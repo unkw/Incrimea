@@ -9,7 +9,7 @@ class Admin extends MX_Controller {
 
     function action_index()
     {
-        $this->theme->setVar('page_title', 'Pages module');
+        $this->theme->setVar('title', 'Pages module');
         $this->theme->setVar('content', 'Administration PAGES module');      
     }
 
