@@ -1,0 +1,176 @@
+/*
+    Document   : admin
+    Created on : 23.11.2011, 20:31:24
+    Author     : Kemal
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+    margin:0;
+    padding:0;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+fieldset,img {
+    border:0;
+}
+address,caption,cite,code,dfn,em,strong,th,var {
+    font-style:normal;
+    font-weight:normal;
+}
+ol,ul {
+    list-style:none;
+}
+caption,th {
+    text-align:left;
+}
+h1,h2,h3,h4,h5,h6 {
+    font-size:100%;
+    font-weight:normal;
+}
+q:before,q:after {
+    content:'';
+}
+abbr,acronym {
+    border:0;
+}
+input[type="submit"],
+input[type="button"] {
+    cursor: pointer;
+}
+/*
+    Global styles
+*/
+
+.red {
+    color: red;
+}
+.green {
+    color: green;
+}
+.yellow {
+    color: #FFE680;
+}
+
+/*
+    End of Global styles
+*/
+
+
+#container {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+#menu {
+    width: 100%;
+    height: 50px;
+    background: #231f20;
+    opacity: 0.9;
+}
+
+ul.menu {
+    margin: 0 0 0 10px;
+}
+
+ul.menu li {
+    float: left;
+}
+
+ul.menu li a {
+    display: block;
+    color: #FFF;
+    padding: 15px 20px;
+    text-decoration: none;
+}
+
+ul.menu li a:hover {
+    background: #003399;
+}
+
+ul.menu li:hover ul.submenu {
+    display: block;
+}
+
+ul.menu li ul.submenu {
+    position: absolute;
+    top: 50px;
+    display: none;
+    border: 1px solid #231f20;
+    border-top: 0;
+}
+
+ul.menu li ul.submenu li a{
+    color: #003399;
+    padding: 8px 15px;
+    background: #efefef;
+}
+ul.menu li ul.submenu li a:hover {
+    color: #FFF;
+    background: #003399;
+}
+
+#content {
+    border: 1px solid #999;
+    min-height: 400px;
+    height: auto !important;
+    height: 400px;
+    padding: 10px 20px;
+}
+
+#content h1 {
+    font-size: 26px;
+    font-weight: bold;
+}
+#content table {
+    width: 100%;
+}
+#content table thead {
+    background: #CCC;
+}
+#content table thead th,
+#content table td {
+    border: 3px solid #FFF;
+    padding: 2px 10px;
+}
+#content table tbody {
+    background: #EEE;
+}
+#content table td.pager {
+    text-align: center;
+}
+#content .error {
+    color: red;
+    font-size: 12px;
+}
+
+/**
+    Messages
+*/
+.message-box {
+    border: 1px solid;
+    margin: 10px 0px;
+    padding:10px 10px 10px 10px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+}
+
+#success_msg {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+}
+#info_msg {
+    color: #00529B;
+    background-color: #BDE5F8;
+}
+#warning_msg {
+    color: #9F6000;
+    background-color: #FEEFB3;
+}
+#error_msg {
+    color: #D8000C;
+    background-color: #FFBABA;
+}
