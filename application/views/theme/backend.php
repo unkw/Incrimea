@@ -14,13 +14,12 @@
         <div id="menu">
             <ul class="menu">
                 <li><a href="<?php print base_url(); ?>admin">Админ. панель</a></li>
-                <li><a href="<?php print base_url(); ?>admin/pages">Контент</a>
+                <li><a href="<?php print base_url(); ?>admin/admin/content">Контент</a>
                     <ul class="submenu">
-                        <li><a href="<?php print base_url(); ?>admin/pages">Список</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/pages/add">Создать контент</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/pages/categories">Категории</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/pages/types">Типы контента</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/comments">Комментарии</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/page">Страницы</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/event/list">События</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/article/list">Статьи</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/hotel/list">Отели</a></li>
                     </ul>
                 </li>
                 <li><a href="#">Модули</a>

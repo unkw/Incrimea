@@ -13,7 +13,7 @@ class Admin extends MX_Controller {
         $this->theme->setVar('content', 'Administration PAGES module');      
     }
 
-    function action_create()
+    function action_new()
     {
         $this->theme->setVar('page_title', 'Create new page');
         $this->theme->setVar('content', 'content is empty');
@@ -23,5 +23,10 @@ class Admin extends MX_Controller {
     {
         $this->theme->setVar('page_title', 'Edit page');
         $this->theme->setVar('content', 'content is empty ... ' . $id);
+    }
+
+    function action_delete($id = 0)
+    {
+        
     }
 }
