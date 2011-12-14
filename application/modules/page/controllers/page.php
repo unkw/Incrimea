@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Pages extends MX_Controller {
+class Page extends MX_Controller {
      
     private $module_name;
     

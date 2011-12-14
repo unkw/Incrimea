@@ -739,7 +739,6 @@ class CI_Form_validation {
 		{
 			return array_shift($this->_field_data[$field]['postdata']);
 		}
-
 		return $this->_field_data[$field]['postdata'];
 	}
 

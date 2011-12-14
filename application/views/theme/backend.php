@@ -16,10 +16,8 @@
                 <li><a href="<?php print base_url(); ?>admin">Админ. панель</a></li>
                 <li><a href="<?php print base_url(); ?>admin/admin/content">Контент</a>
                     <ul class="submenu">
-                        <li><a href="<?php print base_url(); ?>admin/page">Страницы</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/event/list">События</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/article/list">Статьи</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/hotel/list">Отели</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/content">Список</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/content/new">Создать</a></li>
                     </ul>
                 </li>
                 <li><a href="#">Модули</a>
