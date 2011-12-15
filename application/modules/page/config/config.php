@@ -24,12 +24,3 @@ $config['validation_new'] = array(
         'rules' => ''
     ),
 );
-
-$config['validation_edit'] = array_merge($config['validation_new'], array(
-    array(
-        'field' => 'edit-resort',
-        'label' => 'Место отдыха',
-        'rules' => 'required'
-    ),
-));
-

@@ -46,6 +46,7 @@ class Admin extends MX_Controller {
             show_404();
 
         $data = array();
+        $data['module'] = $this->module_name;
         $data['pager'] = $this->pagination->create_links();
         $data['content'] = $this->model->get_pages($config['per_page'], $offset);
 

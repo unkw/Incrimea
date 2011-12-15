@@ -1,3 +1,6 @@
+
+<a href="<?php echo base_url() .'admin/'.$module.'/new'; ?>">Создать страницу</a>
+
 <table>
 
     <thead class="select-all">
@@ -13,7 +16,7 @@
         <?php foreach ($content as $c) : ?>
         <tr>
             <td><input type="checkbox" title="Выделить все страницы" /></td>
-            <td><?php print $c['title']; ?></td>
+            <td><a href="<?php echo base_url() ?>page/view/<?php echo $c['id'] ?>"><?php print $c['title']; ?></a></td>
             <td><?php print $c['username']; ?></td>
             <td><?php print date('Y-m-d H:i:s', $c['created_date']); ?></td>
             <td><?php print $c['status'] ? 'Опубликовано' : 'Не опубликовано'; ?></td>
@@ -22,7 +25,7 @@
         <?php endforeach; ?>
     </tbody>
 
-    <tbody><tr><td class="pager" colspan="8"><?php print $pager; ?></td></tr></tbody>
+    <tbody><tr><td class="pager" colspan="6"><?php print $pager; ?></td></tr></tbody>
 </table>
 
 

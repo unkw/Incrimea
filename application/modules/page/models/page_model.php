@@ -38,9 +38,14 @@ class Page_Model extends CI_Model {
     }
 
     /** Получить страницу */
-    public function get($id)
+    public function get($id, $published = FALSE)
     {
-        $q = $this->db->get_where('page', array('id' => $id));
+        $where = array('id' => $id);
+
+        if ($published)
+            $where['status'] = 1;
+
+        $q = $this->db->get_where('page', $where);
 
         return $q->row_array();
     }

@@ -43,7 +43,7 @@ class Index extends MX_Controller {
     function load_main_page()
     {
         $this->theme->setVar('is_front', TRUE);
-        $this->theme->setVar('page_title', 'Главная. UID = ' . USER_AUTH_ID);
+        $this->theme->setVar('title', 'Главная. UID = ' . USER_AUTH_ID);
         $this->theme->setVar('content', 'Это главная страница сайта Incrimea. <a href="/pages">Страницы</a>');
     }
 

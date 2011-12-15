@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title><?php print $page_title; ?></title>
+    <title><?php print $title; ?></title>
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <link rel="stylesheet" href="<?php print base_url(); ?>css/style.css" type="text/css" media="screen, projection" />
@@ -20,7 +20,7 @@
 
 		<div id="container">
 			<div id="content">
-                            <h1><?php print $page_title; ?></h1>
+                            <h1><?php print $title; ?></h1>
                             <?php print $content; ?>
 			</div><!-- #content-->
 		</div><!-- #container-->
