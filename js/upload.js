@@ -16,6 +16,7 @@ var SingleUpload = {
     imgRemove: null,
     imgFolder: null,
     img: null,
+    moduleName: null,
 
     /** Инициализация загрузчика */
     init: function(){
@@ -34,7 +35,9 @@ var SingleUpload = {
 
         this.imgThumb = $('input[name="edit-thumb"]');
 
-        this.imgFolder = 'images/' + $('input[name="module-name"]').val() + '/';
+        this.moduleName = $('input[name="module-name"]').val();
+
+        this.imgFolder = 'images/' + this.moduleName + '/';
 
         this.fileInput.bind({
             change: function(){
@@ -143,7 +146,7 @@ var SingleUpload = {
 
         new uploaderObject({
             file:       uploadItem.file,
-            url:        '/admin/article/upload',
+            url:        '/admin/' + self.moduleName + '/upload',
             fieldName:  'uploadimg',
 
             onprogress: function(percents) {
