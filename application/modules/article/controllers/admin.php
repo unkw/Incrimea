@@ -5,10 +5,10 @@ class Admin extends MX_Controller {
     function  __construct() {
 
         // Имя модуля
-        $this->module_name = 'page';
+        $this->module_name = 'article';
 
         // Хлебная крошка на главную страницу модуля
-        $this->theme->set_breadcrumb('Страницы', 'admin/page');
+        $this->theme->set_breadcrumb('Статьи', 'admin/article');
 
         // Хэлпер форм и библиотека валидации форм
         $this->load->helper('form');
@@ -28,7 +28,7 @@ class Admin extends MX_Controller {
         $this->load->library('pagination');
 
         // Заголовок
-        $this->theme->setVar('title', 'Страницы');
+        $this->theme->setVar('title', 'Статьи');
 
         // Список пользователей и пагинация
         $config['base_url'] = base_url() . 'admin/'.$this->module_name;
@@ -56,6 +56,7 @@ class Admin extends MX_Controller {
 
     function action_new()
     {
+        $data = array();
         $this->form_validation->set_rules($this->config->config['validation_new']);
 
         if ($this->form_validation->run($this) === TRUE)
@@ -69,32 +70,41 @@ class Admin extends MX_Controller {
                 'status'        => $this->input->post('edit-status') ? 1 : 0,
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'uid'           => USER_AUTH_ID,
+                'resort_id'     => $this->input->post('edit-resorts'),
+                'image_src'     => $this->input->post('edit-image'),
+                'image_thumb'   => $this->input->post('edit-thumb'),
+                'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
             );
 
             $this->model->add($cdata);
 
-            $this->message->set('success', 'Материал "' . $cdata['title'] . '" создан успешно');
+            $this->message->set('success', 'Статья "' . $cdata['title'] . '" создана успешно');
 
             redirect('admin/' . $this->module_name);
         }
 
-        $title = 'Создание страницы';
+        $title = 'Создание статьи';
         // Хлебная крошка
         $this->theme->set_breadcrumb($title, '');
         // Заголовок
         $this->theme->setVar('title', $title);
         // Контент
-        $data = array();
         $data['content'] = array(
+            'id' => '',
             'title' => '',
             'body' => '',
             'status' => 1,
             'sticky' => 0,
+            'resort_id' => 0,
+            'image_desc' => '',
+            'image_src' => '',
+            'image_thumb' => '',
         );
+        $data['resorts'] = $this->model->get_resorts();
         // CKEditor
         $this->editor_init();
         // Отображение
-        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit-page.php', $data, TRUE));
+        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit-article.php', $data, TRUE));
     }
 
     function action_edit($id = 0)
@@ -113,6 +123,10 @@ class Admin extends MX_Controller {
                 'last_update'   => time(),
                 'status'        => $this->input->post('edit-status') ? 1 : 0,
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
+                'resort_id'     => $this->input->post('edit-resorts'),
+                'image_src'     => $this->input->post('edit-image'),
+                'image_thumb'   => $this->input->post('edit-thumb'),
+                'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
             );
 
             $this->model->update($id, $cdata);
@@ -122,7 +136,7 @@ class Admin extends MX_Controller {
             redirect('admin/'.$this->module_name);
         }
 
-        $title = 'Редактирование страницы';
+        $title = 'Редактирование статьи';
         // Хлебная крошка
         $this->theme->set_breadcrumb($title, '');
         // Заголовок
@@ -130,12 +144,13 @@ class Admin extends MX_Controller {
         // Контент
         $data = array();
         $data['content'] = $this->model->get($id);
+        $data['resorts'] = $this->model->get_resorts();
         if (!$data['content'])
             show_404();
         // CKeditor
         $this->editor_init();
         // Отображение
-        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit-page.php', $data, TRUE));
+        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit-article.php', $data, TRUE));
     }
 
     function action_delete($id = 0)
@@ -150,5 +165,22 @@ class Admin extends MX_Controller {
         $this->ckeditor->basePath = base_url().'asset/ckeditor/';
         $this->ckeditor->config['toolbar'] = 'Full';
         $this->ckeditor->config['language'] = 'ru';
+    }
+
+    /** Загрузка картинки */
+    public function action_upload()
+    {
+        $this->load->library('upload', $this->config->config['upload']);
+
+        if (!$this->upload->do_upload('uploadimg')) {
+            echo $this->upload->display_errors('', '');
+        }
+        else
+        {
+            // Нарезка изображений нужного размера
+            $this->model->create_images($this->upload->data());
+
+            echo 'ok';
+        }
     }
 }

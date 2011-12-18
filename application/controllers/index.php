@@ -7,7 +7,6 @@ class Index extends MX_Controller {
     
     function __construct()
     {
-        $this->output->enable_profiler(TRUE);
         $this->common->load_module('user');
         $this->session_update();
     }
@@ -18,8 +17,8 @@ class Index extends MX_Controller {
         // Роутер
         $this->load_page_by_path();
         // Отображение страницы
-        $this->theme->render();
-
+        if (!$this->input->is_ajax_request())
+            $this->theme->render();
     }
 
     /** Определяем страницу какой сущности отобразить */

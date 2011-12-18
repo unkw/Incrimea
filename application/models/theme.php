@@ -74,5 +74,8 @@ class Theme extends CI_Model {
         $this->vars['breadcrumb'] = $this->get_breadcrumb_html();
 
         $this->load->view($this->tpl, $this->vars);
+
+        // Debug information
+        $this->output->enable_profiler(TRUE);
     }
 }

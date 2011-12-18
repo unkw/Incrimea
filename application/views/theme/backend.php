@@ -6,6 +6,12 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <link rel="stylesheet" href="<?php print base_url(); ?>css/admin.css" type="text/css" media="screen, projection" />
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery-ui.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/admin.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/uploaderObject.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/upload.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 </head>
 <body>
 

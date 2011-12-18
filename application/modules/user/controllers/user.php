@@ -49,7 +49,7 @@ class User extends MX_Controller {
             }
         }
 
-        $this->theme->setVar('page_title', 'Вход');
+        $this->theme->setVar('title', 'Вход');
         $this->theme->setVar('content', $this->load->view($this->module_name.'/login.php', $data, TRUE));
     }
 
