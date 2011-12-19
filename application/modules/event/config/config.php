@@ -19,6 +19,16 @@ $config['validation_new'] = array(
         'rules' => 'required'
     ),
     array(
+        'field' => 'edit-date-start',
+        'label' => 'Дата начала',
+        'rules' => 'required'
+    ),
+    array(
+        'field' => 'edit-date-end',
+        'label' => 'Дата завершения',
+        'rules' => 'required'
+    ),
+    array(
         'field' => 'edit-status',
         'label' => 'Статус',
         'rules' => ''

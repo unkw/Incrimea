@@ -63,7 +63,10 @@ class Article_Model extends CI_Model {
             ->update('articles', $data);
     }
 
-    /** Ресайз изображения и создание его превьюшки */
+    /**
+     * Ресайз изображения и создание его превьюшки
+     * TODO: в будущем неплохо было бы написать для таких целей специальный класс
+     */
     public function create_images($img)
     {
         $config = $this->config->config['image_lib'];

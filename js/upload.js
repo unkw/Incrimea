@@ -53,6 +53,7 @@ var SingleUpload = {
             $(this).hide();
             self.imgContainer.find('#img-main').remove();
             self.imgContainer.find('.progress').remove();
+            self.imgContainer.find('.percents').remove();
             self.showUploadInputs();
             self.imgSrc.val('');
             self.imgThumb.val('');
@@ -62,6 +63,7 @@ var SingleUpload = {
             this.hideUploadInputs();
         } else {
             this.imgRemove.hide();
+            $('#img-main').remove();
         }
 
     },
@@ -103,11 +105,14 @@ var SingleUpload = {
 
         // Очищаем контейнер сообщения
         this.imgMsg.text('');
-
         // Картинка
         var img = $('<img id="img-main" />').appendTo(this.imgContainer);
         // Прогресс-бар
-        $('<div/>').addClass('progress').attr('rel', '0').text('0%').appendTo(this.imgContainer);
+        var progressWrap = $('<div />').appendTo(this.imgContainer);
+        $('<progress class="progress" max="100" />')
+            .val(0)
+            .appendTo(progressWrap);
+        $('<span class="percents">0%</span>').appendTo(progressWrap);
 
         this.imgContainer.get(0).file = file;
 
@@ -130,10 +135,9 @@ var SingleUpload = {
         reader.readAsDataURL(file);
     },
 
-    updateProgress: function(bar, value){
-        var width = bar.width();
-        var bgrValue = -width + (value * (width / 100));
-        bar.attr('rel', value).css('background-position', bgrValue+'px center').text(value+'%');
+    updateProgress: function(bar, percents, value){
+        bar.val(value);
+        percents.text(value + '%');
     },
 
     /** Загрузка файла на сервер */
@@ -143,6 +147,7 @@ var SingleUpload = {
 
         var uploadItem = this.imgContainer.get(0);
         var pBar = $(uploadItem).find('.progress');
+        var pPercents = $(uploadItem).find('.percents');
 
         new uploaderObject({
             file:       uploadItem.file,
@@ -150,7 +155,7 @@ var SingleUpload = {
             fieldName:  'uploadimg',
 
             onprogress: function(percents) {
-                self.updateProgress(pBar, percents);
+                self.updateProgress(pBar, pPercents, percents);
             },
 
             oncomplete: function(done, data) {
@@ -166,7 +171,7 @@ var SingleUpload = {
                     else
                         msg = data;
                     self.displayMsg(msg, 'ok' ? 'success' : 'error');
-                    self.updateProgress(pBar, 100);
+                    self.updateProgress(pBar, pPercents, 100);
                 } else {
                     self.displayMsg('При загрузке файла произошла ошибка');
                 }

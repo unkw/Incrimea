@@ -50,6 +50,16 @@
 </div>
 
 <div>
+    <div><label>Дата начала</label></div>
+    <input type="text" name="edit-date-start" class="edit-event-dates" value="<?php echo set_value('edit-date-start', $content['date_start']); ?>" required/>
+</div>
+
+<div>
+    <div><label>Дата завершения</label></div>
+    <input type="text" name="edit-date-end" class="edit-event-dates" value="<?php echo set_value('edit-date-end', $content['date_end']); ?>" required/>
+</div>
+
+<div>
     <div><label>Текст страницы</label></div>
     <?php $this->ckeditor->editor('edit-body', html_entity_decode(set_value('edit-body', $content['body']))); ?>
 </div>

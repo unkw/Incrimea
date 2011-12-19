@@ -151,14 +151,7 @@ ul.menu li ul.submenu li a:hover {
     Upload Files
 */
 #img-container .progress {
-    width: 148px;
-    border: 1px solid #888888;
-    height: 18px;
-    text-align: center;
-    line-height: 100%;
-    background-image: url('../images/common/pbar.png');
-    background-repeat: no-repeat;
-    background-position: -150px center;
+    width: 100px;
 }
 
 /**

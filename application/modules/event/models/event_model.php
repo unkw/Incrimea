@@ -47,20 +47,48 @@ class Event_Model extends CI_Model {
 
         $q = $this->db->get_where('events', $where);
 
-        return $q->row_array();
+        $data = $q->row_array();
+
+        // Преобразование даты в нужный формат
+        $data['date_start'] = $this->toDate($data['date_start']);
+        $data['date_end'] = $this->toDate($data['date_end']);
+
+        return $data;
     }
     
     /** Добавить страницу */
     public function add($data)
     {
+        $data['date_start'] = $this->toTimestamp($data['date_start']);
+        $data['date_end'] = $this->toTimestamp($data['date_end']);
+
         $this->db->insert_batch('events', array($data));
     }
 
     /** Обновить страницу */
     public function update($id, $data)
     {
+        $data['date_start'] = $this->toTimestamp($data['date_start']);
+        $data['date_end'] = $this->toTimestamp($data['date_end']);
+
         $this->db->where('id', $id)
             ->update('events', $data);
+    }
+
+    /** Перевод строки вида "dd-mm-yyyy" в timestamp */
+    public function toTimestamp($string)
+    {
+        $arr = explode('-', $string);
+
+        return mktime(0, 0, 0, $arr[1], $arr[0], $arr[2]);
+    }
+
+    /** Перевод timestamp в date формат */
+    public function toDate($timestamp, $format = FALSE)
+    {
+        $format = $format ? $format : 'd-m-Y';
+
+        return date($format, $timestamp);
     }
 
     /** Ресайз изображения и создание его превьюшки */
