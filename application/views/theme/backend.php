@@ -11,6 +11,7 @@
     <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery-ui.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/admin.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/uploaderObject.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.uploader.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/upload.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 </head>

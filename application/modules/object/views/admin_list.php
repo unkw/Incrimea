@@ -1,5 +1,5 @@
 
-<a href="<?php echo base_url() .'admin/'.$module.'/new'; ?>">Создать статью</a>
+<a href="<?php echo base_url() .'admin/'.$module.'/new'; ?>">Создать объект</a>
 
 <table>
 
@@ -16,11 +16,11 @@
         <?php foreach ($content as $c) : ?>
         <tr>
             <td><input type="checkbox" title="Выделить все страницы" /></td>
-            <td><a href="<?php echo base_url() ?>article/view/<?php echo $c['id'] ?>"><?php print $c['title']; ?></a></td>
+            <td><a href="<?php echo base_url().$module ?>/view/<?php echo $c['id'] ?>"><?php print $c['title']; ?></a></td>
             <td><?php print $c['username']; ?></td>
             <td><?php print date('Y-m-d H:i:s', $c['created_date']); ?></td>
             <td><?php print $c['status'] ? 'Опубликовано' : 'Не опубликовано'; ?></td>
-            <td><a href="<?php print base_url() . 'admin/article/edit/' . $c['id']; ?>">Изменить</a></td>
+            <td><a href="<?php print base_url() . 'admin/'.$module.'/edit/' . $c['id']; ?>">Изменить</a></td>
         </tr>
         <?php endforeach; ?>
     </tbody>

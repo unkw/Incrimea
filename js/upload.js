@@ -4,6 +4,9 @@ $(function(){
     SingleUpload.init();
 });
 
+/** Мультизагрузка файлов */
+
+
 /** Загрузка единичного файла */
 var SingleUpload = {
 

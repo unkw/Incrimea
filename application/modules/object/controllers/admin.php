@@ -5,10 +5,10 @@ class Admin extends MX_Controller {
     function  __construct() {
 
         // Имя модуля
-        $this->module_name = 'article';
+        $this->module_name = 'object';
 
         // Хлебная крошка на главную страницу модуля
-        $this->theme->set_breadcrumb('Статьи', 'admin/article');
+        $this->theme->set_breadcrumb('Объекты', 'admin/' . $this->module_name);
 
         // Хэлпер форм и библиотека валидации форм
         $this->load->helper('form');
@@ -28,7 +28,7 @@ class Admin extends MX_Controller {
         $this->load->library('pagination');
 
         // Заголовок
-        $this->theme->setVar('title', 'Статьи');
+        $this->theme->setVar('title', 'Объекты');
 
         // Список пользователей и пагинация
         $config['base_url'] = base_url() . 'admin/'.$this->module_name;
@@ -63,27 +63,29 @@ class Admin extends MX_Controller {
         {
             $cdata = array(
                 'title'         => $this->input->post('edit-title'),
-                'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
                 'body'          => $this->input->post('edit-body'),
+                'type_id'       => $this->input->post('edit-types'),
+                'min_price'     => $this->input->post('edit-min-price'),
+                'food'          => $this->input->post('edit-food'),
+                'beach'         => $this->input->post('edit-beach'),
+                'number_fund'   => $this->input->post('edit-number-fund'),
+                'structure'     => $this->input->post('edit-structure'),
                 'created_date'  => time(),
                 'last_update'   => time(),
                 'status'        => $this->input->post('edit-status') ? 1 : 0,
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'uid'           => USER_AUTH_ID,
                 'resort_id'     => $this->input->post('edit-resorts'),
-                'image_src'     => $this->input->post('edit-image'),
-                'image_thumb'   => $this->input->post('edit-thumb'),
-                'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
             );
 
             $this->model->add($cdata);
 
-            $this->message->set('success', 'Статья "' . $cdata['title'] . '" создана успешно');
+            $this->message->set('success', 'Объект "' . $cdata['title'] . '" создан успешно');
 
             redirect('admin/' . $this->module_name);
         }
 
-        $title = 'Создание статьи';
+        $title = 'Создание объекта';
         // Хлебная крошка
         $this->theme->set_breadcrumb($title, '');
         // Заголовок
@@ -93,18 +95,26 @@ class Admin extends MX_Controller {
             'id' => '',
             'title' => '',
             'body' => '',
+            'type_id' => '',
+            'min_price' => '',
+            'food' => '',
+            'beach' => '',
+            'number_fund' => '',
+            'structure' => array(),
             'status' => 1,
             'sticky' => 0,
             'resort_id' => 0,
-            'image_desc' => '',
-            'image_src' => '',
-            'image_thumb' => '',
         );
+        // Места отдыха
         $data['resorts'] = $this->model->get_resorts();
+        // Типы объектов
+        $data['types'] = $this->model->get_types();
+        // Инфраструктура
+        $data['structure'] = $this->model->get_structure();
         // CKEditor
         $this->editor_init();
         // Отображение
-        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit-article.php', $data, TRUE));
+        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit.php', $data, TRUE));
     }
 
     function action_edit($id = 0)
@@ -118,17 +128,19 @@ class Admin extends MX_Controller {
         {
             $cdata = array(
                 'title'         => $this->input->post('edit-title'),
-                'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
                 'body'          => $this->input->post('edit-body'),
+                'type_id'       => $this->input->post('edit-types'),
+                'min_price'     => $this->input->post('edit-min-price'),
+                'food'          => $this->input->post('edit-food'),
+                'beach'         => $this->input->post('edit-beach'),
+                'number_fund'   => $this->input->post('edit-number-fund'),
+                'structure'     => $this->input->post('edit-structure'),
                 'last_update'   => time(),
                 'status'        => $this->input->post('edit-status') ? 1 : 0,
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'resort_id'     => $this->input->post('edit-resorts'),
-                'image_src'     => $this->input->post('edit-image'),
-                'image_thumb'   => $this->input->post('edit-thumb'),
-                'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
             );
-
+            
             $this->model->update($id, $cdata);
 
             $this->message->set('success', 'Изменения сохранены успешно');
@@ -136,7 +148,7 @@ class Admin extends MX_Controller {
             redirect('admin/'.$this->module_name);
         }
 
-        $title = 'Редактирование статьи';
+        $title = 'Редактирование объекта';
         // Хлебная крошка
         $this->theme->set_breadcrumb($title, '');
         // Заголовок
@@ -144,13 +156,20 @@ class Admin extends MX_Controller {
         // Контент
         $data = array();
         $data['content'] = $this->model->get($id);
+        // Места отдыха
         $data['resorts'] = $this->model->get_resorts();
+        // Типы объектов
+        $data['types'] = $this->model->get_types();
+        // Инфраструктура
+        $data['structure'] = $this->model->get_structure();
+
         if (!$data['content'])
             show_404();
+
         // CKeditor
         $this->editor_init();
         // Отображение
-        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit-article.php', $data, TRUE));
+        $this->theme->setVar('content', $this->load->view($this->module_name.'/edit.php', $data, TRUE));
     }
 
     function action_delete($id = 0)
@@ -170,17 +189,20 @@ class Admin extends MX_Controller {
     /** Загрузка картинки */
     public function action_upload()
     {
-        $this->load->library('upload', $this->config->config['upload']);
+        echo 'ok';
 
-        if (!$this->upload->do_upload('uploadimg')) {
-            echo $this->upload->display_errors('', '');
-        }
-        else
-        {
-            // Нарезка изображений нужного размера
-            $this->model->create_images($this->upload->data());
 
-            echo 'ok';
-        }
+//        $this->load->library('upload', $this->config->config['upload']);
+//
+//        if (!$this->upload->do_upload('uploadimg')) {
+//            echo $this->upload->display_errors('', '');
+//        }
+//        else
+//        {
+//            // Нарезка изображений нужного размера
+//            $this->model->create_images($this->upload->data());
+//
+//            echo 'ok';
+//        }
     }
 }

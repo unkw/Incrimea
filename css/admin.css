@@ -147,16 +147,32 @@ ul.menu li ul.submenu li a:hover {
     font-size: 12px;
 }
 
-/**
-    Upload Files
-*/
+/** Single Upload Files */
 #img-container .progress {
     width: 100px;
 }
 
-/**
-    Messages
-*/
+/** Object gallery upload images */
+#edit-gallery li {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    position: relative;
+}
+#edit-gallery li:last{
+    margin-right: 0;
+}
+#edit-gallery li .remove {
+    color: red;
+    font-size: 11px;
+    margin-left: 22px;
+}
+#edit-gallery li div {
+    height: 90px;
+    overflow: hidden;
+}
+
+/** Messages */
 .message-box {
     border: 1px solid;
     margin: 10px 0px;
@@ -180,4 +196,8 @@ ul.menu li ul.submenu li a:hover {
 #error_msg {
     color: #D8000C;
     background-color: #FFBABA;
+}
+
+.clear {
+    clear: both;
 }

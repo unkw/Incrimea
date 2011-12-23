@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Article extends MX_Controller {
+class Object extends MX_Controller {
      
     private $module_name;
     

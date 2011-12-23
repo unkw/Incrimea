@@ -14,9 +14,34 @@ $config['validation_new'] = array(
         'rules' => 'is_natural_no_zero'
     ),
     array(
+        'field' => 'edit-types',
+        'label' => 'Тип',
+        'rules' => 'is_natural_no_zero'
+    ),
+    array(
+        'field' => 'edit-min-price',
+        'label' => 'Цены от',
+        'rules' => 'required|alpha_numeric'
+    ),
+    array(
+        'field' => 'edit-beach',
+        'label' => '',
+        'rules' => ''
+    ),
+    array(
+        'field' => 'edit-number-fund',
+        'label' => 'Номерной фонд',
+        'rules' => 'required'
+    ),
+    array(
         'field' => 'edit-body',
         'label' => 'Текст',
         'rules' => 'required'
+    ),
+    array(
+        'field' => 'edit-structure[]',
+        'label' => '',
+        'rules' => ''
     ),
     array(
         'field' => 'edit-status',
@@ -26,21 +51,6 @@ $config['validation_new'] = array(
     array(
         'field' => 'edit-sticky',
         'label' => 'Закреплять вверху списков',
-        'rules' => ''
-    ),
-    array(
-        'field' => 'edit-image',
-        'label' => '',
-        'rules' => ''
-    ),
-    array(
-        'field' => 'edit-thumb',
-        'label' => '',
-        'rules' => ''
-    ),
-    array(
-        'field' => 'edit-image-desc',
-        'label' => 'Описание изображения',
         'rules' => ''
     ),
 );

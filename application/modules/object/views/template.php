@@ -1,7 +1,7 @@
 <div class="content">
-    <img src="<?php echo base_url().$article['image_src']; ?>"
-         title="<?php echo $article['image_desc']; ?>"
+    <img src="<?php echo base_url().$event['image_src']; ?>"
+         title="<?php echo $event['image_desc']; ?>"
          alt=""
          class="main-image" />
-    <?php echo $article['body']; ?>
+    <?php echo $event['body']; ?>
 </div>

@@ -95,6 +95,8 @@ class Admin extends MX_Controller {
             'id' => '',
             'title' => '',
             'body' => '',
+            'date_start' => '',
+            'date_end' => '',
             'status' => 1,
             'sticky' => 0,
             'resort_id' => 0,

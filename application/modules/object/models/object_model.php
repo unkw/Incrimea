@@ -1,5 +1,5 @@
 <?php
-class Article_Model extends CI_Model {
+class Object_Model extends CI_Model {
     
     public function __construct() {
         parent::__construct();
@@ -7,17 +7,17 @@ class Article_Model extends CI_Model {
 
     public function get_count_all()
     {
-        return $this->db->count_all('articles');
+        return $this->db->count_all('objects');
     }
 
     /** Получить список страниц */
     public function get_pages($num, $offset)
     {
         $this->db
-            ->select('a.*, u.username')
-            ->from('articles a')
-            ->join('users u', 'u.id = a.uid')
-            ->order_by('a.created_date', 'desc')
+            ->select('o.*, u.username')
+            ->from('objects o')
+            ->join('users u', 'u.id = o.uid')
+            ->order_by('o.created_date', 'desc')
             ->limit($num, $offset);
 
         $query = $this->db->get();
@@ -37,6 +37,30 @@ class Article_Model extends CI_Model {
         return $q->result_array();
     }
 
+    /** Получить список всех типов объектов */
+    public function get_types()
+    {
+        $this->db->select('*')
+            ->from('object_types')
+            ->order_by('name', 'asc');
+
+        $q = $this->db->get();
+
+        return $q->result_array();
+    }
+
+    /** Получить список того, что входит в инфраструктуру */
+    public function get_structure()
+    {
+        $this->db->select('*')
+            ->from('object_structure')
+            ->order_by('id', 'asc');
+
+        $q = $this->db->get();
+
+        return $q->result_array();
+    }
+
     /** Получить страницу */
     public function get($id, $published = FALSE)
     {
@@ -45,22 +69,48 @@ class Article_Model extends CI_Model {
         if ($published)
             $where['status'] = 1;
 
-        $q = $this->db->get_where('articles', $where);
+        $q = $this->db->get_where('objects', $where);
 
-        return $q->row_array();
+        $data = $q->row_array();
+
+        $data['structure'] = json_decode($data['structure']);
+
+        return $data;
     }
     
     /** Добавить страницу */
     public function add($data)
     {
-        $this->db->insert_batch('articles', array($data));
+        // Сохраняем значения чекбоксов "Инфраструктуры" в формате json
+        $data['structure'] = json_encode($data['structure']);
+
+        $this->db->insert_batch('objects', array($data));
     }
 
     /** Обновить страницу */
     public function update($id, $data)
     {
+        // Сохраняем значения чекбоксов "Инфраструктуры" в формате json
+        $data['structure'] = json_encode($data['structure']); 
+
         $this->db->where('id', $id)
-            ->update('articles', $data);
+            ->update('objects', $data);
+    }
+
+    /** Перевод строки вида "dd-mm-yyyy" в timestamp */
+    public function toTimestamp($string)
+    {
+        $arr = explode('-', $string);
+
+        return mktime(0, 0, 0, $arr[1], $arr[0], $arr[2]);
+    }
+
+    /** Перевод timestamp в date формат */
+    public function toDate($timestamp, $format = FALSE)
+    {
+        $format = $format ? $format : 'd-m-Y';
+
+        return date($format, $timestamp);
     }
 
     /** Ресайз изображения и создание его превьюшки */
@@ -68,10 +118,10 @@ class Article_Model extends CI_Model {
     {
         $config = $this->config->config['image_lib'];
         $origin_img = 'images/temp/' . $img['file_name'];
-        $new_img = 'images/article/' . $img['file_name'];
+        $new_img = 'images/event/' . $img['file_name'];
         $img_info = explode('.', $img['file_name']);
         $img_ext = array_pop($img_info);
-        $thumb = 'images/article/' . implode('.', $img_info) .'_thumb.'.$img_ext;
+        $thumb = 'images/event/' . implode('.', $img_info) .'_thumb.'.$img_ext;
         // Оригинальный файл
         $config['source_image'] = $origin_img;
 
