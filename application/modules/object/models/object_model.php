@@ -64,18 +64,38 @@ class Object_Model extends CI_Model {
     /** Получить страницу */
     public function get($id, $published = FALSE)
     {
-        $where = array('id' => $id);
+        $where = array('o.id' => $id);
 
         if ($published)
-            $where['status'] = 1;
+            $where['o.status'] = 1;
 
-        $q = $this->db->get_where('objects', $where);
+        $this->db->select('o.*, t.name as type, r.name as resort')
+            ->from('objects o')
+            ->join('object_types t', 't.id = o.type_id')
+            ->join('resorts r', 'r.id = o.resort_id')
+            ->where($where);
+
+        $q = $this->db->get();
 
         $data = $q->row_array();
 
         $data['structure'] = json_decode($data['structure']);
 
+        $data['images'] = $data['images'] ? json_decode($data['images']) : array();
+
         return $data;
+    }
+
+    /** Получить инфраструктурные данные объекта в виде массива */
+    public function structure_to_array($data)
+    {
+        $this->db->select('*')
+            ->from('object_structure')
+            ->where_in('url_name', $data);
+
+        $q = $this->db->get();
+
+        return $q->result_array();
     }
     
     /** Добавить страницу */
@@ -84,6 +104,9 @@ class Object_Model extends CI_Model {
         // Сохраняем значения чекбоксов "Инфраструктуры" в формате json
         $data['structure'] = json_encode($data['structure']);
 
+        // Преобразование изображений в json формат
+        $data['images'] = $this->img_src_to_json($data['images']);
+
         $this->db->insert_batch('objects', array($data));
     }
 
@@ -91,10 +114,19 @@ class Object_Model extends CI_Model {
     public function update($id, $data)
     {
         // Сохраняем значения чекбоксов "Инфраструктуры" в формате json
-        $data['structure'] = json_encode($data['structure']); 
+        $data['structure'] = json_encode($data['structure']);
+
+        // Преобразование изображений в json формат
+        $data['images'] = $this->img_src_to_json($data['images']);
 
         $this->db->where('id', $id)
             ->update('objects', $data);
+    }
+
+    /** Преобразование массива с именами изображений в json */
+    public function img_src_to_json($srcArr)
+    {
+        return json_encode($srcArr);
     }
 
     /** Перевод строки вида "dd-mm-yyyy" в timestamp */
@@ -116,67 +148,89 @@ class Object_Model extends CI_Model {
     /** Ресайз изображения и создание его превьюшки */
     public function create_images($img)
     {
-        $config = $this->config->config['image_lib'];
-        $origin_img = 'images/temp/' . $img['file_name'];
-        $new_img = 'images/event/' . $img['file_name'];
-        $img_info = explode('.', $img['file_name']);
-        $img_ext = array_pop($img_info);
-        $thumb = 'images/event/' . implode('.', $img_info) .'_thumb.'.$img_ext;
+        // Основные параметры
+        $default_config = $this->config->config['image_lib'];
         // Оригинальный файл
-        $config['source_image'] = $origin_img;
+        $origin_img = 'images/object/large/' . $img['file_name'];
 
-        // Создание основного изображения
-        $config['new_image'] = $new_img;
+        /** Создание large изображения */
+        $size = $this->config->config['image_large'];
+        $large_img = $origin_img;
+        $config = array();
+        $config = array_merge($default_config, $size);
+        $config['source_image'] = $large_img;
+
         $this->load->library('image_lib', $config);
         $this->image_lib->resize();
-
         $this->image_lib->clear();
 
-        /** Создание превьюшки */
-        $source = getimagesize($new_img);
+        /** Создание medium изображения */
+        $size = $this->config->config['image_medium'];
+        $medium_img = 'images/object/medium/' . $img['file_name'];
+        $config = array();
+        $config = array_merge($default_config, $size);
+        $config['source_image'] = $large_img;
+        $config['new_image'] = $medium_img;
+
+        $this->resize_and_crop($config);
+
+        /** Создание превью изображения */
+        $size = $this->config->config['thumb'];
+        $thumb = 'images/object/thumb/' . $img['file_name'];
+        $config = array();
+        $config = array_merge($default_config, $size);
+        $config['source_image'] = $large_img;
+        $config['new_image'] = $thumb;
+
+        $this->resize_and_crop($config);
+    }
+
+    /** Resize and Crop :) */
+    function resize_and_crop($conf)
+    {
+        // Исходный файл
+        $source = getimagesize($conf['source_image']);
+        // Ширина и высота исходного файла
         $x = $source[0];
         $y = $source[1];
-        // Ширина и высота превью
-        $w_preview = 100;
-        $h_preview = 75;
 
+        // Определяем параметры для ресайза и кропа
         if ($x > $y)
         {
-            $w = round( ($x/$y) * $h_preview );
-            $h = $h_preview;
-            $x_axis = round(($w - $w_preview)/2);
+            $w = round( ($x/$y) * $conf['height'] );
+            $h = $conf['height'];
+            $x_axis = round(($w - $conf['width'])/2);
             $y_axis = 0;
         }
         else
         {
-            $h = round( ($y/$x) * $w_preview );
-            $w = $w_preview;
-            $y_axis = round(($h - $h_preview)/2);
+            $h = round( ($y/$x) * $conf['width'] );
+            $w = $conf['width'];
+            $y_axis = round(($h - $conf['height'])/2);
             $x_axis = 0;
         }
 
-        $config['source_image'] = $config['new_image'];
-        unset($config['new_image']);
-        $config['create_thumb'] = TRUE;
-        $config['thumb_marker'] = '_thumb';
-        $config['width'] = $w;
-        $config['height'] = $h;
-        $this->image_lib->initialize($config);
+        /** Создание временного файла, для дальнейшего кропа */
+        $temp_conf = $conf;
+        $temp_conf['width'] = $w;
+        $temp_conf['height'] = $h;
+        $this->image_lib->initialize($temp_conf);
         $this->image_lib->resize();
-
         $this->image_lib->clear();
 
-        $config['source_image'] = $thumb;
+        /** Делаем crop */
+        $config = array();
+        $config['source_image'] = $conf['new_image'];
         $config['maintain_ratio'] = FALSE;
-        $config['create_thumb'] = FALSE;
-        $config['width'] = $w_preview;
-        $config['height'] = $h_preview;
+        $config['width'] = $conf['width'];
+        $config['height'] = $conf['height'];
         $config['x_axis'] = $x_axis;
         $config['y_axis'] = $y_axis;
 
         $this->image_lib->initialize($config);
         $this->image_lib->crop();
-
-        unlink($origin_img);
+        $this->image_lib->clear();
+        
+        return TRUE;
     }
 }

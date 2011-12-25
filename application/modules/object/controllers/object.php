@@ -24,6 +24,9 @@ class Object extends MX_Controller {
         $data = array();
         $data[$this->module_name] = $this->model->get($id, TRUE);
 
+        // Инфраструктура
+        $data[$this->module_name]['structure'] = $this->model->structure_to_array($data[$this->module_name]['structure']);
+
         if (!$data[$this->module_name])
             show_404();
 

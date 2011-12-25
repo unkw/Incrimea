@@ -22,7 +22,7 @@ var ObjectGallery = {
         
         var self = this;
 
-        this.imgWrapper = $('#edit-gallery');
+        this.imgWrapper = $('#edit-gallery').sortable({handle: 'img'});
         this.uploadSubmit = $('#upload-submit').click(function(){
             self.inputFile.damnUploader('startUpload');
         });
@@ -39,11 +39,28 @@ var ObjectGallery = {
             onLimitExceeded: function(){
             }
         });
+
+        // Удаление уже имеющихся картинок
+        this.imgWrapper.find('a.remove').click(function(){
+
+            $(this).parent('li').remove();
+            return false;
+        });
     },
 
     displayImage: function(file){
 
         var self = this;
+
+        if (file.size > 2000000) {
+            trace('Размер файла не более 2MB ('+file.name+')');
+            return;
+        }
+
+        if (file.name.match(/[А-Яа-я]+/)) {
+            trace('Русские символы в названии файла недопустимы');
+            return;
+        }
 
         var uploadId = this.inputFile.damnUploader('addItem', {
             file: file,
@@ -54,6 +71,7 @@ var ObjectGallery = {
             onComplete: function(successfully, data, errorCode) {
                 if(successfully) {
                     img.css('opacity', 1);
+                    imgWrap.append('<input type="hidden" name="edit-img[]" value="'+data+'" />');
                 } else {
                     alert('Ошибка при загрузке. Код ошибки: '+errorCode); // errorCode содержит код HTTP-ответа, либо 0 при проблеме с соединением
                 }

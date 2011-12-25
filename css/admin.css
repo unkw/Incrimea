@@ -171,6 +171,13 @@ ul.menu li ul.submenu li a:hover {
     height: 90px;
     overflow: hidden;
 }
+#edit-gallery li img {
+    cursor: move;
+}
+#edit-gallery li progress {
+    width: 120px;
+    display: block;
+}
 
 /** Messages */
 .message-box {

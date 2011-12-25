@@ -42,6 +42,16 @@
     <div><label>Галерея объекта</label></div>
     <input type="file" name="edit-gallery" multiple="true" />
     <ul id="edit-gallery">
+        <?php foreach ($content['images'] as $img): ?>
+        <li>
+            <div>
+                <img src="<?php echo base_url().'images/object/thumb/'.$img; ?>" alt="" />
+                <input type="hidden" name="edit-img[]" value="<?php echo $img; ?>" />
+            </div>
+            <progress value="100"></progress>
+            <a href="" class="remove">Удалить</a>
+        </li>
+        <?php endforeach; ?>
     </ul>
     <div class="clear"></div>
     <input type="button" id="upload-submit" value="Загрузить изображения">

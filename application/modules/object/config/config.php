@@ -2,6 +2,7 @@
 
 $config = array();
 
+// Валидация
 $config['validation_new'] = array(
     array(
         'field' => 'edit-title',
@@ -55,18 +56,33 @@ $config['validation_new'] = array(
     ),
 );
 
+// Загрузка файла
 $config['upload'] = array(
-    'upload_path'   => 'images/temp',
+    'upload_path'   => 'images/object/large',
     'allowed_types' => 'jpg|jpeg|png|gif',
     'max_size'      => '2000',
     'max_width'     => 0,
     'max_height'    => 0,
 );
 
+// Основные настройки либы Image
 $config['image_lib'] = array(
     'image_library'  => 'gd2',
     'quality'        => '85%',
     'maintain_ratio' => TRUE,
-    'width'          => 400,
-    'height'         => 300,
 );
+
+// Размеры изображений
+$config['image_large'] = array(
+    'width'  => 640,
+    'height' => 480
+);
+$config['image_medium'] = array(
+    'width'  => 360,
+    'height' => 270
+);
+$config['thumb'] = array(
+    'width'  => 120,
+    'height' => 90
+);
+

@@ -76,6 +76,7 @@ class Admin extends MX_Controller {
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'uid'           => USER_AUTH_ID,
                 'resort_id'     => $this->input->post('edit-resorts'),
+                'images'     => $this->input->post('edit-img'),
             );
 
             $this->model->add($cdata);
@@ -104,6 +105,7 @@ class Admin extends MX_Controller {
             'status' => 1,
             'sticky' => 0,
             'resort_id' => 0,
+            'images' => $this->input->post('edit-img') ? $this->input->post('edit-img') : array(),
         );
         // Места отдыха
         $data['resorts'] = $this->model->get_resorts();
@@ -139,6 +141,7 @@ class Admin extends MX_Controller {
                 'status'        => $this->input->post('edit-status') ? 1 : 0,
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'resort_id'     => $this->input->post('edit-resorts'),
+                'images'     => $this->input->post('edit-img'),
             );
             
             $this->model->update($id, $cdata);
@@ -189,20 +192,18 @@ class Admin extends MX_Controller {
     /** Загрузка картинки */
     public function action_upload()
     {
-        echo 'ok';
+        $this->load->library('upload', $this->config->config['upload']);
 
+        if (!$this->upload->do_upload('edit-images')) {
+            echo $this->upload->display_errors('', '');
+        }
+        else
+        {
+            $img = $this->upload->data();
+            // Нарезка изображений нужного размера
+            $this->model->create_images($img);
 
-//        $this->load->library('upload', $this->config->config['upload']);
-//
-//        if (!$this->upload->do_upload('uploadimg')) {
-//            echo $this->upload->display_errors('', '');
-//        }
-//        else
-//        {
-//            // Нарезка изображений нужного размера
-//            $this->model->create_images($this->upload->data());
-//
-//            echo 'ok';
-//        }
+            echo $img['file_name'];
+        }
     }
 }
