@@ -22,6 +22,8 @@ class Theme extends CI_Model {
         $this->vars['is_front'] = FALSE;
         // Глобальные классы для html тега body
         $this->vars['body_classes'] = array();
+        // Фильтры
+        $this->vars['filters'] = FALSE;
         // "Хлебные крошки"
         $this->vars['breadcrumb'] = array();
     }

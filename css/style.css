@@ -33,7 +33,7 @@ input {
 -----------------------------------------------------------------------------*/
 #header {
 	height: 150px;
-	background: #FFE680;
+	background-color: #B5E3FF;
 }
 
 
@@ -68,7 +68,7 @@ input {
 	width: 180px;
 	margin-left: -100%;
 	position: relative;
-	background: #B5E3FF;
+	background: #efefef;
 }
 
 
@@ -80,7 +80,7 @@ input {
 	width: 220px;
 	margin-left: -220px;
 	position: relative;
-	background: #FFACAA;
+	background: #efefef;
 }
 
 

@@ -6,6 +6,9 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <link rel="stylesheet" href="<?php print base_url(); ?>css/style.css" type="text/css" media="screen, projection" />
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/filters.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 </head>
 
 <body class="<?php print $body_classes; ?>">
@@ -13,7 +16,6 @@
 <div id="wrapper">
 
 	<div id="header">
-		<strong>Header:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tortor. Praesent dictum, libero ut tempus dictum, neque eros elementum mauris, quis mollis arcu velit ac diam. Etiam neque. Quisque nec turpis. Aliquam arcu nulla, dictum et, lacinia a, mollis in, ante. Sed eu felis in elit tempor venenatis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut ultricies porttitor purus. Proin non tellus at ligula fringilla tristique. Fusce vehicula quam. Curabitur vel tortor vitae pede imperdiet ultrices. Sed tortor.
 	</div><!-- #header-->
 
 	<div id="middle">
@@ -26,7 +28,9 @@
 		</div><!-- #container-->
 
 		<div class="sidebar" id="sideLeft">
-                    12345
+                    <?php if ($filters): ?>
+                        <?php print $filters; ?>
+                    <?php endif; ?>
 		</div><!-- .sidebar#sideLeft -->
 
 		<div class="sidebar" id="sideRight">

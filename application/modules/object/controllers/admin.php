@@ -76,7 +76,7 @@ class Admin extends MX_Controller {
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'uid'           => USER_AUTH_ID,
                 'resort_id'     => $this->input->post('edit-resorts'),
-                'images'     => $this->input->post('edit-img'),
+                'images'     => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
             );
 
             $this->model->add($cdata);
@@ -136,12 +136,12 @@ class Admin extends MX_Controller {
                 'food'          => $this->input->post('edit-food'),
                 'beach'         => $this->input->post('edit-beach'),
                 'number_fund'   => $this->input->post('edit-number-fund'),
-                'structure'     => $this->input->post('edit-structure'),
+                'structure'     => $this->input->post('edit-structure') ? $this->input->post('edit-structure') : array(),
                 'last_update'   => time(),
                 'status'        => $this->input->post('edit-status') ? 1 : 0,
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'resort_id'     => $this->input->post('edit-resorts'),
-                'images'     => $this->input->post('edit-img'),
+                'images'     => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
             );
             
             $this->model->update($id, $cdata);

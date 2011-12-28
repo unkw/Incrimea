@@ -15,7 +15,6 @@
     <!-- Галерея объекта -->
     <div>
         <div class="field-label">Галерея: </div>
-        <img src="<?php echo base_url().'images/object/medium/'.$object['images'][0] ?>" alt="" /><br />
         <?php foreach ($object['images'] as $img): ?>
         <img src="<?php echo base_url().'images/object/thumb/'.$img; ?>" alt="" />
         <?php endforeach; ?>
