@@ -99,6 +99,9 @@ input {
 .error {
     color: red;
 }
+.clear {
+    clear: both;
+}
 
 /* Контент */
 .content ul {
@@ -107,4 +110,11 @@ input {
 
 .content .field-label {
     font-weight: bold;
+}
+
+.content .content-items {
+    margin: 10px 0;
+}
+.content .content-items p {
+    margin: 0;
 }

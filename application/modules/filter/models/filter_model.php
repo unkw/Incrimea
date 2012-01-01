@@ -5,7 +5,66 @@ class Filter_Model extends CI_Model {
         parent::__construct();
     }
 
-	public function get_resorts()
+    /** Получить список объектов */
+    public function get_objects($params, $per_page, $offset)
+    {
+        $params = $params ? $params : array();
+
+        // Только опубликованные
+        $where = array(
+            'o.status' => 1
+        );
+
+        /** Основные данные отелей */
+        $this->db->select('o.id, o.title, o.body, o.images, o.min_price, o.structure, r.name as resort')
+            ->from('objects o')
+            ->join('resorts r', 'o.resort_id = r.id')
+            ->where($where);
+
+        if (isset($params['resorts']))
+            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
+
+        $data = $this->db->order_by('o.sticky desc, o.created_date desc')
+            ->limit($per_page, $offset)
+            ->get()
+            ->result_array();
+
+        // Инфраструктура - все чекбоксы
+        $structure_all = $this->db->get('object_structure')->result_array();
+
+        /** Преобразование данных */
+        foreach ($data as &$obj)
+        {
+            // Галерея изображений
+            $obj['images'] = $obj['images'] ? json_decode($obj['images']) : array();
+            
+            /** Инфраструктура */
+            $obj['structure'] = $obj['structure'] ? json_decode($obj['structure']) : array();
+            $_structure = array();
+            foreach ($structure_all as $s)
+            {
+                $index = array_search($s['url_name'], $obj['structure']);
+                if ($index !== FALSE)
+                    $_structure[] = $s;
+            }
+            $obj['structure'] = $_structure;
+        }
+
+        return $data;
+    }
+
+    /** Кол-во всех отелей */
+    public function count_all_objects($params)
+    {
+        $this->db->from('objects o')->join('resorts r', 'r.id = o.resort_id')->where('o.status', 1);
+
+        if (isset($params['resorts']))
+            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
+
+        return $this->db->count_all_results();
+    }
+
+    public function get_resorts()
     {
         $this->db->select('*')
             ->from('resorts')

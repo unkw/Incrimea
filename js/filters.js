@@ -1,5 +1,7 @@
 
 $(function(){
+
+    /** Отправка формы фильтров */
     $('#filters-form').submit(function(){
 
         var getArr = [];
