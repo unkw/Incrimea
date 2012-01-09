@@ -45,18 +45,28 @@ $config['validation_new'] = array(
     ),
 );
 
+// Загрузка файла
 $config['upload'] = array(
-    'upload_path'   => 'images/temp',
+    'upload_path'   => 'images/article',
     'allowed_types' => 'jpg|jpeg|png|gif',
     'max_size'      => '2000',
     'max_width'     => 0,
     'max_height'    => 0,
 );
 
+// Основные настройки либы Image
 $config['image_lib'] = array(
     'image_library'  => 'gd2',
     'quality'        => '85%',
     'maintain_ratio' => TRUE,
-    'width'          => 400,
-    'height'         => 300,
+);
+
+// Размеры изображений
+$config['image_main'] = array(
+    'width'  => 400,
+    'height' => 300
+);
+$config['thumb'] = array(
+    'width'  => 120,
+    'height' => 90
 );

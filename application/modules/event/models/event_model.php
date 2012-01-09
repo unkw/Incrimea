@@ -94,67 +94,79 @@ class Event_Model extends CI_Model {
     /** Ресайз изображения и создание его превьюшки */
     public function create_images($img)
     {
-        $config = $this->config->config['image_lib'];
-        $origin_img = 'images/temp/' . $img['file_name'];
-        $new_img = 'images/event/' . $img['file_name'];
-        $img_info = explode('.', $img['file_name']);
-        $img_ext = array_pop($img_info);
-        $thumb = 'images/event/' . implode('.', $img_info) .'_thumb.'.$img_ext;
+        // Основные параметры
+        $default_config = $this->config->config['image_lib'];
         // Оригинальный файл
-        $config['source_image'] = $origin_img;
+        $origin_img = 'images/event/' . $img['file_name'];
 
-        // Создание основного изображения
-        $config['new_image'] = $new_img;
+        /** Создание основного изображения */
+        $size = $this->config->config['image_main'];
+        $large_img = $origin_img;
+        $config = array();
+        $config = array_merge($default_config, $size);
+        $config['source_image'] = $large_img;
+
         $this->load->library('image_lib', $config);
         $this->image_lib->resize();
-
         $this->image_lib->clear();
 
-        /** Создание превьюшки */
-        $source = getimagesize($new_img);
+        /** Создание превью изображения */
+        $size = $this->config->config['thumb'];
+        $thumb = 'images/event/thumb/' . $img['file_name'];
+        $config = array();
+        $config = array_merge($default_config, $size);
+        $config['source_image'] = $large_img;
+        $config['new_image'] = $thumb;
+
+        $this->resize_and_crop($config);
+    }
+
+    /** Resize and Crop :) */
+    function resize_and_crop($conf)
+    {
+        // Исходный файл
+        $source = getimagesize($conf['source_image']);
+        // Ширина и высота исходного файла
         $x = $source[0];
         $y = $source[1];
-        // Ширина и высота превью
-        $w_preview = 100;
-        $h_preview = 75;
 
+        // Определяем параметры для ресайза и кропа
         if ($x > $y)
         {
-            $w = round( ($x/$y) * $h_preview );
-            $h = $h_preview;
-            $x_axis = round(($w - $w_preview)/2);
+            $w = round( ($x/$y) * $conf['height'] );
+            $h = $conf['height'];
+            $x_axis = round(($w - $conf['width'])/2);
             $y_axis = 0;
         }
         else
         {
-            $h = round( ($y/$x) * $w_preview );
-            $w = $w_preview;
-            $y_axis = round(($h - $h_preview)/2);
+            $h = round( ($y/$x) * $conf['width'] );
+            $w = $conf['width'];
+            $y_axis = round(($h - $conf['height'])/2);
             $x_axis = 0;
         }
 
-        $config['source_image'] = $config['new_image'];
-        unset($config['new_image']);
-        $config['create_thumb'] = TRUE;
-        $config['thumb_marker'] = '_thumb';
-        $config['width'] = $w;
-        $config['height'] = $h;
-        $this->image_lib->initialize($config);
+        /** Создание временного файла, для дальнейшего кропа */
+        $temp_conf = $conf;
+        $temp_conf['width'] = $w;
+        $temp_conf['height'] = $h;
+        $this->image_lib->initialize($temp_conf);
         $this->image_lib->resize();
-
         $this->image_lib->clear();
 
-        $config['source_image'] = $thumb;
+        /** Делаем crop */
+        $config = array();
+        $config['source_image'] = $conf['new_image'];
         $config['maintain_ratio'] = FALSE;
-        $config['create_thumb'] = FALSE;
-        $config['width'] = $w_preview;
-        $config['height'] = $h_preview;
+        $config['width'] = $conf['width'];
+        $config['height'] = $conf['height'];
         $config['x_axis'] = $x_axis;
         $config['y_axis'] = $y_axis;
 
         $this->image_lib->initialize($config);
         $this->image_lib->crop();
+        $this->image_lib->clear();
 
-        unlink($origin_img);
+        return TRUE;
     }
 }

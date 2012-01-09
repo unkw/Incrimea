@@ -10,8 +10,18 @@ $config['validation_new'] = array(
         'rules' => 'required|max_length[70]'
     ),
     array(
+        'field' => 'edit-location',
+        'label' => 'Месторасположение',
+        'rules' => 'required'
+    ),
+    array(
         'field' => 'edit-resorts',
         'label' => 'Место отдыха',
+        'rules' => 'is_natural_no_zero'
+    ),
+    array(
+        'field' => 'edit-region',
+        'label' => 'Регион',
         'rules' => 'is_natural_no_zero'
     ),
     array(
@@ -20,19 +30,44 @@ $config['validation_new'] = array(
         'rules' => 'is_natural_no_zero'
     ),
     array(
-        'field' => 'edit-min-price',
+        'field' => 'edit-price',
         'label' => 'Цены от',
         'rules' => 'required|alpha_numeric'
     ),
     array(
-        'field' => 'edit-beach',
+        'field' => 'edit-beach-distance',
+        'label' => 'Расстояние до пляжа',
+        'rules' => 'required|alpha_numeric'
+    ),
+    array(
+        'field' => 'edit-beach-type',
+        'label' => 'Тип пляжа',
+        'rules' => 'is_natural_no_zero'
+    ),
+    array(
+        'field' => 'edit-room[]',
         'label' => '',
         'rules' => ''
     ),
     array(
-        'field' => 'edit-number-fund',
-        'label' => 'Номерной фонд',
-        'rules' => 'required'
+        'field' => 'edit-infrastructure[]',
+        'label' => '',
+        'rules' => ''
+    ),
+    array(
+        'field' => 'edit-service[]',
+        'label' => '',
+        'rules' => ''
+    ),
+    array(
+        'field' => 'edit-entertainment[]',
+        'label' => '',
+        'rules' => ''
+    ),
+    array(
+        'field' => 'edit-for-children[]',
+        'label' => '',
+        'rules' => ''
     ),
     array(
         'field' => 'edit-body',
@@ -40,17 +75,12 @@ $config['validation_new'] = array(
         'rules' => 'required'
     ),
     array(
-        'field' => 'edit-structure[]',
-        'label' => '',
+        'field' => 'edit-published',
+        'label' => 'Опубликовано',
         'rules' => ''
     ),
     array(
-        'field' => 'edit-status',
-        'label' => 'Статус',
-        'rules' => ''
-    ),
-    array(
-        'field' => 'edit-sticky',
+        'field' => 'edit-priority',
         'label' => 'Закреплять вверху списков',
         'rules' => ''
     ),

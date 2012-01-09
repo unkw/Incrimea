@@ -22,18 +22,23 @@ class Object extends MX_Controller {
 
         // Контент
         $data = array();
-        $data[$this->module_name] = $this->model->get($id, TRUE);
+        $m = $this->module_name;
+        $data = $this->model->get_obj($id);
 
-        // Инфраструктура
-        $data[$this->module_name]['structure'] = $this->model->structure_to_array($data[$this->module_name]['structure']);
-
-        if (!$data[$this->module_name])
+        if (!$data)
             show_404();
 
-        $title = $data[$this->module_name]['title'];
+        $title = $data['title'];
         // Заголовок
         $this->theme->setVar('title', $title);
+        /** Дополнительные поля */
+        $data['room'] = $this->model->get_field('room', $data['room']);
+        $data['infrastructure'] = $this->model->get_field('infrastructure', $data['infrastructure']);
+        $data['service'] = $this->model->get_field('service', $data['service']);
+        $data['entertainment'] = $this->model->get_field('entertainment', $data['entertainment']);
+        $data['for_children'] = $this->model->get_field('for_children', $data['for_children']);
+
         // Отображение
-        $this->theme->setVar('content', $this->load->view($this->module_name.'/template.php', $data, TRUE));
+        $this->theme->setVar('content', $this->load->view($m.'/template.php', $data, TRUE));
     }
 }

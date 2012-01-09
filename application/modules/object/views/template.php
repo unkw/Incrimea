@@ -3,54 +3,114 @@
     <!-- Место отдыха -->
     <div>
         <span class="field-label">Курорт: </span>
-        <?php echo $object['resort']; ?>
+        <?php echo $resort; ?>
+    </div>
+
+    <!-- Регион -->
+    <div>
+        <span class="field-label">Регион: </span>
+        <?php echo $region; ?>
     </div>
 
     <!-- Тип объекта -->
     <div>
         <span class="field-label">Тип: </span>
-        <?php echo $object['type']; ?>
+        <?php echo $type; ?>
     </div>
 
     <!-- Галерея объекта -->
     <div>
         <div class="field-label">Галерея: </div>
-        <?php foreach ($object['images'] as $img): ?>
+        <?php foreach ($images as $img): ?>
         <img src="<?php echo base_url().'images/object/thumb/'.$img; ?>" alt="" />
         <?php endforeach; ?>
+    </div>
+
+    <!-- Месторасположение -->
+    <div>
+        <span class="field-label">Месторасположение: </span>
+        <?php echo $location; ?>
     </div>
 
     <!-- Цена от -->
     <div>
         <span class="field-label">Цена от: </span>
-        <?php echo '$'.$object['min_price']; ?>
+        <?php echo '$'.$price; ?>
     </div>
 
     <!-- Питание -->
     <div>
         <span class="field-label">Питание: </span>
-        <?php echo $object['food']; ?>
+        <?php echo $food; ?>
     </div>
 
-    <!-- Пляж -->
+    <!-- До пляжа -->
     <div>
         <span class="field-label">До пляжа: </span>
-        <?php echo $object['beach']; ?>
+        <?php echo $beach_distance.' м'; ?>
     </div>
 
-    <!-- Номерной фонд -->
+    <!-- Тип пляжа -->
     <div>
-        <span class="field-label">Номерной фонд: </span>
-        <?php echo $object['number_fund']; ?>
+        <span class="field-label">Тип пляжа: </span>
+        <?php echo $beach; ?>
+    </div>
+
+    <!-- В номерах -->
+    <div>
+        <div class="field-label">В номерах: </div>
+        <ul id="obj-room">
+        <?php foreach ($room as $r): ?>
+            <li class="<?php echo $r['url_name']; ?>">
+                <?php echo $r['name']; ?>
+            </li>
+        <?php endforeach; ?>
+        </ul>
     </div>
 
     <!-- Инфраструктура -->
     <div>
         <div class="field-label">Инфраструктура: </div>
-        <ul id="obj-structure">
-        <?php foreach ($object['structure'] as $str): ?>
-            <li class="<?php echo $str['url_name']; ?>">
-                <?php echo $str['name']; ?>
+        <ul id="obj-infrastructure">
+        <?php foreach ($infrastructure as $inf): ?>
+            <li class="<?php echo $inf['url_name']; ?>">
+                <?php echo $inf['name']; ?>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- Сервис -->
+    <div>
+        <div class="field-label">Сервис: </div>
+        <ul id="obj-service">
+        <?php foreach ($service as $ser): ?>
+            <li class="<?php echo $ser['url_name']; ?>">
+                <?php echo $ser['name']; ?>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- Развлечения и спорт -->
+    <div>
+        <div class="field-label">Развлечения и спорт: </div>
+        <ul id="obj-entertainment">
+        <?php foreach ($entertainment as $e): ?>
+            <li class="<?php echo $e['url_name']; ?>">
+                <?php echo $e['name']; ?>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- Для детей -->
+    <div>
+        <div class="field-label">Для детей: </div>
+        <ul id="obj-for-children">
+        <?php foreach ($for_children as $fc): ?>
+            <li class="<?php echo $fc['url_name']; ?>">
+                <?php echo $fc['name']; ?>
             </li>
         <?php endforeach; ?>
         </ul>
@@ -59,7 +119,7 @@
     <!-- Полное описание -->
     <div>
         <div class="field-label">Полное описание: </div>
-        <?php echo $object['body']; ?>
+        <?php echo $body; ?>
     </div>
 
 </div>

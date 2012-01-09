@@ -36,7 +36,7 @@
     <input type="file" name="upload-image" />
 
     <div id="img-container">
-        <img id="img-main" src="<?php echo base_url() . set_value('edit-thumb', $content['image_thumb']); ?>" alt=""/>
+        <img id="img-main" src="<?php echo base_url().'images/event/thumb/'.set_value('edit-image', $content['image_src']); ?>" alt=""/>
     </div>
     <div>
         <input type="button" id="img-upload" value="Загрузить" />
@@ -46,7 +46,6 @@
     <label>Описание</label>
     <input type="text" name="edit-image-desc" size="30" value="<?php echo set_value('edit-image-desc', $content['image_desc']) ?>"/>
     <input type="hidden" name="edit-image" value="<?php echo set_value('edit-image', $content['image_src']); ?>"/>
-    <input type="hidden" name="edit-thumb" value="<?php echo set_value('edit-thumb', $content['image_thumb']); ?>"/>
 </div>
 
 <div>

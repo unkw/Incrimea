@@ -125,6 +125,10 @@ ul.menu li ul.submenu li a:hover {
     font-size: 26px;
     font-weight: bold;
 }
+#content h3 {
+    font-size: 17px;
+    font-weight: bold;
+}
 #content table {
     width: 100%;
 }
@@ -145,6 +149,11 @@ ul.menu li ul.submenu li a:hover {
 #content .error {
     color: red;
     font-size: 12px;
+}
+
+/** Forms */
+#content .title-label {
+    font-weight: bold;
 }
 
 /** Single Upload Files */

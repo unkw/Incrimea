@@ -12,11 +12,11 @@ class Filter_Model extends CI_Model {
 
         // Только опубликованные
         $where = array(
-            'o.status' => 1
+            'o.published' => 1
         );
 
         /** Основные данные отелей */
-        $this->db->select('o.id, o.title, o.body, o.images, o.min_price, o.structure, r.name as resort')
+        $this->db->select('o.id, o.title, o.body, o.images, o.price, o.infrastructure, r.name as resort')
             ->from('objects o')
             ->join('resorts r', 'o.resort_id = r.id')
             ->where($where);
@@ -24,13 +24,13 @@ class Filter_Model extends CI_Model {
         if (isset($params['resorts']))
             $this->db->where_in('r.url_name', explode(',', $params['resorts']));
 
-        $data = $this->db->order_by('o.sticky desc, o.created_date desc')
+        $data = $this->db->order_by('o.priority desc, o.created_date desc')
             ->limit($per_page, $offset)
             ->get()
             ->result_array();
 
         // Инфраструктура - все чекбоксы
-        $structure_all = $this->db->get('object_structure')->result_array();
+        $structure_all = $this->db->get('obj_infrastructure')->result_array();
 
         /** Преобразование данных */
         foreach ($data as &$obj)
@@ -39,31 +39,75 @@ class Filter_Model extends CI_Model {
             $obj['images'] = $obj['images'] ? json_decode($obj['images']) : array();
             
             /** Инфраструктура */
-            $obj['structure'] = $obj['structure'] ? json_decode($obj['structure']) : array();
+            $obj['infrastructure'] = $obj['infrastructure'] ? json_decode($obj['infrastructure']) : array();
             $_structure = array();
             foreach ($structure_all as $s)
             {
-                $index = array_search($s['url_name'], $obj['structure']);
+                $index = array_search($s['url_name'], $obj['infrastructure']);
                 if ($index !== FALSE)
                     $_structure[] = $s;
             }
-            $obj['structure'] = $_structure;
+            $obj['infrastructure'] = $_structure;
         }
 
         return $data;
     }
 
-    /** Кол-во всех отелей */
-    public function count_all_objects($params)
+    /** Получить список статей */
+    public function get_articles($params, $per_page, $offset)
     {
-        $this->db->from('objects o')->join('resorts r', 'r.id = o.resort_id')->where('o.status', 1);
+        $params = $params ? $params : array();
+
+        // Только опубликованные
+        $where = array(
+            'a.status' => 1
+        );
+
+        /** Основные данные статей */
+        $this->db->select('a.id, a.title, a.preview, a.image_src, a.image_desc, r.name as resort')
+            ->from('articles a')
+            ->join('resorts r', 'a.resort_id = r.id')
+            ->where($where);
 
         if (isset($params['resorts']))
             $this->db->where_in('r.url_name', explode(',', $params['resorts']));
 
-        return $this->db->count_all_results();
+        $data = $this->db->order_by('a.sticky desc, a.created_date desc')
+            ->limit($per_page, $offset)
+            ->get()
+            ->result_array();
+
+        return $data;
     }
 
+    /** Получить список событий */
+    public function get_events($params, $per_page, $offset)
+    {
+        $params = $params ? $params : array();
+
+        // Только опубликованные
+        $where = array(
+            'e.status' => 1
+        );
+
+        /** Основные данные статей */
+        $this->db->select('e.id, e.title, e.preview, e.image_src, e.image_desc, r.name as resort')
+            ->from('events e')
+            ->join('resorts r', 'e.resort_id = r.id')
+            ->where($where);
+
+        if (isset($params['resorts']))
+            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
+
+        $data = $this->db->order_by('e.sticky desc, e.created_date desc')
+            ->limit($per_page, $offset)
+            ->get()
+            ->result_array();
+
+        return $data;
+    }
+
+    /** Получить список мест отдыха */
     public function get_resorts()
     {
         $this->db->select('*')
@@ -75,42 +119,56 @@ class Filter_Model extends CI_Model {
         return $q->result_array();
     }
 
-    /** Получить список всех типов объектов */
-    public function get_types()
+    /** Получить список того, что входит в инфраструктуру */
+    public function get_field($field, $where = FALSE)
     {
+        $prefix = 'obj_';
+
         $this->db->select('*')
-            ->from('object_types')
+            ->from($prefix.$field)
             ->order_by('name', 'asc');
 
+        if ($where)
+            $this->db->where_in('url_name', $where);
+
         $q = $this->db->get();
 
         return $q->result_array();
     }
 
-    /** Получить список того, что входит в инфраструктуру */
-    public function get_structure()
+    /** Кол-во всех отелей */
+    public function count_all_objects($params)
     {
-        $this->db->select('*')
-            ->from('object_structure')
-            ->order_by('id', 'asc');
+        $this->db->from('objects o')->join('resorts r', 'r.id = o.resort_id')->where('o.published', 1);
 
-        $q = $this->db->get();
+        if (isset($params['resorts']))
+            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
 
-        return $q->result_array();
+        return $this->db->count_all_results();
     }
 
-    /** Получить инфраструктурные данные объекта в виде массива */
-    public function structure_to_array($data)
+    /** Кол-во всех статей */
+    public function count_all_articles($params)
     {
-        $this->db->select('*')
-            ->from('object_structure')
-            ->where_in('url_name', $data);
+        $this->db->from('articles a')->join('resorts r', 'r.id = a.resort_id')->where('a.status', 1);
 
-        $q = $this->db->get();
+        if (isset($params['resorts']))
+            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
 
-        return $q->result_array();
+        return $this->db->count_all_results(); 
     }
-    
+
+    /** Кол-во всех событий */
+    public function count_all_events($params)
+    {
+        $this->db->from('events e')->join('resorts r', 'r.id = e.resort_id')->where('e.status', 1);
+
+        if (isset($params['resorts']))
+            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
+
+        return $this->db->count_all_results();
+    }
+
     /** Перевод строки вида "dd-mm-yyyy" в timestamp */
     public function toTimestamp($string)
     {

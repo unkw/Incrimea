@@ -7,7 +7,8 @@
     <meta name="description" content="" />
     <link rel="stylesheet" href="<?php print base_url(); ?>css/style.css" type="text/css" media="screen, projection" />
     <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>js/filters.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.formUrl.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/scripts.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 </head>
 

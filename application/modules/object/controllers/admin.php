@@ -63,20 +63,26 @@ class Admin extends MX_Controller {
         {
             $cdata = array(
                 'title'         => $this->input->post('edit-title'),
-                'body'          => $this->input->post('edit-body'),
+                'location'      => $this->input->post('edit-location'),
+                'resort_id'     => $this->input->post('edit-resorts'),
+                'region_id'     => $this->input->post('edit-region'),
                 'type_id'       => $this->input->post('edit-types'),
-                'min_price'     => $this->input->post('edit-min-price'),
+                'images'        => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
+                'price'         => $this->input->post('edit-price'),
                 'food'          => $this->input->post('edit-food'),
-                'beach'         => $this->input->post('edit-beach'),
-                'number_fund'   => $this->input->post('edit-number-fund'),
-                'structure'     => $this->input->post('edit-structure'),
+                'beach_distance'=> $this->input->post('edit-beach-distance'),
+                'beach_id'      => $this->input->post('edit-beach-type'),
+                'room'          => $this->input->post('edit-room'),
+                'infrastructure'=> $this->input->post('edit-infrastructure'),
+                'service'       => $this->input->post('edit-service'),
+                'entertainment' => $this->input->post('edit-entertainment'),
+                'for_children'  => $this->input->post('edit-for-children'),
+                'body'          => $this->input->post('edit-body'),
+                'published'     => $this->input->post('edit-published') ? 1 : 0,
+                'priority'      => $this->input->post('edit-priority'),
                 'created_date'  => time(),
                 'last_update'   => time(),
-                'status'        => $this->input->post('edit-status') ? 1 : 0,
-                'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'uid'           => USER_AUTH_ID,
-                'resort_id'     => $this->input->post('edit-resorts'),
-                'images'     => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
             );
 
             $this->model->add($cdata);
@@ -91,28 +97,31 @@ class Admin extends MX_Controller {
         $this->theme->set_breadcrumb($title, '');
         // Заголовок
         $this->theme->setVar('title', $title);
-        // Контент
-        $data['content'] = array(
+        // Поля
+        $data = $this->all_fields();
+        // По-умолчанию
+        $data['obj'] = array(
             'id' => '',
             'title' => '',
-            'body' => '',
-            'type_id' => '',
-            'min_price' => '',
-            'food' => '',
-            'beach' => '',
-            'number_fund' => '',
-            'structure' => array(),
-            'status' => 1,
-            'sticky' => 0,
+            'location' => '',
             'resort_id' => 0,
+            'region_id' => 0,
+            'type_id' => 0,
             'images' => $this->input->post('edit-img') ? $this->input->post('edit-img') : array(),
+            'price' => '',
+            'food' => '',
+            'beach_distance' => '',
+            'beach_id' => 0,
+            'room' => array(),
+            'infrastructure' => array(),
+            'service' => array(),
+            'entertainment' => array(),
+            'for_children' => array(),
+            'body' => '',
+            'published' => 1,
+            'priority' => 0,
         );
-        // Места отдыха
-        $data['resorts'] = $this->model->get_resorts();
-        // Типы объектов
-        $data['types'] = $this->model->get_types();
-        // Инфраструктура
-        $data['structure'] = $this->model->get_structure();
+
         // CKEditor
         $this->editor_init();
         // Отображение
@@ -130,18 +139,24 @@ class Admin extends MX_Controller {
         {
             $cdata = array(
                 'title'         => $this->input->post('edit-title'),
-                'body'          => $this->input->post('edit-body'),
-                'type_id'       => $this->input->post('edit-types'),
-                'min_price'     => $this->input->post('edit-min-price'),
-                'food'          => $this->input->post('edit-food'),
-                'beach'         => $this->input->post('edit-beach'),
-                'number_fund'   => $this->input->post('edit-number-fund'),
-                'structure'     => $this->input->post('edit-structure') ? $this->input->post('edit-structure') : array(),
-                'last_update'   => time(),
-                'status'        => $this->input->post('edit-status') ? 1 : 0,
-                'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
+                'location'      => $this->input->post('edit-location'),
                 'resort_id'     => $this->input->post('edit-resorts'),
-                'images'     => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
+                'region_id'     => $this->input->post('edit-region'),
+                'type_id'       => $this->input->post('edit-types'),
+                'images'        => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
+                'price'         => $this->input->post('edit-price'),
+                'food'          => $this->input->post('edit-food'),
+                'beach_distance'=> $this->input->post('edit-beach-distance'),
+                'beach_id'      => $this->input->post('edit-beach-type'),
+                'room'          => $this->input->post('edit-room'),
+                'infrastructure'=> $this->input->post('edit-infrastructure'),
+                'service'       => $this->input->post('edit-service'),
+                'entertainment' => $this->input->post('edit-entertainment'),
+                'for_children'  => $this->input->post('edit-for-children'),
+                'body'          => $this->input->post('edit-body'),
+                'published'     => $this->input->post('edit-published') ? 1 : 0,
+                'priority'      => $this->input->post('edit-priority'),
+                'last_update'   => time(),
             );
             
             $this->model->update($id, $cdata);
@@ -156,17 +171,12 @@ class Admin extends MX_Controller {
         $this->theme->set_breadcrumb($title, '');
         // Заголовок
         $this->theme->setVar('title', $title);
-        // Контент
-        $data = array();
-        $data['content'] = $this->model->get($id);
-        // Места отдыха
-        $data['resorts'] = $this->model->get_resorts();
-        // Типы объектов
-        $data['types'] = $this->model->get_types();
-        // Инфраструктура
-        $data['structure'] = $this->model->get_structure();
+        // Поля
+        $data = $this->all_fields();
+        // Основные данные
+        $data['obj'] = $this->model->get($id);
 
-        if (!$data['content'])
+        if (!$data['obj'])
             show_404();
 
         // CKeditor
@@ -178,6 +188,19 @@ class Admin extends MX_Controller {
     function action_delete($id = 0)
     {
         
+    }
+
+    function action_fields()
+    {
+        $title = 'Редактирование полей';
+        // Хлебная крошка
+        $this->theme->set_breadcrumb($title, '');
+        // Заголовок
+        $this->theme->setVar('title', $title);
+
+        $data = $this->all_fields();
+
+        $this->theme->setVar('content', $this->load->view($this->module_name.'/fields.php', $data, TRUE));
     }
 
     /** Инициализация графического редактора */
@@ -206,4 +229,32 @@ class Admin extends MX_Controller {
             echo $img['file_name'];
         }
     }
+    
+    /** Все поля */
+    protected function all_fields()
+    {
+        $data = array();
+
+        // Места отдыха
+        $data['resorts'] = $this->model->get_resorts();
+        // Регионы
+        $data['regions'] = $this->model->get_regions();
+        // Типы объектов
+        $data['types'] = $this->model->get_field('types');
+        // Типы объектов
+        $data['beachs'] = $this->model->get_field('beachs');
+        // Типы объектов
+        $data['room'] = $this->model->get_field('room');
+        // Инфраструктура
+        $data['infrastructure'] = $this->model->get_field('infrastructure');
+        // Сервис
+        $data['service'] = $this->model->get_field('service');
+        // Развлечения и спорт
+        $data['entertainment'] = $this->model->get_field('entertainment');
+        // Для детей
+        $data['for_children'] = $this->model->get_field('for_children');
+
+        return $data;
+    }
+
 }

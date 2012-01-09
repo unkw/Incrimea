@@ -21,6 +21,7 @@ class Admin extends MX_Controller {
 
     function action_index()
     {
+        
     }
 	
 }

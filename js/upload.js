@@ -17,7 +17,6 @@ var SingleUpload = {
     imgMsg: null,
     imgSrc: null,
     imgRemove: null,
-    imgFolder: null,
     img: null,
     moduleName: null,
 
@@ -36,11 +35,7 @@ var SingleUpload = {
 
         this.imgSrc = $('input[name="edit-image"]');
 
-        this.imgThumb = $('input[name="edit-thumb"]');
-
         this.moduleName = $('input[name="module-name"]').val();
-
-        this.imgFolder = 'images/' + this.moduleName + '/';
 
         this.fileInput.bind({
             change: function(){
@@ -59,10 +54,9 @@ var SingleUpload = {
             self.imgContainer.find('.percents').remove();
             self.showUploadInputs();
             self.imgSrc.val('');
-            self.imgThumb.val('');
         });
 
-        if (this.imgThumb.val()) {
+        if (this.imgSrc.val()) {
             this.hideUploadInputs();
         } else {
             this.imgRemove.hide();
@@ -164,12 +158,12 @@ var SingleUpload = {
             oncomplete: function(done, data) {
                 if(done) {
                     var msg = '';
-                    if (data == 'ok') {
+                    if (data.substr(0, 5) != 'error') {
                         msg = 'Файл загружен успешно';
                         // Прячем кнопку загрузки
                         $('#img-upload').hide();
                         // Заполняем hidden поля данными
-                        self.setSrc(uploadItem.file.name);
+                        self.imgSrc.val(data);
                     }
                     else
                         msg = data;
@@ -180,14 +174,5 @@ var SingleUpload = {
                 }
             }
         });
-    },
-
-    /** Заполняем инпуты для сохранения в бд */
-    setSrc: function(filename){
-        var name = unescape(encodeURIComponent(filename));
-        this.imgSrc.val(this.imgFolder + name);
-        var nameArr = name.split('.');
-        var ext = nameArr.pop();
-        this.imgThumb.val(this.imgFolder + nameArr.join('.') + '_thumb.' + ext);
     }
 }

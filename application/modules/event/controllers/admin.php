@@ -74,7 +74,6 @@ class Admin extends MX_Controller {
                 'uid'           => USER_AUTH_ID,
                 'resort_id'     => $this->input->post('edit-resorts'),
                 'image_src'     => $this->input->post('edit-image'),
-                'image_thumb'   => $this->input->post('edit-thumb'),
                 'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
             );
 
@@ -102,7 +101,6 @@ class Admin extends MX_Controller {
             'resort_id' => 0,
             'image_desc' => '',
             'image_src' => '',
-            'image_thumb' => '',
         );
         $data['resorts'] = $this->model->get_resorts();
         // CKEditor
@@ -131,7 +129,6 @@ class Admin extends MX_Controller {
                 'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
                 'resort_id'     => $this->input->post('edit-resorts'),
                 'image_src'     => $this->input->post('edit-image'),
-                'image_thumb'   => $this->input->post('edit-thumb'),
                 'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
             );
             

@@ -37,11 +37,11 @@ class Object_Model extends CI_Model {
         return $q->result_array();
     }
 
-    /** Получить список всех типов объектов */
-    public function get_types()
+    /** Получить список регионов */
+    public function get_regions()
     {
         $this->db->select('*')
-            ->from('object_types')
+            ->from('regions')
             ->order_by('name', 'asc');
 
         $q = $this->db->get();
@@ -49,63 +49,93 @@ class Object_Model extends CI_Model {
         return $q->result_array();
     }
 
-    /** Получить список того, что входит в инфраструктуру */
-    public function get_structure()
+    /** Получить список пунктов поля */
+    public function get_field($field, $where = FALSE)
     {
+        $prefix = 'obj_';
+
         $this->db->select('*')
-            ->from('object_structure')
-            ->order_by('id', 'asc');
+            ->from($prefix.$field)
+            ->order_by('name', 'asc');
+
+        if ($where)
+            $this->db->where_in('url_name', $where);
 
         $q = $this->db->get();
 
         return $q->result_array();
     }
 
-    /** Получить страницу */
+    /** Получить основные данные страницы для редактирования */
     public function get($id, $published = FALSE)
     {
         $where = array('o.id' => $id);
 
         if ($published)
-            $where['o.status'] = 1;
+            $where['o.published'] = 1;
 
-        $this->db->select('o.*, t.name as type, r.name as resort')
+        $this->db->select('o.*')
             ->from('objects o')
-            ->join('object_types t', 't.id = o.type_id')
-            ->join('resorts r', 'r.id = o.resort_id')
             ->where($where);
 
         $q = $this->db->get();
 
         $data = $q->row_array();
-
-        $data['structure'] = json_decode($data['structure']);
+        
+        $data['room'] = json_decode($data['room']);
+        $data['infrastructure'] = json_decode($data['infrastructure']);
+        $data['service'] = json_decode($data['service']);
+        $data['entertainment'] = json_decode($data['entertainment']);
+        $data['for_children'] = json_decode($data['for_children']);
 
         $data['images'] = $data['images'] ? json_decode($data['images']) : array();
 
         return $data;
     }
 
-    /** Получить инфраструктурные данные объекта в виде массива */
-    public function structure_to_array($data)
-    {
-        $this->db->select('*')
-            ->from('object_structure')
-            ->where_in('url_name', $data);
+    /** Получить данные объекта для отображения */
+    public function get_obj($id){
+
+        $where = array(
+            'o.id' => $id,
+            'o.published' => 1,
+        );
+
+        $this->db->select('o.*, r.name as resort, reg.name as region, t.name as type, b.name as beach')
+            ->from('objects o')
+            ->join('resorts r', 'r.id = o.resort_id')
+            ->join('regions reg', 'reg.id = o.region_id')
+            ->join('obj_types t', 't.id = o.type_id')
+            ->join('obj_beachs b', 'b.id = o.beach_id')
+            ->where($where);
 
         $q = $this->db->get();
 
-        return $q->result_array();
+        $data = $q->row_array();
+
+        $data['room'] = json_decode($data['room']);
+        $data['infrastructure'] = json_decode($data['infrastructure']);
+        $data['service'] = json_decode($data['service']);
+        $data['entertainment'] = json_decode($data['entertainment']);
+        $data['for_children'] = json_decode($data['for_children']);
+
+        $data['images'] = $data['images'] ? json_decode($data['images']) : array();
+
+        return $data;
     }
-    
+
     /** Добавить страницу */
     public function add($data)
     {
-        // Сохраняем значения чекбоксов "Инфраструктуры" в формате json
-        $data['structure'] = json_encode($data['structure']);
+        /** Сохраняем значения чекбоксов  в формате json */
+        $data['room'] = json_encode($data['room'] ? $data['room'] : array());
+        $data['infrastructure'] = json_encode($data['infrastructure'] ? $data['infrastructure'] : array());
+        $data['service'] = json_encode($data['service'] ? $data['service'] : array());
+        $data['entertainment'] = json_encode($data['entertainment'] ? $data['entertainment'] : array());
+        $data['for_children'] = json_encode($data['for_children'] ? $data['for_children'] : array());
 
         // Преобразование изображений в json формат
-        $data['images'] = $this->img_src_to_json($data['images']);
+        $data['images'] = json_encode($data['images']);
 
         $this->db->insert_batch('objects', array($data));
     }
@@ -113,20 +143,18 @@ class Object_Model extends CI_Model {
     /** Обновить страницу */
     public function update($id, $data)
     {
-        // Сохраняем значения чекбоксов "Инфраструктуры" в формате json
-        $data['structure'] = json_encode($data['structure']);
+        /** Сохраняем значения чекбоксов  в формате json */
+        $data['room'] = json_encode($data['room'] ? $data['room'] : array());
+        $data['infrastructure'] = json_encode($data['infrastructure'] ? $data['infrastructure'] : array());
+        $data['service'] = json_encode($data['service'] ? $data['service'] : array());
+        $data['entertainment'] = json_encode($data['entertainment'] ? $data['entertainment'] : array());
+        $data['for_children'] = json_encode($data['for_children'] ? $data['for_children'] : array());
 
         // Преобразование изображений в json формат
-        $data['images'] = $this->img_src_to_json($data['images']);
+        $data['images'] = json_encode($data['images']);
 
         $this->db->where('id', $id)
             ->update('objects', $data);
-    }
-
-    /** Преобразование массива с именами изображений в json */
-    public function img_src_to_json($srcArr)
-    {
-        return json_encode($srcArr);
     }
 
     /** Перевод строки вида "dd-mm-yyyy" в timestamp */
@@ -186,7 +214,7 @@ class Object_Model extends CI_Model {
     }
 
     /** Resize and Crop :) */
-    function resize_and_crop($conf)
+    public function resize_and_crop($conf)
     {
         // Исходный файл
         $source = getimagesize($conf['source_image']);

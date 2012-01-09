@@ -45,16 +45,18 @@ class Filter extends MX_Controller {
             $this->load->library('pagination');
             switch ($params['type']) {
                 case 'objects': $data['objects'] = $this->get_objects($params, TRUE); break;
-                case 'events': break;
-                case 'articles': break;
+                case 'events': $data['events'] = $this->get_events($params, TRUE); break;
+                case 'articles': $data['articles'] = $this->get_articles($params, TRUE); break;
             }
         }
         /** Все типы контента */
         else
         {
             $data['objects'] = $this->get_objects($params);
+            $data['articles'] = $this->get_articles($params);
+            $data['events'] = $this->get_events($params);
         }
-
+        
         /** Пагинация */
         $data['pager'] = $this->pager;
 
@@ -66,7 +68,7 @@ class Filter extends MX_Controller {
     {
         $config = array();
         // Кол-во отелей на страницу
-        $config['per_page'] = 3;
+        $config['per_page'] = $pagination ? 3 : 3;
         // Номер текущей страницы
         $page = (int)$this->input->get('page', TRUE) ? (int)$this->input->get('page', TRUE) : 1;
         // Позиция для БД
@@ -96,7 +98,77 @@ class Filter extends MX_Controller {
         return $this->model->get_objects($params, $config['per_page'], $offset);
     }
 
-    /** Форома фильтров */
+    /** Получить список статей */
+    function get_articles($params, $pagination = FALSE)
+    {
+        $config = array();
+        // Кол-во отелей на страницу
+        $config['per_page'] = $pagination ? 3 : 3;
+        // Номер текущей страницы
+        $page = (int)$this->input->get('page', TRUE) ? (int)$this->input->get('page', TRUE) : 1;
+        // Позиция для БД
+        $offset = ($page - 1) * $config['per_page'];
+
+        /** Прикручиваем пагинацию, если необходимо */
+        if ($pagination)
+        {
+            // Адресная строка
+            $config['base_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
+            // Кол-во отелей всего
+            $config['total_rows'] = $this->model->count_all_articles($params);
+            // Ссылка на первую страницу
+            $config['first_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
+            // Сегмент номера страницы в адресной строке
+            $config['uri_segment'] = 2;
+
+            $this->pagination->initialize($config);
+
+            if ($offset > $config['total_rows'])
+                redirect('filter');
+
+            // Пейджер
+            $this->pager = $this->pagination->create_links();
+        }
+
+        return $this->model->get_articles($params, $config['per_page'], $offset);
+    }
+
+    /** Получить список статей */
+    function get_events($params, $pagination = FALSE)
+    {
+        $config = array();
+        // Кол-во отелей на страницу
+        $config['per_page'] = $pagination ? 3 : 3;
+        // Номер текущей страницы
+        $page = (int)$this->input->get('page', TRUE) ? (int)$this->input->get('page', TRUE) : 1;
+        // Позиция для БД
+        $offset = ($page - 1) * $config['per_page'];
+
+        /** Прикручиваем пагинацию, если необходимо */
+        if ($pagination)
+        {
+            // Адресная строка
+            $config['base_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
+            // Кол-во отелей всего
+            $config['total_rows'] = $this->model->count_all_events($params);
+            // Ссылка на первую страницу
+            $config['first_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
+            // Сегмент номера страницы в адресной строке
+            $config['uri_segment'] = 2;
+
+            $this->pagination->initialize($config);
+
+            if ($offset > $config['total_rows'])
+                redirect('filter');
+
+            // Пейджер
+            $this->pager = $this->pagination->create_links();
+        }
+
+        return $this->model->get_events($params, $config['per_page'], $offset);
+    }
+
+    /** Форма фильтров */
     function form($params = array())
     {
         $this->load->helper('form');
@@ -104,12 +176,22 @@ class Filter extends MX_Controller {
         $data = array();
 
         $params['resorts'] = isset($params['resorts']) ? explode(',', $params['resorts']) : array();
+        $params['room'] = isset($params['room']) ? explode(',', $params['room']) : array();
 
         $data['resorts'] = $this->model->get_resorts();
+
         $data['params'] = array_merge(array(
-            'type' => array(),
-            'resorts' => array()
+            'type' => false,
+            'resorts' => array(),
+            'room' => array()
         ), $params);
+
+        switch ($data['params']['type'])
+        {
+            case 'objects':
+                $data['room'] = $this->model->get_field('room');
+                break;
+        }
 
         return $this->load->view($this->module_name . '/form.php', $data, TRUE);
     }
