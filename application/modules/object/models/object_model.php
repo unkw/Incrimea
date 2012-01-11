@@ -52,14 +52,16 @@ class Object_Model extends CI_Model {
     /** Получить список пунктов поля */
     public function get_field($field, $where = FALSE)
     {
+        if (is_array($where) && !$where)
+            return array();
+
         $prefix = 'obj_';
 
         $this->db->select('*')
             ->from($prefix.$field)
             ->order_by('name', 'asc');
 
-        if ($where)
-            $this->db->where_in('url_name', $where);
+        $this->db->where_in('url_name', $where);
 
         $q = $this->db->get();
 

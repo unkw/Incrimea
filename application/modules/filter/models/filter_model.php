@@ -19,12 +19,13 @@ class Filter_Model extends CI_Model {
         $this->db->select('o.id, o.title, o.body, o.images, o.price, o.infrastructure, r.name as resort')
             ->from('objects o')
             ->join('resorts r', 'o.resort_id = r.id')
-            ->where($where);
+            ->join('obj_beachs b', 'o.beach_id = b.id');
 
-        if (isset($params['resorts']))
-            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
+        // Дополнительные фильтры
+        $this->obj_add_filters($params);
 
-        $data = $this->db->order_by('o.priority desc, o.created_date desc')
+        $data = $this->db->where($where)
+            ->order_by('o.priority desc, o.created_date desc')
             ->limit($per_page, $offset)
             ->get()
             ->result_array();
@@ -122,6 +123,9 @@ class Filter_Model extends CI_Model {
     /** Получить список того, что входит в инфраструктуру */
     public function get_field($field, $where = FALSE)
     {
+        if (is_array($where) && !$where)
+            return array();
+
         $prefix = 'obj_';
 
         $this->db->select('*')
@@ -139,10 +143,12 @@ class Filter_Model extends CI_Model {
     /** Кол-во всех отелей */
     public function count_all_objects($params)
     {
-        $this->db->from('objects o')->join('resorts r', 'r.id = o.resort_id')->where('o.published', 1);
+        $this->db->from('objects o')
+            ->join('resorts r', 'r.id = o.resort_id')
+            ->join('obj_beachs b', 'b.id = o.beach_id')
+            ->where('o.published', 1);
 
-        if (isset($params['resorts']))
-            $this->db->where_in('r.url_name', explode(',', $params['resorts']));
+        $this->obj_add_filters($params);
 
         return $this->db->count_all_results();
     }
@@ -167,6 +173,47 @@ class Filter_Model extends CI_Model {
             $this->db->where_in('r.url_name', explode(',', $params['resorts']));
 
         return $this->db->count_all_results();
+    }
+
+    /** Условия накладываемые дополнительными фильтрами объектов */
+    private function obj_add_filters($params)
+    {
+        $fields = array(
+            'resorts' => 'r',
+            'beachs' => 'b',
+        );
+
+        foreach ($fields as $k => $alias)
+            $this->fields_query_builder($params, $k, $alias);
+
+        $json_fields = array(
+            'room' => 'room',
+            'infr' => 'infrastructure',
+            'service' => 'service',
+            'entment' => 'entertainment',
+            'child' => 'for_children',
+        );
+
+        foreach ($json_fields as $key => $column)
+            $this->like_query_builder($params, $key, $column);
+    }
+
+    /** Построитель запросов для связей один ко многим */
+    private function fields_query_builder($params, $name, $alias)
+    {
+        if (isset($params[$name])) {
+            $this->db->where_in($alias.'.url_name', explode(',', $params[$name]));
+        }
+    }
+
+    /** Построитель запросов для извлечения LIKE(-ом) */
+    private function like_query_builder($params, $name, $column)
+    {
+        if (isset($params[$name])) {
+            $data = explode(',', $params[$name]);
+            foreach ($data as $d)
+                $this->db->like('o.'.$column, '"'.$d.'"');
+        }
     }
 
     /** Перевод строки вида "dd-mm-yyyy" в timestamp */

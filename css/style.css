@@ -118,3 +118,8 @@ input {
 .content .content-items p {
     margin: 0;
 }
+
+/* ФИЛЬТРЫ */
+#filters-form .filters-title {
+    display: block;
+}

@@ -20,7 +20,7 @@ class Filter extends MX_Controller {
     /** Главная страницы фильтров */
     function action_index()
     {
-        // Все GET параметры с XSS фильтром
+        // Все GET параметры проверенные на XSS
         $params = $this->input->get(NULL, TRUE);
 
         // Проверка на GET параметров на валидность
@@ -177,19 +177,34 @@ class Filter extends MX_Controller {
 
         $params['resorts'] = isset($params['resorts']) ? explode(',', $params['resorts']) : array();
         $params['room'] = isset($params['room']) ? explode(',', $params['room']) : array();
+        $params['infr'] = isset($params['infr']) ? explode(',', $params['infr']) : array();
+        $params['service'] = isset($params['service']) ? explode(',', $params['service']) : array();
+        $params['entment'] = isset($params['entment']) ? explode(',', $params['entment']) : array();
+        $params['child'] = isset($params['child']) ? explode(',', $params['child']) : array();
+        $params['beachs'] = isset($params['beachs']) ? explode(',', $params['beachs']) : array();
 
         $data['resorts'] = $this->model->get_resorts();
 
         $data['params'] = array_merge(array(
             'type' => false,
             'resorts' => array(),
-            'room' => array()
+            'room' => array(),
+            'infr' => array(),
+            'service' => array(),
+            'entment' => array(),
+            'child' => array(),
+            'beachs' => array(),
         ), $params);
 
         switch ($data['params']['type'])
         {
             case 'objects':
                 $data['room'] = $this->model->get_field('room');
+                $data['infrastructure'] = $this->model->get_field('infrastructure');
+                $data['service'] = $this->model->get_field('service');
+                $data['entment'] = $this->model->get_field('entertainment');
+                $data['child'] = $this->model->get_field('for_children');
+                $data['beachs'] = $this->model->get_field('beachs');
                 break;
         }
 
