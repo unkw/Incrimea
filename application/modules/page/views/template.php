@@ -1,3 +1,3 @@
 <div class="content">
-    <?php echo $page['body']; ?>
+    <?php echo $body; ?>
 </div>

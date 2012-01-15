@@ -53,12 +53,19 @@ class Page_Model extends CI_Model {
     /** Добавить страницу */
     public function add($data)
     {
+        // Сохранение метатегов
+        $data['meta_id'] = $this->metatags->create();  
+
         $this->db->insert_batch('page', array($data));
     }
 
     /** Обновить страницу */
     public function update($id, $data)
     {
+        // Сохранение метатегов
+        if ( ! $this->metatags->update($data['meta_id']) )
+            $data['meta_id'] = $this->metatags->create();   
+
         $this->db->where('id', $id)
             ->update('page', $data);
     }

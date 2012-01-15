@@ -178,14 +178,15 @@ class Filter_Model extends CI_Model {
     /** Условия накладываемые дополнительными фильтрами объектов */
     private function obj_add_filters($params)
     {
+        /** Условия для классических полей (связь 1->∞) */
         $fields = array(
             'resorts' => 'r',
             'beachs' => 'b',
         );
-
         foreach ($fields as $k => $alias)
-            $this->fields_query_builder($params, $k, $alias);
+            $this->condition_for_classic_fields($params, $k, $alias);
 
+        /** Условия для полей содержащих данные в формате JSON */
         $json_fields = array(
             'room' => 'room',
             'infr' => 'infrastructure',
@@ -193,27 +194,64 @@ class Filter_Model extends CI_Model {
             'entment' => 'entertainment',
             'child' => 'for_children',
         );
-
         foreach ($json_fields as $key => $column)
-            $this->like_query_builder($params, $key, $column);
+            $this->condition_for_json_fields($params, $key, $column);
+
+        /** Условия для полей на проверку больше/меньше */
+        $border_fields = array(
+            'distance' => array('o.beach_distance', '<='),
+            'p-min' => array('o.price', '>='),
+            'p-max' => array('o.price', '<='),
+        );
+        foreach ($border_fields as $key => $val)
+            $this->condition_for_border_fields($params, $key, $val);
+
+        return TRUE;
     }
 
-    /** Построитель запросов для связей один ко многим */
-    private function fields_query_builder($params, $name, $alias)
+    /** Условия для обычных полей (один ко многим) */
+    private function condition_for_classic_fields($params, $name, $alias)
     {
         if (isset($params[$name])) {
             $this->db->where_in($alias.'.url_name', explode(',', $params[$name]));
+
+            return TRUE;
         }
+
+        return FALSE;
     }
 
-    /** Построитель запросов для извлечения LIKE(-ом) */
-    private function like_query_builder($params, $name, $column)
+    /** Условия для полей содержащих JSON */
+    private function condition_for_json_fields($params, $name, $column)
     {
         if (isset($params[$name])) {
             $data = explode(',', $params[$name]);
             foreach ($data as $d)
                 $this->db->like('o.'.$column, '"'.$d.'"');
+
+            return TRUE;
         }
+
+        return FALSE;
+    }
+
+    /** 
+     * Условия для полей являющихся границей, для сравнения
+     * с ними на больше или меньше (цена, расстояние до пляжа и т.п.)
+     * @param array $params - параметры get запроса
+     * @param string $name - имя параметра из get запроса
+     * @param array $val - массив содержащий имя колонки и знак сравнения
+     * return bool
+     */
+    private function condition_for_border_fields($params, $name, $val)
+    {
+        if (isset($params[$name])) {
+            $this->db->where($val[0].' '.$val[1], (int)$params[$name]);
+
+            return TRUE;
+        }
+
+        return FALSE;
     }
 
     /** Перевод строки вида "dd-mm-yyyy" в timestamp */

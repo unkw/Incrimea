@@ -24,31 +24,51 @@
         /** Отправка формы фильтров на onchange */
         for (var i = 0; i < settings.bindChange.length; i++) {
             $(this).find('[name="'+settings.bindChange[i]+'"]').change(function(){
-                submitForm.call(self); return false;
+                submitForm.call(self);
+                return false;
             });
         }
 
         /** Отправка формы фильтров по сабмиту */
         $(this).submit(function(){
-            submitForm.call(this); return false;
+            submitForm.call(this);
+            return false;
         });
 
         // Ссылка, позволяющая программным путем отправить форму
         var programSubmit = $('<a href="#">Показать</a>').click(function(){
-            submitForm.call(self); return false;
+            submitForm.call(self);
+            return false;
+        });
+        $(this).data('programSubmit', programSubmit);
+
+        // Флаг, существует ли setTimeout
+        $(this).data('hider', null);
+        
+        /** Отправка формы по клику */
+        $(this).find('input[type="checkbox"]').change(function(){
+            addCustomSubmitLink.call(this, self);
         });
 
-        /** Отправка формы по клику */
-        var hider = null;
-        $(this).find('input[type="checkbox"]').change(function(){
-            if (hider) clearTimeout(hider);
-            programSubmit.show();
-            $(this).parent().parent().append(programSubmit);
-            hider = setTimeout(function(){
-                programSubmit.hide();
-            }, 3000);
+        $(this).find('input[type="text"]').keyup(function(){
+            addCustomSubmitLink.call(this, self);
         });
     });
+
+    /** Добавить произвольную ссылку отправления формы около элемента */
+    function addCustomSubmitLink(form) {
+        
+        var hider = $(form).data('hider');
+        var programSubmit = $(form).data('programSubmit');
+
+        if (hider) clearTimeout(hider);
+        programSubmit.show();
+        $(this).parent().parent().append(programSubmit);
+        hider = setTimeout(function(){
+            programSubmit.hide();
+        }, 3000);
+        $(form).data('hider', hider);
+    }
 
     /** Отправка формы */
     function submitForm() {
@@ -60,12 +80,27 @@
         if (type.length)
             getArr.push(type.attr('name') + '=' + type.val());
 
-        /** Обработка чекбоксов */
+        /** Обработке полей формы */
         var params = {};
 
-        $(this).find('input[type="checkbox"]').filter(function(){
-            if ($(this).prop('checked')) {
-                var name = $(this).attr('name').replace(/\[\]/, '');
+        $(this).find('input').filter(function(){
+
+            var name = null;
+
+            /** Обработка чекбоксов */
+            if ($(this).attr('type') == 'checkbox') {
+                if ($(this).prop('checked')) {
+                    name = $(this).attr('name').replace(/\[\]/, '');
+                }
+            }
+
+            /** Обработке текстовых полей */
+            else if ($(this).attr('type') == 'text') {
+                if (/^\s*\d+\s*$/.test($(this).val()))
+                    name = $(this).attr('name');
+            }
+
+            if (name) {
                 if (params[name]) {
                     params[name].push($(this).val());
                 }
@@ -73,6 +108,7 @@
                     params[name] = [$(this).val()];
                 }
             }
+         
         });
 
         for (var key in params) {

@@ -151,6 +151,32 @@ ul.menu li ul.submenu li a:hover {
     font-size: 12px;
 }
 
+/** Подменю */
+#submenu {
+    border: 1px solid #D3D3D3;
+    border-radius: 10px;
+    margin: 5px 0;
+    height: 40px;
+    padding: 11px 0 0 25px;
+    list-style: circle;
+    color: red;
+}
+#submenu li {
+    float: left;
+    margin-right: 25px;
+}
+#submenu li:last-child {
+    margin-right: 0;
+}
+#submenu li a {
+    font-size: 21px;
+    color: #2F6FAB;
+    font-family: Tahoma;
+}
+#submenu li a:hover {
+    text-decoration: none;
+}
+
 /** Forms */
 #content .title-label {
     font-weight: bold;

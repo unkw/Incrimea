@@ -62,6 +62,9 @@ class Event_Model extends CI_Model {
         $data['date_start'] = $this->toTimestamp($data['date_start']);
         $data['date_end'] = $this->toTimestamp($data['date_end']);
 
+        // Сохранение метатегов
+        $data['meta_id'] = $this->metatags->create(); 
+
         $this->db->insert_batch('events', array($data));
     }
 
@@ -70,6 +73,10 @@ class Event_Model extends CI_Model {
     {
         $data['date_start'] = $this->toTimestamp($data['date_start']);
         $data['date_end'] = $this->toTimestamp($data['date_end']);
+
+        // Сохранение метатегов
+        if ( ! $this->metatags->update($data['meta_id']) )
+            $data['meta_id'] = $this->metatags->create();
 
         $this->db->where('id', $id)
             ->update('events', $data);
@@ -118,55 +125,7 @@ class Event_Model extends CI_Model {
         $config['source_image'] = $large_img;
         $config['new_image'] = $thumb;
 
-        $this->resize_and_crop($config);
+        $this->image_lib->resize_and_crop($config);
     }
 
-    /** Resize and Crop :) */
-    function resize_and_crop($conf)
-    {
-        // Исходный файл
-        $source = getimagesize($conf['source_image']);
-        // Ширина и высота исходного файла
-        $x = $source[0];
-        $y = $source[1];
-
-        // Определяем параметры для ресайза и кропа
-        if ($x > $y)
-        {
-            $w = round( ($x/$y) * $conf['height'] );
-            $h = $conf['height'];
-            $x_axis = round(($w - $conf['width'])/2);
-            $y_axis = 0;
-        }
-        else
-        {
-            $h = round( ($y/$x) * $conf['width'] );
-            $w = $conf['width'];
-            $y_axis = round(($h - $conf['height'])/2);
-            $x_axis = 0;
-        }
-
-        /** Создание временного файла, для дальнейшего кропа */
-        $temp_conf = $conf;
-        $temp_conf['width'] = $w;
-        $temp_conf['height'] = $h;
-        $this->image_lib->initialize($temp_conf);
-        $this->image_lib->resize();
-        $this->image_lib->clear();
-
-        /** Делаем crop */
-        $config = array();
-        $config['source_image'] = $conf['new_image'];
-        $config['maintain_ratio'] = FALSE;
-        $config['width'] = $conf['width'];
-        $config['height'] = $conf['height'];
-        $config['x_axis'] = $x_axis;
-        $config['y_axis'] = $y_axis;
-
-        $this->image_lib->initialize($config);
-        $this->image_lib->crop();
-        $this->image_lib->clear();
-
-        return TRUE;
-    }
 }

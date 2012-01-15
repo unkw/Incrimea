@@ -13,12 +13,15 @@
 <input type="hidden" name="edit-id" value="<?php echo $content['id']; ?>" />
 
 <div>
-    <div><label>Заголовок</label></div>
+    <div><label class="title-label">Заголовок</label></div>
     <input type="text" name="edit-title" size="50" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
 </div>
 
+<!-- Метатеги -->
+<?php print $metatags; ?>
+
 <div>
-    <div><label>Место отдыха</label></div>
+    <div><label class="title-label">Место отдыха</label></div>
     <select name="edit-resorts">
     <option value="0"></option>
     <?php foreach ($resorts as $r) : ?>
@@ -29,7 +32,7 @@
 
 
 <div>
-    <div><label>Титульное изображение</label></div>
+    <div><label class="title-label">Титульное изображение</label></div>
 
     <a href="#" id="img-remove">Удалить</a>
 
@@ -49,12 +52,12 @@
 </div>
 
 <div>
-    <div><label>Текст страницы</label></div>
+    <div><label class="title-label">Текст страницы</label></div>
     <?php $this->ckeditor->editor('edit-body', html_entity_decode(set_value('edit-body', $content['body']))); ?>
 </div>
 
 <div>
-    <div><label>Настройки публикации</label></div>
+    <div><label class="title-label">Настройки публикации</label></div>
     <label>
         <input type="checkbox" name="edit-status" value="1" <?php echo set_checkbox('edit-status', '1', $content['status'] ? TRUE : FALSE); ?> />
         Опубликовано

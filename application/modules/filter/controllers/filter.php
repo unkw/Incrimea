@@ -2,9 +2,14 @@
 
 class Filter extends MX_Controller {
      
+    // Имя модуля
     private $module_name;
+    // Пейджер
     var $pager = FALSE;
+    // Допустимые типы контента
     var $allow_types = array('objects', 'events', 'articles');
+    // Параметры GET запроса
+    private $params;
     
     function __construct()
     {
@@ -21,16 +26,16 @@ class Filter extends MX_Controller {
     function action_index()
     {
         // Все GET параметры проверенные на XSS
-        $params = $this->input->get(NULL, TRUE);
+        $this->params = $this->input->get(NULL, TRUE);
 
         // Проверка на GET параметров на валидность
-        if (!$this->check_params($params))
+        if (!$this->check_params())
             redirect('filter');
 
         $this->theme->setVar('title', 'Incrimea');
 
         /** Форма фильтров */
-        $this->theme->setVar('filters', $this->filter->form($params));
+        $this->theme->setVar('filters', $this->filter->form());
 
         /** Содержимое контента */
         $data = array(
@@ -40,21 +45,21 @@ class Filter extends MX_Controller {
         );
 
         /** Показывать только один из типов контента */
-        if (isset($params['type']))
+        if (isset($this->params['type']))
         {
             $this->load->library('pagination');
-            switch ($params['type']) {
-                case 'objects': $data['objects'] = $this->get_objects($params, TRUE); break;
-                case 'events': $data['events'] = $this->get_events($params, TRUE); break;
-                case 'articles': $data['articles'] = $this->get_articles($params, TRUE); break;
+            switch ($this->params['type']) {
+                case 'objects': $data['objects'] = $this->get_content_by_type('objects', TRUE); break;
+                case 'events': $data['events'] = $this->get_content_by_type('events', TRUE); break;
+                case 'articles': $data['articles'] = $this->get_content_by_type('articles', TRUE); break;
             }
         }
-        /** Все типы контента */
+        /** Все типы контента вместе */
         else
         {
-            $data['objects'] = $this->get_objects($params);
-            $data['articles'] = $this->get_articles($params);
-            $data['events'] = $this->get_events($params);
+            $data['objects'] = $this->get_content_by_type('objects');
+            $data['events'] = $this->get_content_by_type('events');      
+            $data['articles'] = $this->get_content_by_type('articles');
         }
         
         /** Пагинация */
@@ -63,12 +68,12 @@ class Filter extends MX_Controller {
         $this->theme->setVar('content', $this->load->view($this->module_name.'/template.php', $data, TRUE));
     }
 
-    /** Получить список отелей */
-    function get_objects($params, $pagination = FALSE)
+    /** Получить список заданного контента в зависимости от типа (отели, статьи или события) */
+    function get_content_by_type($type, $pagination = FALSE, $per_page = 3)
     {
         $config = array();
         // Кол-во отелей на страницу
-        $config['per_page'] = $pagination ? 3 : 3;
+        $config['per_page'] = $per_page;
         // Номер текущей страницы
         $page = (int)$this->input->get('page', TRUE) ? (int)$this->input->get('page', TRUE) : 1;
         // Позиция для БД
@@ -78,11 +83,12 @@ class Filter extends MX_Controller {
         if ($pagination)
         {
             // Адресная строка
-            $config['base_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
+            $config['base_url'] = base_url().$this->module_name.'?'.$this->url_params_to_string();
             // Кол-во отелей всего
-            $config['total_rows'] = $this->model->count_all_objects($params);
+            $method = 'count_all_'.$type;
+            $config['total_rows'] = $this->model->$method($this->params);
             // Ссылка на первую страницу
-            $config['first_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
+            $config['first_url'] = base_url().$this->module_name.'?'.$this->url_params_to_string();
             // Сегмент номера страницы в адресной строке
             $config['uri_segment'] = 2;
 
@@ -95,137 +101,79 @@ class Filter extends MX_Controller {
             $this->pager = $this->pagination->create_links();
         }
 
-        return $this->model->get_objects($params, $config['per_page'], $offset);
+        $method = 'get_'.$type;
+
+        return $this->model->$method($this->params, $config['per_page'], $offset);
     }
-
-    /** Получить список статей */
-    function get_articles($params, $pagination = FALSE)
-    {
-        $config = array();
-        // Кол-во отелей на страницу
-        $config['per_page'] = $pagination ? 3 : 3;
-        // Номер текущей страницы
-        $page = (int)$this->input->get('page', TRUE) ? (int)$this->input->get('page', TRUE) : 1;
-        // Позиция для БД
-        $offset = ($page - 1) * $config['per_page'];
-
-        /** Прикручиваем пагинацию, если необходимо */
-        if ($pagination)
-        {
-            // Адресная строка
-            $config['base_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
-            // Кол-во отелей всего
-            $config['total_rows'] = $this->model->count_all_articles($params);
-            // Ссылка на первую страницу
-            $config['first_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
-            // Сегмент номера страницы в адресной строке
-            $config['uri_segment'] = 2;
-
-            $this->pagination->initialize($config);
-
-            if ($offset > $config['total_rows'])
-                redirect('filter');
-
-            // Пейджер
-            $this->pager = $this->pagination->create_links();
-        }
-
-        return $this->model->get_articles($params, $config['per_page'], $offset);
-    }
-
-    /** Получить список статей */
-    function get_events($params, $pagination = FALSE)
-    {
-        $config = array();
-        // Кол-во отелей на страницу
-        $config['per_page'] = $pagination ? 3 : 3;
-        // Номер текущей страницы
-        $page = (int)$this->input->get('page', TRUE) ? (int)$this->input->get('page', TRUE) : 1;
-        // Позиция для БД
-        $offset = ($page - 1) * $config['per_page'];
-
-        /** Прикручиваем пагинацию, если необходимо */
-        if ($pagination)
-        {
-            // Адресная строка
-            $config['base_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
-            // Кол-во отелей всего
-            $config['total_rows'] = $this->model->count_all_events($params);
-            // Ссылка на первую страницу
-            $config['first_url'] = base_url().$this->module_name.'?'.$this->arr_to_string($params);
-            // Сегмент номера страницы в адресной строке
-            $config['uri_segment'] = 2;
-
-            $this->pagination->initialize($config);
-
-            if ($offset > $config['total_rows'])
-                redirect('filter');
-
-            // Пейджер
-            $this->pager = $this->pagination->create_links();
-        }
-
-        return $this->model->get_events($params, $config['per_page'], $offset);
-    }
+    
 
     /** Форма фильтров */
-    function form($params = array())
+    public function form()
     {
         $this->load->helper('form');
 
         $data = array();
 
-        $params['resorts'] = isset($params['resorts']) ? explode(',', $params['resorts']) : array();
-        $params['room'] = isset($params['room']) ? explode(',', $params['room']) : array();
-        $params['infr'] = isset($params['infr']) ? explode(',', $params['infr']) : array();
-        $params['service'] = isset($params['service']) ? explode(',', $params['service']) : array();
-        $params['entment'] = isset($params['entment']) ? explode(',', $params['entment']) : array();
-        $params['child'] = isset($params['child']) ? explode(',', $params['child']) : array();
-        $params['beachs'] = isset($params['beachs']) ? explode(',', $params['beachs']) : array();
-
+        // Места отдыха
         $data['resorts'] = $this->model->get_resorts();
 
-        $data['params'] = array_merge(array(
-            'type' => false,
-            'resorts' => array(),
-            'room' => array(),
-            'infr' => array(),
-            'service' => array(),
-            'entment' => array(),
-            'child' => array(),
-            'beachs' => array(),
-        ), $params);
+        // Параметры для всех типов контента
+        $data['params'] = array(
+            'type' => isset($this->params['type']) ? $this->params['type'] : false,
+            'resorts' => isset($this->params['resorts']) ? explode(',', $this->params['resorts']) : array(),
+        );
 
         switch ($data['params']['type'])
         {
             case 'objects':
+
                 $data['room'] = $this->model->get_field('room');
                 $data['infrastructure'] = $this->model->get_field('infrastructure');
                 $data['service'] = $this->model->get_field('service');
                 $data['entment'] = $this->model->get_field('entertainment');
                 $data['child'] = $this->model->get_field('for_children');
                 $data['beachs'] = $this->model->get_field('beachs');
+
+                $data['params'] = array_merge($data['params'], $this->obj_form_params());
+
                 break;
         }
 
         return $this->load->view($this->module_name . '/form.php', $data, TRUE);
     }
 
-    /** Проверка валидности параметров фильтра */
-    function check_params($params)
+    /** Параметры GET запроса для отелей */
+    private function obj_form_params()
     {
-        if (!isset($params['type']) || in_array($params['type'], $this->allow_types))
+
+        return array(
+            'room' => isset($this->params['room']) ? explode(',', $this->params['room']) : array(),
+            'infr' => isset($this->params['infr']) ? explode(',', $this->params['infr']) : array(),
+            'service' => isset($this->params['service']) ? explode(',', $this->params['service']) : array(),
+            'entment' => isset($this->params['entment']) ? explode(',', $this->params['entment']) : array(),
+            'child' => isset($this->params['child']) ? explode(',', $this->params['child']) : array(),
+            'beachs' => isset($this->params['beachs']) ? explode(',', $this->params['beachs']) : array(),
+            'distance' => isset($this->params['distance']) ? $this->params['distance'] : '',
+            'price_min' => isset($this->params['p-min']) ? $this->params['p-min'] : '',
+            'price_max' => isset($this->params['p-max']) ? $this->params['p-max'] : '',
+        );
+    }
+
+    /** Проверка валидности параметров фильтра */
+    function check_params()
+    {
+        if (!isset($this->params['type']) || in_array($this->params['type'], $this->allow_types))
             return TRUE;
         else
             return FALSE;
     }
 
     /** Преобразование массива в GET строку */
-    function arr_to_string($arr, $sep_in = '=', $sep_out = '&')
+    function url_params_to_string($sep_in = '=', $sep_out = '&')
     {
         $temp = array();
 
-        foreach ($arr as $key => $value)
+        foreach ($this->params as $key => $value)
         {
             if ($key != 'page')
                 $temp[] = $key.$sep_in.$value;

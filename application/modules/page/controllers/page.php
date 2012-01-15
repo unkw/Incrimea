@@ -22,12 +22,15 @@ class Page extends MX_Controller {
 
         // Контент
         $data = array();
-        $data[$this->module_name] = $this->model->get($id, TRUE);
+        $data = $this->model->get($id, TRUE);
 
-        if (!$data[$this->module_name])
+        if (!$data)
             show_404();
 
-        $title = $data[$this->module_name]['title'];
+        // Назначаем метатеги
+        $this->theme->set_metatags($data['meta_id']);
+
+        $title = $data['title'];
         // Заголовок
         $this->theme->setVar('title', $title);
         // Отображение

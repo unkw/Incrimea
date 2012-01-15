@@ -60,20 +60,9 @@ class Admin extends MX_Controller {
 
         if ($this->form_validation->run($this) === TRUE)
         {
-            $cdata = array(
-                'title'         => $this->input->post('edit-title'),
-                'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
-                'body'          => $this->input->post('edit-body'),
-                'created_date'  => time(),
-                'last_update'   => time(),
-                'status'        => $this->input->post('edit-status') ? 1 : 0,
-                'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
-                'uid'           => USER_AUTH_ID,
-            );
+            $this->model->add($this->processing_request_data());
 
-            $this->model->add($cdata);
-
-            $this->message->set('success', 'Материал "' . $cdata['title'] . '" создан успешно');
+            $this->message->set('success', 'Страница создана успешно');
 
             redirect('admin/' . $this->module_name);
         }
@@ -91,6 +80,9 @@ class Admin extends MX_Controller {
             'status' => 1,
             'sticky' => 0,
         );
+
+        // Метатеги
+        $data['metatags'] = $this->metatags->html_form_fields();
         // CKEditor
         $this->editor_init();
         // Отображение
@@ -106,16 +98,7 @@ class Admin extends MX_Controller {
 
         if ($this->form_validation->run($this))
         {
-            $cdata = array(
-                'title'         => $this->input->post('edit-title'),
-                'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
-                'body'          => $this->input->post('edit-body'),
-                'last_update'   => time(),
-                'status'        => $this->input->post('edit-status') ? 1 : 0,
-                'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
-            );
-
-            $this->model->update($id, $cdata);
+            $this->model->update($id, $this->processing_request_data($id));
 
             $this->message->set('success', 'Изменения сохранены успешно');
 
@@ -132,6 +115,9 @@ class Admin extends MX_Controller {
         $data['content'] = $this->model->get($id);
         if (!$data['content'])
             show_404();
+
+        // Метатеги
+        $data['metatags'] = $this->metatags->html_form_fields($data['content']['meta_id']);
         // CKeditor
         $this->editor_init();
         // Отображение
@@ -141,6 +127,31 @@ class Admin extends MX_Controller {
     function action_delete($id = 0)
     {
         
+    }
+
+    private function processing_request_data($id = 0)
+    {
+        $data = array(
+            'title'         => $this->input->post('edit-title'),
+            'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
+            'body'          => $this->input->post('edit-body'),
+            'last_update'   => time(),
+            'status'        => $this->input->post('edit-status') ? 1 : 0,
+            'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
+        );
+
+        // Дополнительные данные при создании отеля
+        if (!$id)
+        {
+            $data['created_date'] = time();
+            $data['uid'] = USER_AUTH_ID;
+        }
+        else
+        {
+            $data['meta_id'] = $this->input->post('edit-metaid');
+        }
+
+        return $data;
     }
 
     /** Инициализация графического редактора */

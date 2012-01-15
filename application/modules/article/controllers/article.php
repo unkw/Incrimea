@@ -22,14 +22,16 @@ class Article extends MX_Controller {
 
         // Контент
         $data = array();
-        $data[$this->module_name] = $this->model->get($id, TRUE);
+        $data = $this->model->get($id, TRUE);
 
-        if (!$data[$this->module_name])
+        if (!$data)
             show_404();
 
-        $title = $data[$this->module_name]['title'];
+        // Назначаем метатеги
+        $this->theme->set_metatags($data['meta_id']);
+
         // Заголовок
-        $this->theme->setVar('title', $title);
+        $this->theme->setVar('title', $data['title']);
         // Отображение
         $this->theme->setVar('content', $this->load->view($this->module_name.'/template.php', $data, TRUE));
     }

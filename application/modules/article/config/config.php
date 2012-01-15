@@ -45,6 +45,18 @@ $config['validation_new'] = array(
     ),
 );
 
+// Значение полей по-умолчанию
+$config['default_fields'] = array(
+    'id' => '',
+    'title' => '',
+    'body' => '',
+    'status' => 1,
+    'sticky' => 0,
+    'resort_id' => 0,
+    'image_desc' => '',
+    'image_src' => '',
+);
+
 // Загрузка файла
 $config['upload'] = array(
     'upload_path'   => 'images/article',

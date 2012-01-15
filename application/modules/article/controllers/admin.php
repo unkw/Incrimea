@@ -61,23 +61,9 @@ class Admin extends MX_Controller {
 
         if ($this->form_validation->run($this) === TRUE)
         {
-            $cdata = array(
-                'title'         => $this->input->post('edit-title'),
-                'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
-                'body'          => $this->input->post('edit-body'),
-                'created_date'  => time(),
-                'last_update'   => time(),
-                'status'        => $this->input->post('edit-status') ? 1 : 0,
-                'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
-                'uid'           => USER_AUTH_ID,
-                'resort_id'     => $this->input->post('edit-resorts'),
-                'image_src'     => $this->input->post('edit-image'),
-                'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
-            );
+            $this->model->add($this->processing_request_data());
 
-            $this->model->add($cdata);
-
-            $this->message->set('success', 'Статья "' . $cdata['title'] . '" создана успешно');
+            $this->message->set('success', 'Статья создана успешно');
 
             redirect('admin/' . $this->module_name);
         }
@@ -88,16 +74,10 @@ class Admin extends MX_Controller {
         // Заголовок
         $this->theme->setVar('title', $title);
         // Контент
-        $data['content'] = array(
-            'id' => '',
-            'title' => '',
-            'body' => '',
-            'status' => 1,
-            'sticky' => 0,
-            'resort_id' => 0,
-            'image_desc' => '',
-            'image_src' => '',
-        );
+        $data['content'] = $this->config->config['default_fields'];
+        // Метатеги
+        $data['metatags'] = $this->metatags->html_form_fields(); 
+
         $data['resorts'] = $this->model->get_resorts();
         // CKEditor
         $this->editor_init();
@@ -114,19 +94,7 @@ class Admin extends MX_Controller {
 
         if ($this->form_validation->run($this))
         {
-            $cdata = array(
-                'title'         => $this->input->post('edit-title'),
-                'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
-                'body'          => $this->input->post('edit-body'),
-                'last_update'   => time(),
-                'status'        => $this->input->post('edit-status') ? 1 : 0,
-                'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
-                'resort_id'     => $this->input->post('edit-resorts'),
-                'image_src'     => $this->input->post('edit-image'),
-                'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
-            );
-
-            $this->model->update($id, $cdata);
+            $this->model->update($id, $this->processing_request_data($id));
 
             $this->message->set('success', 'Изменения сохранены успешно');
 
@@ -144,6 +112,9 @@ class Admin extends MX_Controller {
         $data['resorts'] = $this->model->get_resorts();
         if (!$data['content'])
             show_404();
+
+        // Метатеги
+        $data['metatags'] = $this->metatags->html_form_fields($data['content']['meta_id']);
         // CKeditor
         $this->editor_init();
         // Отображение
@@ -153,15 +124,6 @@ class Admin extends MX_Controller {
     function action_delete($id = 0)
     {
         
-    }
-
-    /** Инициализация графического редактора */
-    private function editor_init()
-    {
-        $this->load->library('ckeditor');
-        $this->ckeditor->basePath = base_url().'asset/ckeditor/';
-        $this->ckeditor->config['toolbar'] = 'Full';
-        $this->ckeditor->config['language'] = 'ru';
     }
 
     /** Загрузка картинки */
@@ -181,5 +143,43 @@ class Admin extends MX_Controller {
 
             echo $img['file_name'];
         }
+    }
+
+    /** Обработка данных запроса */
+    private function processing_request_data($id = 0)
+    {
+        $data = array(
+            'title'         => $this->input->post('edit-title'),
+            'preview'       => mb_substr($this->input->post('edit-body'), 0, 100),
+            'body'          => $this->input->post('edit-body'),
+            'last_update'   => time(),
+            'status'        => $this->input->post('edit-status') ? 1 : 0,
+            'sticky'        => $this->input->post('edit-sticky') ? 1 : 0,
+            'resort_id'     => $this->input->post('edit-resorts'),
+            'image_src'     => $this->input->post('edit-image'),
+            'image_desc'    => $this->input->post('edit-image') ? $this->input->post('edit-image-desc') : '',
+        );
+
+        // Дополнительные данные при создании отеля
+        if (!$id)
+        {
+            $data['created_date'] = time();
+            $data['uid'] = USER_AUTH_ID;
+        }
+        else
+        {
+            $data['meta_id'] = $this->input->post('edit-metaid');
+        }
+
+        return $data;
+    }
+
+    /** Инициализация графического редактора */
+    private function editor_init()
+    {
+        $this->load->library('ckeditor');
+        $this->ckeditor->basePath = base_url().'asset/ckeditor/';
+        $this->ckeditor->config['toolbar'] = 'Full';
+        $this->ckeditor->config['language'] = 'ru';
     }
 }

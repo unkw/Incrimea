@@ -17,6 +17,9 @@
     <input type="text" name="edit-title" size="50" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
 </div>
 
+<!-- Метатеги -->
+<?php echo $metatags; ?>
+
 <div>
     <div><label>Место отдыха</label></div>
     <select name="edit-resorts">

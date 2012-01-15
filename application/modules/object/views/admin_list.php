@@ -1,6 +1,8 @@
+<ul id="submenu">
+    <li><a href="<?php echo base_url() .'admin/'.$module.'/new'; ?>">Создать объект</a></li>
+    <li><a href="<?php echo base_url() .'admin/'.$module.'/fields'; ?>">Управление полями</a></li>
+</ul>
 
-<a href="<?php echo base_url() .'admin/'.$module.'/new'; ?>">Создать объект</a>
-<a href="<?php echo base_url() .'admin/'.$module.'/fields'; ?>">Поля</a>
 <table>
 
     <thead class="select-all">

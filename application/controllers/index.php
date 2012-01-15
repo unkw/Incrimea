@@ -1,13 +1,17 @@
 <?php
 class Index extends MX_Controller {
 
-    public $modules;
     // Приставка для методов, предназначенных для отображения
     private $pre = 'action_';
+
+    private $autoload_modules = array('user', 'metatags');
     
     function __construct()
     {
-        $this->common->load_module('user');
+        // Автоподгрузка модулей
+        foreach ($this->autoload_modules as $m)
+            $this->common->load_module($m);
+
         $this->session_update();
     }
 
@@ -113,6 +117,7 @@ class Index extends MX_Controller {
         return $this->uri->segment(1) == 'admin' ? TRUE : FALSE;
     }
 
+    /** Обновление сессий */
     function session_update()
     {
         if ($this->session->userdata('last_activity') < time() - 300)

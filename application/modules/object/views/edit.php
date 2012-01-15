@@ -19,6 +19,9 @@
     <input type="text" name="edit-title" size="50" value="<?php echo set_value('edit-title', $obj['title']) ?>"/>
 </div>
 
+<!-- Метатеги -->
+<?php print $metatags; ?>
+
 <!-- Месторасположение -->
 <div>
     <div><label class="title-label">Месторасположение</label></div>

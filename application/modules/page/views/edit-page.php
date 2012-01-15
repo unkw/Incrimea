@@ -12,8 +12,8 @@
     <input type="text" name="edit-title" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
 </div>
 
-
-
+<!-- Метатеги -->
+<?php echo $metatags; ?>
 
 <div>
     <div><label>Текст страницы</label></div>

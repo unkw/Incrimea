@@ -86,6 +86,29 @@ $config['validation_new'] = array(
     ),
 );
 
+// Значения полей по умолчанию
+$config['default_fields'] = array(
+    'id' => '',
+    'title' => '',
+    'location' => '',
+    'resort_id' => 0,
+    'region_id' => 0,
+    'type_id' => 0,
+    'images' => isset($_POST['edit-img']) ? $_POST['edit-img'] : array(),
+    'price' => '',
+    'food' => '',
+    'beach_distance' => '',
+    'beach_id' => 0,
+    'room' => array(),
+    'infrastructure' => array(),
+    'service' => array(),
+    'entertainment' => array(),
+    'for_children' => array(),
+    'body' => '',
+    'published' => 1,
+    'priority' => 0,
+);
+
 // Загрузка файла
 $config['upload'] = array(
     'upload_path'   => 'images/object/large',

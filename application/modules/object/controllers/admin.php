@@ -23,7 +23,7 @@ class Admin extends MX_Controller {
         $this->load->config();
     }
 
-    function action_index()
+    public function action_index()
     {
         $this->load->library('pagination');
 
@@ -48,46 +48,24 @@ class Admin extends MX_Controller {
         $data = array();
         $data['module'] = $this->module_name;
         $data['pager'] = $this->pagination->create_links();
-        $data['content'] = $this->model->get_pages($config['per_page'], $offset);
+        $data['content'] = $this->model->get_list($config['per_page'], $offset);
 
         // Контент
         $this->theme->setVar('content', $this->load->view($this->module_name . '/admin_list.php', $data, TRUE));
     }
 
-    function action_new()
+    /** Создание отеля */
+    public function action_new()
     {
         $data = array();
+
         $this->form_validation->set_rules($this->config->config['validation_new']);
 
         if ($this->form_validation->run($this) === TRUE)
         {
-            $cdata = array(
-                'title'         => $this->input->post('edit-title'),
-                'location'      => $this->input->post('edit-location'),
-                'resort_id'     => $this->input->post('edit-resorts'),
-                'region_id'     => $this->input->post('edit-region'),
-                'type_id'       => $this->input->post('edit-types'),
-                'images'        => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
-                'price'         => $this->input->post('edit-price'),
-                'food'          => $this->input->post('edit-food'),
-                'beach_distance'=> $this->input->post('edit-beach-distance'),
-                'beach_id'      => $this->input->post('edit-beach-type'),
-                'room'          => $this->input->post('edit-room'),
-                'infrastructure'=> $this->input->post('edit-infrastructure'),
-                'service'       => $this->input->post('edit-service'),
-                'entertainment' => $this->input->post('edit-entertainment'),
-                'for_children'  => $this->input->post('edit-for-children'),
-                'body'          => $this->input->post('edit-body'),
-                'published'     => $this->input->post('edit-published') ? 1 : 0,
-                'priority'      => $this->input->post('edit-priority'),
-                'created_date'  => time(),
-                'last_update'   => time(),
-                'uid'           => USER_AUTH_ID,
-            );
+            $this->model->create($this->processing_request_data());
 
-            $this->model->add($cdata);
-
-            $this->message->set('success', 'Объект "' . $cdata['title'] . '" создан успешно');
+            $this->message->set('success', 'Объект создан успешно');
 
             redirect('admin/' . $this->module_name);
         }
@@ -100,27 +78,9 @@ class Admin extends MX_Controller {
         // Поля
         $data = $this->all_fields();
         // По-умолчанию
-        $data['obj'] = array(
-            'id' => '',
-            'title' => '',
-            'location' => '',
-            'resort_id' => 0,
-            'region_id' => 0,
-            'type_id' => 0,
-            'images' => $this->input->post('edit-img') ? $this->input->post('edit-img') : array(),
-            'price' => '',
-            'food' => '',
-            'beach_distance' => '',
-            'beach_id' => 0,
-            'room' => array(),
-            'infrastructure' => array(),
-            'service' => array(),
-            'entertainment' => array(),
-            'for_children' => array(),
-            'body' => '',
-            'published' => 1,
-            'priority' => 0,
-        );
+        $data['obj'] = $this->config->config['default_fields'];
+        // Метатеги
+        $data['metatags'] = $this->metatags->html_form_fields();
 
         // CKEditor
         $this->editor_init();
@@ -128,7 +88,8 @@ class Admin extends MX_Controller {
         $this->theme->setVar('content', $this->load->view($this->module_name.'/edit.php', $data, TRUE));
     }
 
-    function action_edit($id = 0)
+    /** Редактирование отеля */
+    public function action_edit($id = 0)
     {
         if (!$id || !is_numeric($id))
             show_404();
@@ -137,44 +98,25 @@ class Admin extends MX_Controller {
 
         if ($this->form_validation->run($this))
         {
-            $cdata = array(
-                'title'         => $this->input->post('edit-title'),
-                'location'      => $this->input->post('edit-location'),
-                'resort_id'     => $this->input->post('edit-resorts'),
-                'region_id'     => $this->input->post('edit-region'),
-                'type_id'       => $this->input->post('edit-types'),
-                'images'        => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
-                'price'         => $this->input->post('edit-price'),
-                'food'          => $this->input->post('edit-food'),
-                'beach_distance'=> $this->input->post('edit-beach-distance'),
-                'beach_id'      => $this->input->post('edit-beach-type'),
-                'room'          => $this->input->post('edit-room'),
-                'infrastructure'=> $this->input->post('edit-infrastructure'),
-                'service'       => $this->input->post('edit-service'),
-                'entertainment' => $this->input->post('edit-entertainment'),
-                'for_children'  => $this->input->post('edit-for-children'),
-                'body'          => $this->input->post('edit-body'),
-                'published'     => $this->input->post('edit-published') ? 1 : 0,
-                'priority'      => $this->input->post('edit-priority'),
-                'last_update'   => time(),
-            );
-            
-            $this->model->update($id, $cdata);
+            $this->model->update($id, $this->processing_request_data($id));
 
             $this->message->set('success', 'Изменения сохранены успешно');
 
             redirect('admin/'.$this->module_name);
         }
 
+        // Заголовок
         $title = 'Редактирование объекта';
         // Хлебная крошка
         $this->theme->set_breadcrumb($title, '');
         // Заголовок
         $this->theme->setVar('title', $title);
-        // Поля
+        // Дополнительные поля
         $data = $this->all_fields();
         // Основные данные
         $data['obj'] = $this->model->get($id);
+        // Метатеги
+        $data['metatags'] = $this->metatags->html_form_fields($data['obj']['meta_id']);
 
         if (!$data['obj'])
             show_404();
@@ -185,12 +127,14 @@ class Admin extends MX_Controller {
         $this->theme->setVar('content', $this->load->view($this->module_name.'/edit.php', $data, TRUE));
     }
 
-    function action_delete($id = 0)
+    /** Удаление отеля */
+    public function action_delete($id = 0)
     {
         
     }
 
-    function action_fields()
+    /** Дополнительные поля отеля */
+    public function action_fields()
     {
         $title = 'Редактирование полей';
         // Хлебная крошка
@@ -203,16 +147,7 @@ class Admin extends MX_Controller {
         $this->theme->setVar('content', $this->load->view($this->module_name.'/fields.php', $data, TRUE));
     }
 
-    /** Инициализация графического редактора */
-    private function editor_init()
-    {
-        $this->load->library('ckeditor');
-        $this->ckeditor->basePath = base_url().'asset/ckeditor/';
-        $this->ckeditor->config['toolbar'] = 'Full';
-        $this->ckeditor->config['language'] = 'ru';
-    }
-
-    /** Загрузка картинки */
+    /** Загрузка изображений */
     public function action_upload()
     {
         $this->load->library('upload', $this->config->config['upload']);
@@ -229,8 +164,59 @@ class Admin extends MX_Controller {
             echo $img['file_name'];
         }
     }
-    
-    /** Все поля */
+
+    /**
+     * Обработка данных запроса для сохранения данных отеля
+     * @param int $id - ID отеля
+     */
+    private function processing_request_data($id = 0)
+    {
+        $data = array(
+            'title'         => $this->input->post('edit-title'),
+            'location'      => $this->input->post('edit-location'),
+            'resort_id'     => $this->input->post('edit-resorts'),
+            'region_id'     => $this->input->post('edit-region'),
+            'type_id'       => $this->input->post('edit-types'),
+            'images'        => $this->input->post('edit-img') ? $this->input->post('edit-img') : 0,
+            'price'         => $this->input->post('edit-price'),
+            'food'          => $this->input->post('edit-food'),
+            'beach_distance'=> $this->input->post('edit-beach-distance'),
+            'beach_id'      => $this->input->post('edit-beach-type'),
+            'room'          => $this->input->post('edit-room'),
+            'infrastructure'=> $this->input->post('edit-infrastructure'),
+            'service'       => $this->input->post('edit-service'),
+            'entertainment' => $this->input->post('edit-entertainment'),
+            'for_children'  => $this->input->post('edit-for-children'),
+            'body'          => $this->input->post('edit-body'),
+            'published'     => $this->input->post('edit-published') ? 1 : 0,
+            'priority'      => $this->input->post('edit-priority'),
+            'last_update'   => time(),
+        );
+
+        // Дополнительные данные при создании отеля
+        if (!$id)
+        {
+            $data['created_date'] = time();
+            $data['uid'] = USER_AUTH_ID;
+        }
+        else
+        {
+            $data['meta_id'] = $this->input->post('edit-metaid');
+        }
+
+        return $data;
+    }
+
+    /** Инициализация графического редактора */
+    private function editor_init()
+    {
+        $this->load->library('ckeditor');
+        $this->ckeditor->basePath = base_url().'asset/ckeditor/';
+        $this->ckeditor->config['toolbar'] = 'Full';
+        $this->ckeditor->config['language'] = 'ru';
+    }
+
+    /** Получить все поля с их значениями */
     protected function all_fields()
     {
         $data = array();

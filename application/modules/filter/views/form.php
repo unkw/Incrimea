@@ -1,4 +1,4 @@
-<?php echo form_open('filter', array('id' => 'filters-form', 'method' => 'get')); ?>
+<?php echo form_open(base_url().'filter', array('id' => 'filters-form', 'method' => 'get')); ?>
 
     <h4>Тип контента</h4>
     <div>
@@ -29,10 +29,19 @@
     <!-- Дополнительные фильтры для отелей -->
     <?php if ($params['type'] == 'objects') : ?>
 
+    <!-- Цена -->
+    <h4>Цена</h4>
+    <div class="filters-box">
+        <div>
+            <label>От </label><input type="text" name="p-min" size="3" value="<?php echo $params['price_min']; ?>" autocomplete="off" />
+            <label>До </label><input type="text" name="p-max" size="3" value="<?php echo $params['price_max']; ?>" autocomplete="off" />
+        </div>
+    </div>
+
     <!-- Пляж -->
     <h4>Расстояние до пляжа</h4>
     <div class="filters-box">
-        <div><label>Не более </label> <input type="text" name="distance" size="3" />м</div>
+        <div><label>До </label> <input type="text" name="distance" size="3" value="<?php echo $params['distance']; ?>"/>м</div>
     </div>
 
     <a href="#" class="filters-title">Тип пляжа</a>

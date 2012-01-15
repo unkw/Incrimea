@@ -22,15 +22,18 @@ class Object extends MX_Controller {
 
         // Контент
         $data = array();
-        $m = $this->module_name;
+
         $data = $this->model->get_obj($id);
 
         if (!$data)
             show_404();
 
-        $title = $data['title'];
+        // Назначаем метатеги
+        $this->theme->set_metatags($data['meta_id']);
+
         // Заголовок
-        $this->theme->setVar('title', $title);
+        $this->theme->setVar('title', $data['title']);
+
         /** Дополнительные поля */
         $data['room'] = $this->model->get_field('room', $data['room']);
         $data['infrastructure'] = $this->model->get_field('infrastructure', $data['infrastructure']);
@@ -39,6 +42,6 @@ class Object extends MX_Controller {
         $data['for_children'] = $this->model->get_field('for_children', $data['for_children']);
 
         // Отображение
-        $this->theme->setVar('content', $this->load->view($m.'/template.php', $data, TRUE));
+        $this->theme->setVar('content', $this->load->view($this->module_name.'/template.php', $data, TRUE));
     }
 }

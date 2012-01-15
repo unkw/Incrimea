@@ -1,15 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title><?php print $title; ?></title>
-    <meta name="keywords" content="" />
-    <meta name="description" content="" />
-    <link rel="stylesheet" href="<?php print base_url(); ?>css/style.css" type="text/css" media="screen, projection" />
-    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.formUrl.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>js/scripts.js"></script>
-    <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title><?php print $head_title; ?></title>
+
+<?php print $metatags; ?>
+
+<link rel="stylesheet" href="<?php print base_url(); ?>css/style.css" type="text/css" media="screen, projection" />
+<script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.formUrl.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/scripts.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 </head>
 
 <body class="<?php print $body_classes; ?>">
