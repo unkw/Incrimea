@@ -5,6 +5,12 @@
     </div>
 
     <div class="fields">
+
+        <?php if ($path || $view_path_field): ?>
+            <div>Путь</div>
+            <input type="text" name="edit-path" value="<?php echo $path; ?>" size="80" />
+        <?php endif; ?>
+
         <div>Заголовок</div>
         <input type="text" name="edit-metatitle" value="<?php echo $title; ?>" size="80" />
 

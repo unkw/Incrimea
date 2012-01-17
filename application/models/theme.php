@@ -6,6 +6,7 @@ class Theme extends CI_Model {
     var $tpl;
     var $breadcrumb = array();
     var $body_classes = array();
+    var $metatags_disable = FALSE;
 
     function __construct()
     {
@@ -18,6 +19,8 @@ class Theme extends CI_Model {
     {
         // Путь к шаблону по умолчанию
         $this->tpl = 'theme/frontend.php';
+        // Название сайта
+        $this->vars['site_name'] = 'Incrimea';
         // Заголовок
         $this->vars['head_title'] = NULL;
         // Метатеги
@@ -72,23 +75,33 @@ class Theme extends CI_Model {
     /** Получить метатеги */
     function get_metatags_html()
     {
+        // Включены ли метатеги
+        if ($this->metatags_disable)
+            return FALSE;
+
+        // Если метатеги не назначены, получить метатеги по текущему адресу url
         if (is_null($this->vars['metatags']))
         {
-            $this->setVar('metatags', $this->metatags->get_by_path($this->uri->uri_string()));
+            $path = $this->uri->uri_string();
+            // Метатеги главной страницы
+            if ($path == '')
+                $path = 'index';
+
+            $this->setVar('metatags', $this->metatags->get_by_path($path));
         }
 
         $meta = $this->vars['metatags'];
 
+        // Отображение мета заголовка
         if (isset($meta['title']) && trim($meta['title']))
-            $this->setVar('head_title', trim($meta['title']));
+            $this->setVar('head_title', trim($meta['title']).' | '.$this->vars['site_name']);
         else
-            $this->setVar('head_title', $this->vars['title']);
+            $this->setVar('head_title', $this->vars['title'].' | '.$this->vars['site_name']);
 
-        $this->theme->setVar('metatags', $this->metatags->html($meta));
-
-        return $this->vars['metatags'];
+        return $this->metatags->html($meta);
     }
 
+    /** Задать метатеги */
     function set_metatags($meta_id)
     {
         $this->setVar('metatags', $this->metatags->get($meta_id));

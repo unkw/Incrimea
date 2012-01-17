@@ -37,58 +37,39 @@ class Metatags_Model extends CI_Model {
     }
 
     /**
-     * Получить список пользователей
-     * @param int $num - кол-во получаемых пользователей
+     * Получить список метатегов
+     * @param int $num - кол-во
      * @param int $offset - позиция в таблице бд
      * @return array
      */
-    public function get_users($num, $offset)
+    public function get_list($num, $offset, $params)
     {
-
         $this->db
-            ->select('u.*, r.name as role')
-            ->from('users u')
-            ->join('roles r', 'u.role_id = r.id')
+            ->select('m.*')
+            ->from($this->table.' m')
+            ->order_by('id', 'desc')
             ->limit($num, $offset);
 
-        $query = $this->db->get();
+        $this->add_condition($params);
 
-        return $query->result_array();
+        return $this->db->get()->result_array();
     }
 
-    /** Получить кол-во всех пользователей */
-    public function get_count_all()
+    /** Получить кол-во всех метатегов */
+    public function get_count_all($params)
     {
-        return $this->db->count_all('users');
+        $this->db->from($this->table);
+
+        $this->add_condition($params);
+
+        return $this->db->count_all_results();
     }
-    /** Добавление нового пользователя */
-    public function add_user($data)
+
+    /** Дополнительные условия */
+    private function add_condition($params)
     {
-        $this->db->insert_batch('users', array($data));
+        if ($params['list'] && $params['list'] != 'all')
+            $this->db->where('path <>', '');
     }
 
-    /** Получить данные пользователя по ID */
-    public function get_user($uid)
-    {
-        $q = $this->db->get_where('users', array('id' => $uid));
-
-        return $q->row_array();
-    }
-
-    /** Редактирование пользователя */
-    public function update_user($uid, $data)
-    {
-        $this->db->where('id', $uid)
-            ->update('users', $data);
-    }
-
-    /** Удаление пользователя */
-    public function delete_user($uid)
-    {
-        // Главного админа удалить нельзя :)
-        if ($uid == 1)
-            return FALSE;
-
-        $this->db->delete('users', array('id' => $uid));
-    }
 }

@@ -13,6 +13,7 @@
     <script type="text/javascript" src="<?php echo base_url(); ?>js/uploaderObject.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.uploader.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/upload.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.autoSubmit.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 </head>
 <body>
@@ -22,7 +23,7 @@
         <div id="menu">
             <ul class="menu">
                 <li><a href="<?php print base_url(); ?>admin">Админ. панель</a></li>
-                <li><a href="<?php print base_url(); ?>admin/admin/content">Контент</a>
+                <li><a href="#">Контент</a>
                     <ul class="submenu">
                         <li><a href="<?php print base_url(); ?>admin/page">Страницы</a></li>
                         <li><a href="<?php print base_url(); ?>admin/article">Статьи</a></li>
@@ -32,9 +33,9 @@
                 </li>
                 <li><a href="#">Модули</a>
                     <ul class="submenu">
-                        <li><a href="<?php print base_url(); ?>admin/path">Path</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/metatags">Metatags</a></li>
-                        <li><a href="<?php print base_url(); ?>admin/filters">Filters</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/path">Алиасы</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/metatags">Метатеги</a></li>
+                        <li><a href="<?php print base_url(); ?>admin/filters">Фильтры</a></li>
                     </ul>
                 </li>
                 <li><a href="<?php print base_url(); ?>admin/user/list">Пользователи</a>
@@ -44,7 +45,7 @@
                         <li><a href="<?php print base_url(); ?>admin/user/settings">Настройки</a></li>
                     </ul>
                 </li>
-                <li><a href="#">Настройка сайта</a></li>
+                <li><a href="<?php print base_url(); ?>admin/admin/site_settings">Настройка сайта</a></li>
                 <li><a href="#">Отчеты</a></li>
             </ul>
         </div>

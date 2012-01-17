@@ -60,6 +60,8 @@ class Index extends MX_Controller {
         $this->load->library('message');
         // Шаблон админ. панели
         $this->theme->tpl = 'theme/backend.php';
+        // Выключить метатеги для страниц админки
+        $this->theme->metatags_disable = TRUE;
         // "Хлебная крошка" на главную страницу админ. панели
         $this->theme->set_breadcrumb('Админ. панель', 'admin');
 

@@ -32,7 +32,7 @@ class Filter extends MX_Controller {
         if (!$this->check_params())
             redirect('filter');
 
-        $this->theme->setVar('title', 'Incrimea');
+        $this->theme->setVar('title', 'Отдых в Крыму');
 
         /** Форма фильтров */
         $this->theme->setVar('filters', $this->filter->form());

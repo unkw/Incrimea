@@ -15,7 +15,7 @@
             <div>
                 <!-- Превью -->
                 <?php if (isset($obj['images'][0])) : ?>
-                <img src="<?php echo base_url().'images/object/thumb/'.$obj['images'][0]; ?>" alt="" align="left"/>
+                    <img src="<?php echo base_url().'images/object/thumb/'.$obj['images'][0]; ?>" alt="" align="left"/>
                 <?php endif; ?>
                 <!-- Краткое описание -->
                 <?php echo $obj['body']; ?>
