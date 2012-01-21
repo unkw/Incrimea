@@ -76,7 +76,9 @@ class Admin extends MX_Controller {
         // Контент
         $data['content'] = $this->config->config['default_fields'];
         // Метатеги
-        $data['metatags'] = $this->metatags->html_form_fields(); 
+        $data['metatags'] = $this->metatags->html_form_fields();
+        // Алиас
+        $data['alias'] = $this->path->get_form_field();
 
         $data['resorts'] = $this->model->get_resorts();
         // CKEditor
@@ -115,6 +117,8 @@ class Admin extends MX_Controller {
 
         // Метатеги
         $data['metatags'] = $this->metatags->html_form_fields($data['content']['meta_id']);
+        // Алиас
+        $data['alias'] = $this->path->get_form_field($data['content']['alias_id']);
         // CKeditor
         $this->editor_init();
         // Отображение
@@ -169,6 +173,7 @@ class Admin extends MX_Controller {
         else
         {
             $data['meta_id'] = $this->input->post('edit-metaid');
+            $data['alias_id'] = $this->input->post('pathid');
         }
 
         return $data;

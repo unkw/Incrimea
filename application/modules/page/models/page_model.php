@@ -14,8 +14,9 @@ class Page_Model extends CI_Model {
     public function get_pages($num, $offset)
     {
         $this->db
-            ->select('p.*, u.username')
+            ->select('p.*, a.alias, u.username')
             ->from('page p')
+            ->join('alias a', 'a.id = p.alias_id', 'left')
             ->join('users u', 'u.id = p.uid')
             ->order_by('p.created_date', 'desc')
             ->limit($num, $offset);
@@ -56,7 +57,10 @@ class Page_Model extends CI_Model {
         // Сохранение метатегов
         $data['meta_id'] = $this->metatags->create();  
 
-        $this->db->insert_batch('page', array($data));
+        $this->db->insert('page', $data);
+
+        // Сохранение алиаса
+        $this->save_path($this->db->insert_id(), $data, TRUE);
     }
 
     /** Обновить страницу */
@@ -66,7 +70,36 @@ class Page_Model extends CI_Model {
         if ( ! $this->metatags->update($data['meta_id']) )
             $data['meta_id'] = $this->metatags->create();   
 
+        // Сохранение синонима
+        $this->save_path($id, & $data);
+
         $this->db->where('id', $id)
             ->update('page', $data);
     }
+
+    /** Сохранение синонима */
+    private function save_path($id, & $data, $create = FALSE)
+    {
+        $pathdata = array(
+            'realpath' => 'page/view/'.$id,
+            'auto'     => $this->input->post('pathauto') ? 1 : 0,
+        );
+
+        // Формируем алиас
+        if (!$pathdata['auto'] && trim($this->input->post('path')))
+            $pathdata['alias'] = $this->input->post('path');
+        else
+            $pathdata['alias'] = $data['title'];
+
+        // Сохранение
+        if ( $create || !$data['alias_id'] || !$this->path->update($pathdata, $data['alias_id']) )
+            $data['alias_id'] = $this->path->create($pathdata);
+
+        // Обновить alias_id контента при создании контента
+        if ($create)
+            $this->db->update('page', array('alias_id'=>$data['alias_id']), array('id'=>$id));
+
+        return TRUE;
+    }
+
 }

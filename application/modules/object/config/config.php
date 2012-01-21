@@ -139,3 +139,4 @@ $config['thumb'] = array(
     'height' => 90
 );
 
+

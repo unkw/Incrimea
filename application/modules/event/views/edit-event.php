@@ -78,6 +78,9 @@
     </label>
 </div>
 
+<!-- Алиас -->
+<?php print $alias; ?>
+
 <input type="hidden" name="module-name" value="event">
 
 <input type="submit" value="Сохранить" />

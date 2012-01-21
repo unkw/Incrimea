@@ -14,8 +14,9 @@ class Object_Model extends CI_Model {
     public function get_list($num, $offset)
     {
         $this->db
-            ->select('o.*, u.username')
+            ->select('o.*, a.alias, u.username')
             ->from('objects o')
+            ->join('alias a', 'a.id = o.alias_id', 'left')
             ->join('users u', 'u.id = o.uid')
             ->order_by('o.created_date', 'desc')
             ->limit($num, $offset);
@@ -123,7 +124,11 @@ class Object_Model extends CI_Model {
         // Сохранение метатегов
         $data['meta_id'] = $this->metatags->create();
 
-        $this->db->insert_batch('objects', array($data));
+        // Сохранение отеля
+        $this->db->insert('objects', $data);
+
+        // Сохранение алиаса
+        $this->save_path($this->db->insert_id(), $data, TRUE);
     }
 
     /** Обновить отель */
@@ -136,8 +141,37 @@ class Object_Model extends CI_Model {
         if ( ! $this->metatags->update($data['meta_id']) )
             $data['meta_id'] = $this->metatags->create();
 
+        // Сохранение синонима
+        $this->save_path($id, & $data);
+
         $this->db->where('id', $id)
             ->update('objects', $data);
+    }
+
+    /** Сохранение синонима */
+    private function save_path($id, & $data, $create = FALSE)
+    {
+        $pathdata = array(
+            'realpath' => 'object/view/'.$id,
+            'auto'     => $this->input->post('pathauto') ? 1 : 0,
+        );
+
+        // Формируем алиас
+        $resort = $this->db->get_where('resorts', array('id' => $data['resort_id']))->row_array();
+        if (!$pathdata['auto'] && trim($this->input->post('path')))
+            $pathdata['alias'] = $this->input->post('path');
+        else
+            $pathdata['alias'] = 'object/'.$resort['name'].'/'.$data['title'];
+
+        // Сохранение
+        if ( $create || !$data['alias_id'] || !$this->path->update($pathdata, $data['alias_id']) )
+            $data['alias_id'] = $this->path->create($pathdata);
+
+        // Обновить alias_id контента при создании контента
+        if ($create)
+            $this->db->update('objects', array('alias_id'=>$data['alias_id']), array('id'=>$id));
+
+        return TRUE;
     }
 
     /** Преобразование данных для сохранения отеля */

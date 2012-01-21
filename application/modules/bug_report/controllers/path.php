@@ -3,8 +3,6 @@
 class Path extends MX_Controller {
      
     private $module_name;
-
-    private $suffix = '.html';
     
     function __construct()
     {
@@ -56,32 +54,27 @@ class Path extends MX_Controller {
     /** Создать url синоним */
     public function create($data)
     {
-        $data['alias'] = $this->clear_alias($data);
+        $data['alias'] = $this->clear_alias($data['alias']);
         return $this->model->create($data);
     }
 
     /** Обновить url синоним */
     public function update($data, $alias_id)
     {
-        $data['alias'] = $this->clear_alias($data);
+        $data['alias'] = $this->clear_alias($data['alias']);
         return $this->model->update($data, $alias_id);
     }
 
     /** Очистка алиаса от недопустимых символов */
-    private function clear_alias($data)
+    private function clear_alias($alias)
     {
-        $alias = $data['alias'];
         // Транслитерация
         $this->load->helper('text');
         $alias = strtolower(convert_accented_characters($alias));
 
         // Очистка
-        $alias = preg_replace('/[\*\"\?\&\'\(\)\.\,\:\«\»]+/', '', $alias);
+        $alias = preg_replace('/[\*\"\?\&\'\(\)]+/', '', $alias);
         $alias = preg_replace('/\s+/', '_', $alias);
-
-        if ($data['auto'])
-            $alias .= $this->suffix;
-
         return $alias;
     }
 }

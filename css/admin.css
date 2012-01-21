@@ -41,6 +41,10 @@ input[type="submit"],
 input[type="button"] {
     cursor: pointer;
 }
+a {
+    color: #2F6FAB;
+}
+
 /*
     Global styles
 */
@@ -142,6 +146,9 @@ ul.menu li ul.submenu li a:hover {
 }
 #content table tbody {
     background: #EEE;
+}
+#content table tbody tr:hover {
+    background: #dff1ff;
 }
 #content table td.pager {
     text-align: center;

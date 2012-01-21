@@ -9,7 +9,7 @@
 
         <div class="content-items">
             <!-- Название -->
-            <h3><a href="<?php echo base_url().'object/view/'.$obj['id']; ?>" title=""><?php echo $obj['title']; ?></a></h3>
+            <h3><a href="<?php echo base_url().$obj['alias']; ?>" title=""><?php echo $obj['title']; ?></a></h3>
             <!-- Место отдыха -->
             <div><?php echo $obj['resort']; ?></div>
             <div>
