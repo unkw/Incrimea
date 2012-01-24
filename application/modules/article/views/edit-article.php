@@ -68,6 +68,8 @@
     </label>
 </div>
 
+<?php print $alias; ?>
+
 <input type="hidden" name="module-name" value="article">
 
 <input type="submit" value="Сохранить" />

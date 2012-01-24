@@ -4,7 +4,7 @@ class Index extends MX_Controller {
     // Приставка для методов, предназначенных для отображения
     private $pre = 'action_';
 
-    private $autoload_modules = array('user', 'metatags');
+    private $autoload_modules = array('user', 'metatags', 'path');
     
     function __construct()
     {
@@ -91,7 +91,6 @@ class Index extends MX_Controller {
     function load_module_page()
     {
         // Получаем реальный адрес, если задан синином пути
-        $this->common->load_module('path');
         $path = $this->path->get_real_path();
 
         // Модуль

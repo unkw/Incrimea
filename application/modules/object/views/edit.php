@@ -204,6 +204,9 @@
     </label>
 </div>
 
+<!-- Алиас -->
+<?php print $alias; ?>
+
 <!-- Номерной фонд -->
 <div>
     <div><label class="title-label">Номерной фонд</label></div>

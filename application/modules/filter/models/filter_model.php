@@ -16,8 +16,9 @@ class Filter_Model extends CI_Model {
         );
 
         /** Основные данные отелей */
-        $this->db->select('o.id, o.title, o.body, o.images, o.price, o.infrastructure, r.name as resort')
+        $this->db->select('o.id, o.title, o.body, o.images, o.price, o.infrastructure, a.alias, r.name as resort')
             ->from('objects o')
+            ->join('alias a', 'a.id = o.alias_id', 'left')
             ->join('resorts r', 'o.resort_id = r.id')
             ->join('obj_beachs b', 'o.beach_id = b.id');
 
@@ -65,8 +66,9 @@ class Filter_Model extends CI_Model {
         );
 
         /** Основные данные статей */
-        $this->db->select('a.id, a.title, a.preview, a.image_src, a.image_desc, r.name as resort')
+        $this->db->select('a.id, a.title, a.preview, a.image_src, a.image_desc, al.alias, r.name as resort')
             ->from('articles a')
+            ->join('alias al', 'al.id = a.alias_id', 'left')
             ->join('resorts r', 'a.resort_id = r.id')
             ->where($where);
 
@@ -92,8 +94,9 @@ class Filter_Model extends CI_Model {
         );
 
         /** Основные данные статей */
-        $this->db->select('e.id, e.title, e.preview, e.image_src, e.image_desc, r.name as resort')
+        $this->db->select('e.id, e.title, e.preview, e.image_src, e.image_desc, a.alias, r.name as resort')
             ->from('events e')
+            ->join('alias a', 'a.id = e.alias_id', 'left')
             ->join('resorts r', 'e.resort_id = r.id')
             ->where($where);
 

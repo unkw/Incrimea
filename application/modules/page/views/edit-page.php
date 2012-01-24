@@ -32,6 +32,8 @@
     </label>
 </div>
 
+<?php print $alias; ?>
+
 <input type="submit" value="Сохранить" />
 
 <?php echo form_close(); ?>

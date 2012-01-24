@@ -81,6 +81,8 @@ class Admin extends MX_Controller {
         $data['obj'] = $this->config->config['default_fields'];
         // Метатеги
         $data['metatags'] = $this->metatags->html_form_fields();
+        // Алиас
+        $data['alias'] = $this->path->get_form_field();
 
         // CKEditor
         $this->editor_init();
@@ -115,12 +117,14 @@ class Admin extends MX_Controller {
         $data = $this->all_fields();
         // Основные данные
         $data['obj'] = $this->model->get($id);
-        // Метатеги
-        $data['metatags'] = $this->metatags->html_form_fields($data['obj']['meta_id']);
 
         if (!$data['obj'])
             show_404();
 
+        // Метатеги
+        $data['metatags'] = $this->metatags->html_form_fields($data['obj']['meta_id']);
+        // Алиас
+        $data['alias'] = $this->path->get_form_field($data['obj']['alias_id']);
         // CKeditor
         $this->editor_init();
         // Отображение
@@ -202,6 +206,7 @@ class Admin extends MX_Controller {
         else
         {
             $data['meta_id'] = $this->input->post('edit-metaid');
+            $data['alias_id'] = $this->input->post('pathid');
         }
 
         return $data;

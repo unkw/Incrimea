@@ -5,8 +5,5 @@ class Admin_Model extends CI_Model {
         parent::__construct();
     }
     
-    public function index()
-    {
-    }
     
 }

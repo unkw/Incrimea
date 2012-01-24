@@ -14,8 +14,9 @@ class Event_Model extends CI_Model {
     public function get_pages($num, $offset)
     {
         $this->db
-            ->select('e.*, u.username')
+            ->select('e.*, a.alias, u.username')
             ->from('events e')
+            ->join('alias a', 'a.id = e.alias_id', 'left')
             ->join('users u', 'u.id = e.uid')
             ->order_by('e.created_date', 'desc')
             ->limit($num, $offset);
@@ -65,7 +66,10 @@ class Event_Model extends CI_Model {
         // Сохранение метатегов
         $data['meta_id'] = $this->metatags->create(); 
 
-        $this->db->insert_batch('events', array($data));
+        $this->db->insert('events', $data);
+
+        // Сохранение алиаса
+        $this->save_path($this->db->insert_id(), $data, TRUE);
     }
 
     /** Обновить страницу */
@@ -78,8 +82,37 @@ class Event_Model extends CI_Model {
         if ( ! $this->metatags->update($data['meta_id']) )
             $data['meta_id'] = $this->metatags->create();
 
+        // Сохранение синонима
+        $this->save_path($id, & $data);
+
         $this->db->where('id', $id)
             ->update('events', $data);
+    }
+
+    /** Сохранение синонима */
+    private function save_path($id, & $data, $create = FALSE)
+    {
+        $pathdata = array(
+            'realpath' => 'event/view/'.$id,
+            'auto'     => $this->input->post('pathauto') ? 1 : 0,
+        );
+
+        // Формируем алиас
+        $resort = $this->db->get_where('resorts', array('id' => $data['resort_id']))->row_array();
+        if (!$pathdata['auto'] && trim($this->input->post('path')))
+            $pathdata['alias'] = $this->input->post('path');
+        else
+            $pathdata['alias'] = 'event/'.$resort['name'].'/'.$data['title'];
+
+        // Сохранение
+        if ( $create || !$data['alias_id'] || !$this->path->update($pathdata, $data['alias_id']) )
+            $data['alias_id'] = $this->path->create($pathdata);
+
+        // Обновить alias_id контента при создании контента
+        if ($create)
+            $this->db->update('events', array('alias_id'=>$data['alias_id']), array('id'=>$id));
+
+        return TRUE;
     }
 
     /** Перевод строки вида "dd-mm-yyyy" в timestamp */

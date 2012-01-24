@@ -10,8 +10,33 @@ $(function(){
     /** Инициализация загрузчика изображений для отеля */
     ObjectGallery.init();
 
+    /** Инициализация обработчиков для элементов модуля Path */
+    Path.init();
+
 });
 
+/** Модуль Path */
+var Path = {
+
+    parentForm: null,
+
+    init: function(){
+
+        var self = this;
+
+        this.parentForm = $('form#edit-content');
+
+        // Обработка чекбокска "Автоматический синоним"
+        this.parentForm.find('input[name="pathauto"]').change(function(){
+            self.parentForm.find('input[name="path"]')
+                .prop('disabled', $(this).prop('checked') ? true : false);
+        });
+
+    }
+    
+};
+
+/** Загрузка изображений */
 var ObjectGallery = {
 
     inputFile: null,

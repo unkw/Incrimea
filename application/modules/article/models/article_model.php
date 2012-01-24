@@ -14,8 +14,9 @@ class Article_Model extends CI_Model {
     public function get_pages($num, $offset)
     {
         $this->db
-            ->select('a.*, u.username')
+            ->select('a.*, al.alias, u.username')
             ->from('articles a')
+            ->join('alias al', 'al.id = a.alias_id', 'left')
             ->join('users u', 'u.id = a.uid')
             ->order_by('a.created_date', 'desc')
             ->limit($num, $offset);
@@ -56,7 +57,10 @@ class Article_Model extends CI_Model {
         // Сохранение метатегов
         $data['meta_id'] = $this->metatags->create();    
 
-        $this->db->insert_batch('articles', array($data));
+        $this->db->insert('articles', $data);
+
+        // Сохранение алиаса
+        $this->save_path($this->db->insert_id(), $data, TRUE);
     }
 
     /** Обновить страницу */
@@ -66,8 +70,36 @@ class Article_Model extends CI_Model {
         if ( ! $this->metatags->update($data['meta_id']) )
             $data['meta_id'] = $this->metatags->create();
 
-        $this->db->where('id', $id)
-            ->update('articles', $data);
+        // Сохранение синонима
+        $this->save_path($id, & $data);
+        
+        $this->db->where('id', $id)->update('articles', $data);
+    }
+
+    /** Сохранение синонима */
+    private function save_path($id, & $data, $create = FALSE)
+    {
+        $pathdata = array(
+            'realpath' => 'article/view/'.$id,
+            'auto'     => $this->input->post('pathauto') ? 1 : 0,
+        );
+
+        // Формируем алиас
+        $resort = $this->db->get_where('resorts', array('id' => $data['resort_id']))->row_array();
+        if (!$pathdata['auto'] && trim($this->input->post('path')))
+            $pathdata['alias'] = $this->input->post('path');
+        else
+            $pathdata['alias'] = 'article/'.$resort['name'].'/'.$data['title'];
+
+        // Сохранение
+        if ( $create || !$data['alias_id'] || !$this->path->update($pathdata, $data['alias_id']) )
+            $data['alias_id'] = $this->path->create($pathdata);
+
+        // Обновить alias_id контента при создании контента
+        if ($create)
+            $this->db->update('articles', array('alias_id'=>$data['alias_id']), array('id'=>$id));
+
+        return TRUE;
     }
 
     /** Ресайз изображения и создание его превьюшки */

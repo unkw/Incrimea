@@ -42,7 +42,7 @@
 	</div><!-- #middle-->
 
 	<div id="footer">
-            <a href="user/login">Вход</a>
+            <a href="<?php echo base_url();?>user/login">Вход</a>
 	</div><!-- #footer -->
 
 </div><!-- #wrapper -->
