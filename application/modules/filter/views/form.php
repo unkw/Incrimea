@@ -36,6 +36,8 @@
             <label>От </label><input type="text" name="p-min" size="3" value="<?php echo $params['price_min']; ?>" autocomplete="off" />
             <label>До </label><input type="text" name="p-max" size="3" value="<?php echo $params['price_max']; ?>" autocomplete="off" />
         </div>
+
+        <div id="slider-price-range"></div>
     </div>
 
     <!-- Пляж -->
@@ -118,17 +120,54 @@
 
     <?php endif; ?> <!-- END Дополнительные фильтры для отелей -->
 
-    <h4>Места отдыха</h4>
-    <?php foreach ($resorts as $r): ?>
-    <div>
-        <label>
-            <input type="checkbox" name="resorts[]" value="<?php echo $r['url_name']; ?>"
-            <?php if (in_array($r['url_name'], $params['resorts'])) echo 'checked="checked"'; ?>
-            />
-            <?php echo $r['name']; ?>
-        </label>
+    <!-- Места отдыха -->
+    <h4>Выберите местарасположение</h4>
+
+    <div class="resorts-selected">
+        
     </div>
-    <?php endforeach; ?>
+    
+    <a class="small-map" href="#crimea-map" title="Выберите место отдыха"></a>
+
+    <div style="display: none">
+        <div id="crimea-map">
+
+            <div class="map">
+
+            </div>
+
+            <div class="resorts">
+                <ul>
+                <?php foreach ($resorts as $r) : ?>
+                    <li>
+                        <label for="resort-<?php echo $r['url_name']; ?>">
+                        <?php
+                            $data = array(
+                                    'name'    => 'resorts[]',
+                                    'id'      => 'resort-' . $r['url_name'],
+                                    'value'   => $r['url_name'],
+                                    'checked' => in_array($r['url_name'], $params['resorts']),
+                                    'autocomplete' => 'off'
+                                );
+                            echo form_checkbox($data);
+                            echo $r['name'];
+                        ?>
+                        </label>
+                    </li>
+                <?php endforeach; ?>
+                </ul>
+
+                <div class="buttons">
+                    <input type="button" value="Добавить" id="resorts-add" />
+                    <a href="#" id="resorts-select" >Выбрать все</a>
+                    <a href="#" id="resorts-reset" >Отменить выделение</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <input type="submit" value="Показать" />
+
+    <a href="<?php echo base_url(); ?>" >Сбросить</a>
 <?php echo form_close(); ?>

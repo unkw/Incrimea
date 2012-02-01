@@ -9,7 +9,7 @@ class Filter extends MX_Controller {
     // Допустимые типы контента
     var $allow_types = array('objects', 'events', 'articles');
     // Параметры GET запроса
-    private $params;
+    private $params = NULL;
     
     function __construct()
     {
@@ -20,22 +20,19 @@ class Filter extends MX_Controller {
         $this->load->model($this->module_name.'/'.$this->module_name.'_model');
         $model = $this->module_name.'_model';
         $this->model = $this->$model;
+
+        // Все GET параметры проверенные на XSS
+        $this->params = $this->input->get(NULL, TRUE);
     }
 
     /** Главная страницы фильтров */
     function action_index()
     {
-        // Все GET параметры проверенные на XSS
-        $this->params = $this->input->get(NULL, TRUE);
-
         // Проверка на GET параметров на валидность
         if (!$this->check_params())
             redirect('filter');
 
         $this->theme->setVar('title', 'Отдых в Крыму');
-
-        /** Форма фильтров */
-        $this->theme->setVar('filters', $this->filter->form());
 
         /** Содержимое контента */
         $data = array(
@@ -135,7 +132,6 @@ class Filter extends MX_Controller {
                 $data['beachs'] = $this->model->get_field('beachs');
 
                 $data['params'] = array_merge($data['params'], $this->obj_form_params());
-
                 break;
         }
 

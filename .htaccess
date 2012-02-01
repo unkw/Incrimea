@@ -6,5 +6,5 @@ AddCharset utf-8 *
 </IfModule>
 
 RewriteEngine on
-RewriteCond $1 !^(index\.php|images|js|asset|css|robots\.txt|favicon\.ico)
+RewriteCond $1 !^(index\.php|images|js|asset|css|PIE\.php|robots\.txt|favicon\.ico)
 RewriteRule ^(.*)$ index.php/$1 [L]

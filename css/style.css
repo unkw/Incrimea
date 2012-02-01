@@ -1,94 +1,102 @@
-* {
-	margin: 0;
-	padding: 0;
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+    margin:0;
+    padding:0;
 }
-body {
-	font: 12px/18px Arial, Tahoma, Verdana, sans-serif;
-	width: 100%;
+table {
+    border-collapse: collapse;
+    border-spacing:0;
 }
+fieldset,img {
+    border:0;
+}
+address,caption,cite,code,dfn,em,strong,th,var {
+    font-style:normal;
+    font-weight:normal;
+}
+ol,ul {
+    list-style:none;
+}
+caption,th {
+    text-align:left;
+}
+h1,h2,h3,h4,h5,h6 {
+    font-size:100%;
+    font-weight:bold;
+}
+h1 {font-size: 24px;}
+h2 {font-size: 21px;}
+h3 {font-size: 18px;}
+h4 {font-size: 16px;}
 a {
-	color: blue;
-	outline: none;
-	text-decoration: underline;
+    color: #00529B;
 }
 a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
-p {
-	margin: 0 0 18px;
+q:before,q:after {
+    content:'';
 }
-img {
-	border: none;
+abbr,acronym {
+    border:0;
 }
-input {
-	vertical-align: middle;
+input[type="submit"],
+input[type="button"] {
+    cursor: pointer;
 }
+
 #wrapper {
-	width: 1000px;
-	margin: 0 auto;
+    width: 1000px;
+    margin: 0 auto;
+    font-size: 14px;
 }
 
 
 /* Header
 -----------------------------------------------------------------------------*/
 #header {
-	height: 150px;
-	background-color: #B5E3FF;
+    height: 150px;
+    background-color: #B5E3FF;
 }
 
 
 /* Middle
 -----------------------------------------------------------------------------*/
 #middle {
-	width: 100%;
-	height: 1%;
-	position: relative;
+    width: 100%;
+    height: 1%;
+    position: relative;
 }
 #middle:after {
-	content: '.';
-	display: block;
-	clear: both;
-	visibility: hidden;
-	height: 0;
+    content: '.';
+    display: block;
+    clear: both;
+    visibility: hidden;
+    height: 0;
 }
 #container {
-	width: 100%;
-	float: left;
-	overflow: hidden;
+    width: 100%;
+    float: left;
+    overflow: hidden;
 }
 #content {
-	padding: 0 240px 0 200px;
+    padding: 0 0 0 270px;
 }
-
 
 /* Sidebar Left
 -----------------------------------------------------------------------------*/
 #sideLeft {
-	float: left;
-	width: 180px;
-	margin-left: -100%;
-	position: relative;
-	background: #efefef;
+    float: left;
+    width: 250px;
+    margin-left: -100%;
+    position: relative;
+    background: #efefef;
 }
-
-
-/* Sidebar Right
------------------------------------------------------------------------------*/
-#sideRight {
-	float: left;
-	margin-right: -3px;
-	width: 220px;
-	margin-left: -220px;
-	position: relative;
-	background: #efefef;
-}
-
 
 /* Footer
 -----------------------------------------------------------------------------*/
 #footer {
-	height: 100px;
-	background: #BFF08E;
+    height: 100px;
+    background: #BFF08E;
 }
 
 /* GLOBAL CLASSES
@@ -107,19 +115,129 @@ input {
 .content ul {
     list-style: none;
 }
-
 .content .field-label {
     font-weight: bold;
 }
-
 .content .content-items {
-    margin: 10px 0;
+    margin: 0 0 10px 0;
 }
 .content .content-items p {
     margin: 0;
 }
 
-/* ФИЛЬТРЫ */
+/* Фильтры */
 #filters-form .filters-title {
     display: block;
+}
+#filters-form .small-map {
+    cursor: pointer;
+    display: block;
+    width: 209px;
+    height: 136px;
+    background: url(images/crimea.jpg) 0 0 no-repeat;
+}
+
+.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1.1em; }
+.ui-widget .ui-widget { font-size: 1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1em; }
+.ui-widget-content { border: 1px solid #dddddd; background: #eeeeee; color: #333333; }
+.ui-widget-content a { color: #333333; }
+.ui-widget-header { border: 1px solid #e78f08; background: #f6a828; color: #ffffff; font-weight: bold; }
+.ui-widget-header a { color: #ffffff; }
+
+/* Interaction states
+----------------------------------*/
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #cccccc; background: #f6f6f6; font-weight: bold; color: #1c94c4; }
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #1c94c4; text-decoration: none; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #fbcb09; background: #fdf5ce url(images/ui-bg_glass_100_fdf5ce_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #c77405; }
+.ui-state-hover a, .ui-state-hover a:hover { color: #c77405; text-decoration: none; }
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #fbd850; background: #ffffff; font-weight: bold; color: #eb8f00; }
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #eb8f00; text-decoration: none; }
+.ui-widget :active { outline: none; }
+
+/* Interaction Cues
+----------------------------------*/
+
+.ui-slider { position: relative; text-align: left; }
+.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
+.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
+
+.ui-slider-horizontal { height: .8em; }
+.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
+.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
+.ui-slider-horizontal .ui-slider-range-min { left: 0; }
+.ui-slider-horizontal .ui-slider-range-max { right: 0; }
+
+#filters-form #slider-price-range {
+    height: 5px;
+    margin: 5px;
+}
+#filters-form #slider-price-range .ui-slider-handle {
+    width: 10px;
+    height: 10px;
+    margin-top: 1px;
+    cursor: pointer;
+    border-radius: 8px;
+    behavior: url(/PIE.php);
+}
+
+/* Карты Крыма */
+#crimea-map {
+    width: 800px;
+    height: 350px;
+    padding: 0;
+    margin: 0;
+}
+#crimea-map .map {
+    width: 450px;
+    border: 1px solid #999;
+    height: 100%;
+    float: left;
+    position: relative;
+}
+#crimea-map .map .resort-label {
+    width: 12px;
+    height: 12px;
+    border: 1px solid #333;
+    cursor: pointer;
+    background: #4F8A10;
+    border-radius: 8px;
+    margin: 5px;
+    behavior: url(/PIE.php);
+}
+#crimea-map .map .resort-label:hover {
+    background: #cd0a0a;
+}
+#crimea-map .map .resort-tooltip {
+    position: absolute;
+    font-size: 12px;
+}
+#crimea-map .map .checked-label {
+    background: #cd0a0a;
+}
+#crimea-map .map #label-yalta {
+    left: 200px;
+    bottom: 5px;
+}
+#crimea-map .resorts {
+}
+#crimea-map .resorts ul {
+    position: relative;
+    list-style: none;
+    left: 15px;
+    top: 10px;
+}
+#crimea-map .resorts ul li {
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    width: 110px;
+    margin: 0;
+    padding: 0;
+}
+#crimea-map .resorts .buttons {
+    position: relative;
+    margin: 20px 0 0 15px;
+    left: 15px;
 }

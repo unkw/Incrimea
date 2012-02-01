@@ -48,7 +48,6 @@ class Index extends MX_Controller {
         $this->theme->setVar('is_front', TRUE);
 
         $this->common->load_module('filter');
-
         // Контент
         $this->filter->action_index();
     }

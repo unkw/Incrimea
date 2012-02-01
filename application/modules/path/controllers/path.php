@@ -76,7 +76,7 @@ class Path extends MX_Controller {
         $alias = strtolower(convert_accented_characters($alias));
 
         // Очистка
-        $alias = preg_replace('/[\*\"\?\&\'\(\)\.\,\:\«\»]+/', '', $alias);
+        $alias = preg_replace('/[^a-z 0-9~%.:_\-\/]/i', '', $alias);
         $alias = preg_replace('/\s+/', '_', $alias);
 
         if ($data['auto'])

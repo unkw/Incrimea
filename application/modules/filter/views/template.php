@@ -49,7 +49,7 @@
 
         <div class="content-items">
             <!-- Название -->
-            <h3><a href="<?php echo base_url().'article/view/'.$a['id']; ?>" title=""><?php echo $a['title']; ?></a></h3>
+            <h3><a href="<?php echo base_url().$a['alias']; ?>" title=""><?php echo $a['title']; ?></a></h3>
             <!-- Место отдыха -->
             <div><?php echo $a['resort']; ?></div>
             <div>

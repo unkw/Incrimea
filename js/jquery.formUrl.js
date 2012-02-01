@@ -14,7 +14,8 @@
     // Create some defaults, extending them with any options that were provided
     var settings = $.extend( {
       checkboxSep: ',',
-      bindChange: []
+      bindChange: [],
+      withoutSubmit: []
     }, options);
 
     return this.each(function() {
@@ -29,13 +30,13 @@
             });
         }
 
-        /** Отправка формы фильтров по сабмиту */
+        // Отправка формы фильтров по сабмиту
         $(this).submit(function(){
             submitForm.call(this);
             return false;
         });
 
-        // Ссылка, позволяющая программным путем отправить форму
+        /** Ссылка, позволяющая программным путем отправить форму */
         var programSubmit = $('<a href="#">Показать</a>').click(function(){
             submitForm.call(self);
             return false;
@@ -45,11 +46,14 @@
         // Флаг, существует ли setTimeout
         $(this).data('hider', null);
         
-        /** Отправка формы по клику */
+        // Отправка формы по клику
         $(this).find('input[type="checkbox"]').change(function(){
+            if ( $.inArray($(this).attr('name'), settings.withoutSubmit) != -1)
+                return;
             addCustomSubmitLink.call(this, self);
         });
 
+        // Добавление ссылки "Показать" при вводе символов
         $(this).find('input[type="text"]').keyup(function(){
             addCustomSubmitLink.call(this, self);
         });
@@ -66,13 +70,13 @@
         $(this).parent().parent().append(programSubmit);
         hider = setTimeout(function(){
             programSubmit.hide();
-        }, 3000);
+        }, 4000);
         $(form).data('hider', hider);
     }
 
     /** Отправка формы */
     function submitForm() {
-        
+
         var getArr = [];
 
         /** Тип контента */
@@ -80,9 +84,10 @@
         if (type.length)
             getArr.push(type.attr('name') + '=' + type.val());
 
-        /** Обработке полей формы */
+        /** URL параметры */
         var params = {};
 
+        // Обработка полей
         $(this).find('input').filter(function(){
 
             var name = null;
@@ -111,11 +116,12 @@
          
         });
 
+        // Формируем url
         for (var key in params) {
             getArr.push(key + '=' + params[key].join(settings.checkboxSep));
         }
 
-        /** Отправляем GET запрос */
+        // Отправляем GET запрос
         document.location = $(this).attr('action') + ((getArr.length) ? '?' : '') + getArr.join('&');
     }
 

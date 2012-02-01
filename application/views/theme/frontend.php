@@ -7,9 +7,14 @@
 <?php print $metatags; ?>
 
 <link rel="stylesheet" href="<?php print base_url(); ?>css/style.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="<?php print base_url(); ?>css/colorbox.css" type="text/css" media="screen, projection" />
 <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/jquery-ui.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.formUrl.js"></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>js/scripts.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.colorbox.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/filters.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/resortInstance.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/init.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 </head>
 
@@ -30,14 +35,10 @@
 		</div><!-- #container-->
 
 		<div class="sidebar" id="sideLeft">
-                    <?php if ($filters): ?>
-                        <?php print $filters; ?>
+                    <?php if ($left): ?>
+                        <?php print $left; ?>
                     <?php endif; ?>
 		</div><!-- .sidebar#sideLeft -->
-
-		<div class="sidebar" id="sideRight">
-			<strong>Right Sidebar:</strong> Integer velit. Vestibulum nisi nunc, accumsan ut, vehicula sit amet, porta a, mi. Nam nisl tellus, placerat eget, posuere eget, egestas eget, dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In elementum urna a eros. Integer iaculis. Maecenas vel elit.
-		</div><!-- .sidebar#sideRight -->
 
 	</div><!-- #middle-->
 
