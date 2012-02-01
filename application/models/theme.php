@@ -14,6 +14,8 @@ class Theme extends CI_Model {
     var $body_classes = array();
     /** По-умолчанию метатеги включены */
     var $metatags_disable = FALSE;
+    /** Строка GET */
+    var $query_string = null;
     /** Регионы */
     var $regions = array(
         'left' => array(),
