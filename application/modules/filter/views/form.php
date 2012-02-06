@@ -33,8 +33,8 @@
     <h4>Цена</h4>
     <div class="filters-box">
         <div>
-            <label>От </label><input type="text" name="p-min" size="3" value="<?php echo $params['price_min']; ?>" autocomplete="off" />
-            <label>До </label><input type="text" name="p-max" size="3" value="<?php echo $params['price_max']; ?>" autocomplete="off" />
+            <label>От <input type="text" name="p-min" size="3" value="<?php echo $params['price_min']; ?>" autocomplete="off" /></label>
+            <label>До <input type="text" name="p-max" size="3" value="<?php echo $params['price_max']; ?>" autocomplete="off" /></label>
         </div>
 
         <div id="slider-price-range"></div>
@@ -47,7 +47,7 @@
     </div>
 
     <a href="#" class="filters-title">Тип пляжа</a>
-    <div>
+    <div class="filters-box">
         <?php foreach ($beachs as $bch) : ?>
             <div><label>
                 <input type="checkbox" name="beachs[]" value="<?php echo $bch['url_name']; ?>"
@@ -93,7 +93,7 @@
             </label></div>
         <?php endforeach; ?>
     </div>
-    
+
     <a href="" class="filters-title">Развлечения и спорт</a>
     <div class="filters-box">
         <?php foreach ($entment as $ent) : ?>
@@ -124,9 +124,9 @@
     <h4>Выберите местарасположение</h4>
 
     <div class="resorts-selected">
-        
+
     </div>
-    
+
     <a class="small-map" href="#crimea-map" title="Выберите место отдыха"></a>
 
     <div style="display: none">

@@ -1,9 +1,10 @@
 <?php
 class Index extends MX_Controller {
 
-    // Приставка для методов, предназначенных для отображения
+    /** Action prefix */
     private $pre = 'action_';
 
+    /** Autoloaded modules */
     private $autoload_modules = array('user', 'metatags', 'path');
     
     function __construct()
@@ -12,10 +13,11 @@ class Index extends MX_Controller {
         foreach ($this->autoload_modules as $m)
             $this->common->load_module($m);
 
+        // Обновление сессии
         $this->session_update();
     }
 
-    /** Точка входа на сайт */
+    /** Point of entry to the site */
     function index()
     {
         // Роутер
@@ -25,11 +27,11 @@ class Index extends MX_Controller {
             $this->theme->render();
     }
 
-    /** Определяем страницу какой сущности отобразить */
+    /** Router action */
     function load_page_by_path()
     {
         $this->theme->set_breadcrumb('Главная', '');
-
+        
         if ($this->uri->segment(1))
             if ($this->is_admin_url())
                 if ($this->auth->is_admin())
@@ -42,7 +44,7 @@ class Index extends MX_Controller {
             $this->load_main_page();
     }
 
-    /** Отображение главной страницы */
+    /** Display home page */
     function load_main_page()
     {
         $this->theme->setVar('is_front', TRUE);
@@ -52,54 +54,44 @@ class Index extends MX_Controller {
         $this->filter->action_index();
     }
 
-    /** Отображение административных страниц */
+    /** Display administration pages */
     function load_admin_page()
     {
-        // Библиотека сообщений системы
+        // Library system messages
         $this->load->library('message');
-        // Шаблон админ. панели
+        // Template admin panel
         $this->theme->tpl = 'theme/backend.php';
-        // Выключить метатеги для страниц админки
+        // Disable metatags for admin pages
         $this->theme->metatags_disable = TRUE;
-        // "Хлебная крошка" на главную страницу админ. панели
+        // Set breadcrumb to main admin panel page
         $this->theme->set_breadcrumb('Админ. панель', 'admin');
 
         $path = array_splice($this->uri->segment_array(), 1);
-        
-        // Модуль
+        // Module
         $module = isset($path[0]) ? $path[0] : 'admin';
-
-        // Метод
+        // Method
         $method = $this->pre . (isset($path[1]) ? $path[1] : 'index');
-
-        // Аргументы
+        // Arguments
         $params = array_splice($path, 2);
-
-        $this->common->load_controller($module, 'admin');
-
-        // Добавляем хлебные крошки
-//        $this->theme->setBreadcrumb('');
         
+        $this->common->load_controller($module, 'admin');
         if (method_exists($this->admin, $method))
             call_user_func_array(array($this->admin, $method), $params);
         else
             show_404();
     }
 
-    /** Отображение страниц модулей */
+    /** Display module pages */
     function load_module_page()
     {
-        // Получаем реальный адрес, если задан синином пути
+        // Get real path
         $path = $this->path->get_real_path();
-
-        // Модуль
+        // Module
         $module = $path[0];
         $this->common->load_module($module);
-
-        // Метод
+        // Method
         $method = $this->pre . (isset($path[1]) ? $path[1] : 'index');
-        
-        // Аргументы
+        // Arguments
         $params = array_splice($path, 2);
 
         if (method_exists($this->$module, $method))
@@ -109,7 +101,7 @@ class Index extends MX_Controller {
     }
 
     /**
-     * Определяет является ли путь путем в административную панель
+     * Detection admin url
      * @return bool 
      */
     function is_admin_url()
@@ -117,7 +109,7 @@ class Index extends MX_Controller {
         return $this->uri->segment(1) == 'admin' ? TRUE : FALSE;
     }
 
-    /** Обновление сессий */
+    /** Update session */
     function session_update()
     {
         if ($this->session->userdata('last_activity') < time() - 300)

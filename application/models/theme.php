@@ -15,7 +15,7 @@ class Theme extends CI_Model {
     /** По-умолчанию метатеги включены */
     var $metatags_disable = FALSE;
     /** Строка GET */
-    var $query_string = null;
+    var $filters_qs = null;
     /** Регионы */
     var $regions = array(
         'left' => array(),
@@ -211,6 +211,7 @@ class Theme extends CI_Model {
         $this->load->view($this->tpl, $this->vars);
 
         // Debug information
-        $this->output->enable_profiler(TRUE);
+        if ($this->auth->is_admin())
+            $this->output->enable_profiler(TRUE);
     }
 }

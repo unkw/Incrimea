@@ -15,6 +15,7 @@
     var settings = $.extend( {
       checkboxSep: ',',
       bindChange: [],
+      bindFilters: [], // Фильтры для всех типов контента
       withoutSubmit: []
     }, options);
 
@@ -25,7 +26,7 @@
         /** Отправка формы фильтров на onchange */
         for (var i = 0; i < settings.bindChange.length; i++) {
             $(this).find('[name="'+settings.bindChange[i]+'"]').change(function(){
-                submitForm.call(self);
+                submitForm.call(self, true);
                 return false;
             });
         }
@@ -37,7 +38,7 @@
         });
 
         /** Ссылка, позволяющая программным путем отправить форму */
-        var programSubmit = $('<a href="#">Показать</a>').click(function(){
+        var programSubmit = $('<a href="#" class="program-submit">Показать</a>').click(function(){
             submitForm.call(self);
             return false;
         });
@@ -75,7 +76,9 @@
     }
 
     /** Отправка формы */
-    function submitForm() {
+    function submitForm(onChange) {
+
+        onChange = onChange || false;
 
         var getArr = [];
 
@@ -91,6 +94,9 @@
         $(this).find('input').filter(function(){
 
             var name = null;
+
+            if (onChange && $.inArray($(this).attr('name'), settings.bindFilters) == -1)
+                return;
 
             /** Обработка чекбоксов */
             if ($(this).attr('type') == 'checkbox') {

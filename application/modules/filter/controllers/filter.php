@@ -32,41 +32,52 @@ class Filter extends MX_Controller {
         if (!$this->check_params())
             redirect('filter');
 
-        $this->theme->setVar('title', 'Отдых в Крыму');
+        /** Шаблон контента по-умолчанию */
+        $tpl = 'main.php';
 
+        /** Заголовок */
+        $this->theme->setVar('title', 'Отдых в Крыму');
         /** Содержимое контента */
         $data = array(
             'objects' => false,
             'articles' => false,
             'events' => false,
         );
-
-        /** Показывать только один из типов контента */
+        // Показывать только один из типов контента
         if (isset($this->params['type']))
         {
             $this->load->library('pagination');
-            switch ($this->params['type']) {
-                case 'objects': $data['objects'] = $this->get_content_by_type('objects', TRUE); break;
-                case 'events': $data['events'] = $this->get_content_by_type('events', TRUE); break;
-                case 'articles': $data['articles'] = $this->get_content_by_type('articles', TRUE); break;
+            switch ($this->params['type'])
+            {
+                case 'objects':
+                    $data['objects'] = $this->get_content_by_type('objects', TRUE);
+                    $tpl = 'objects.php';
+                    break;
+                case 'events':
+                    $data['events'] = $this->get_content_by_type('events', TRUE);
+                    $tpl = 'events.php';
+                    break;
+                case 'articles': 
+                    $data['articles'] = $this->get_content_by_type('articles', TRUE);
+                    $tpl = 'articles.php';
+                    break;
             }
         }
-        /** Все типы контента вместе */
+        // Показать все типы контента вместе
         else
         {
             $data['objects'] = $this->get_content_by_type('objects');
-            $data['events'] = $this->get_content_by_type('events');      
             $data['articles'] = $this->get_content_by_type('articles');
         }
-        
-        /** Пагинация */
+        /** Пейджер */
         $data['pager'] = $this->pager;
-
-        $this->theme->setVar('content', $this->load->view($this->module_name.'/template.php', $data, TRUE));
+        /** Контент */
+        $this->theme->setVar('content', $this->load->view($this->module_name.'/'.$tpl, $data, TRUE));
     }
 
+
     /** Получить список заданного контента в зависимости от типа (отели, статьи или события) */
-    function get_content_by_type($type, $pagination = FALSE, $per_page = 3)
+    function get_content_by_type($type, $pagination = FALSE, $per_page = 5)
     {
         $config = array();
         // Кол-во отелей на страницу
@@ -141,7 +152,6 @@ class Filter extends MX_Controller {
     /** Параметры GET запроса для отелей */
     private function obj_form_params()
     {
-
         return array(
             'room' => isset($this->params['room']) ? explode(',', $this->params['room']) : array(),
             'infr' => isset($this->params['infr']) ? explode(',', $this->params['infr']) : array(),

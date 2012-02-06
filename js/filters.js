@@ -13,6 +13,7 @@ var FilterManager = {
         /** Отправка формы фильтров */
         $(this.formId).formUrl({
             bindChange: ['type'],
+            bindFilters: ['resorts[]'],
             withoutSubmit: ['resorts[]']
         });
 
@@ -61,8 +62,10 @@ var FilterManager = {
             step: 5,
             values: [pMin.val() ? pMin.val() : 0, pMax.val() ? pMax.val() : 800],
             slide: function(e, ui) {
-                pMin.val(ui.values[0]);
-                pMax.val(ui.values[1]);
+                var max = $(this).slider('option', 'max');
+                if (ui.values[0] < 0) ui.values[0] = 0;
+                if (ui.values[0]!=pMin.val()) pMin.val(ui.values[0]);
+                if (ui.values[1]!=max || pMax.val()!='') pMax.val(ui.values[1]);
             }
         });
 

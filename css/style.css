@@ -99,7 +99,7 @@ input[type="button"] {
     background: #BFF08E;
 }
 
-/* GLOBAL CLASSES
+/* Глобальные классы
 -----------------------------------------------------------------------------*/
 .success {
     color: green;
@@ -109,6 +109,20 @@ input[type="button"] {
 }
 .clear {
     clear: both;
+}
+
+/* Контент главной страницы */
+#content .filter-column {
+    width: 50%;
+    float: left;
+}
+
+#objects-column {
+    
+}
+
+#articles-column {
+    
 }
 
 /* Контент */
@@ -125,7 +139,7 @@ input[type="button"] {
     margin: 0;
 }
 
-/* Фильтры */
+/* Форма фильтров */
 #filters-form .filters-title {
     display: block;
 }
@@ -136,52 +150,39 @@ input[type="button"] {
     height: 136px;
     background: url(images/crimea.jpg) 0 0 no-repeat;
 }
-
-.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1.1em; }
-.ui-widget .ui-widget { font-size: 1em; }
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1em; }
-.ui-widget-content { border: 1px solid #dddddd; background: #eeeeee; color: #333333; }
-.ui-widget-content a { color: #333333; }
-.ui-widget-header { border: 1px solid #e78f08; background: #f6a828; color: #ffffff; font-weight: bold; }
-.ui-widget-header a { color: #ffffff; }
-
-/* Interaction states
-----------------------------------*/
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #cccccc; background: #f6f6f6; font-weight: bold; color: #1c94c4; }
-.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #1c94c4; text-decoration: none; }
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #fbcb09; background: #fdf5ce url(images/ui-bg_glass_100_fdf5ce_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #c77405; }
-.ui-state-hover a, .ui-state-hover a:hover { color: #c77405; text-decoration: none; }
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #fbd850; background: #ffffff; font-weight: bold; color: #eb8f00; }
-.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #eb8f00; text-decoration: none; }
-.ui-widget :active { outline: none; }
-
-/* Interaction Cues
-----------------------------------*/
-
-.ui-slider { position: relative; text-align: left; }
-.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
-.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
-
-.ui-slider-horizontal { height: .8em; }
-.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
-.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
-.ui-slider-horizontal .ui-slider-range-min { left: 0; }
-.ui-slider-horizontal .ui-slider-range-max { right: 0; }
-
 #filters-form #slider-price-range {
     height: 5px;
-    margin: 5px;
+    margin: 10px 5px 5px 5px;
+    background: #FFF;
 }
 #filters-form #slider-price-range .ui-slider-handle {
-    width: 10px;
-    height: 10px;
-    margin-top: 1px;
+    width: 6px;
+    height: 15px;
     cursor: pointer;
-    border-radius: 8px;
+    margin: 0 0 0 -4px;
+    background: #4F8A10;
+    top: -.4em;
+    border-radius: 3px;
     behavior: url(/PIE.php);
 }
+#filters-form #slider-price-range .ui-state-default {
+    border: 1px solid #333;
+}
+#filters-form #slider-price-range .ui-widget-header {
+    background: #189DE1;
+}
+#filters-form .filters-box div {
+    position: relative;
+}
+#filters-form .program-submit {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: 1px solid #CCC;
+}
 
-/* Карты Крыма */
+/* Карта Крыма */
 #crimea-map {
     width: 800px;
     height: 350px;
@@ -218,8 +219,6 @@ input[type="button"] {
 #crimea-map .map #label-yalta {
     left: 200px;
     bottom: 5px;
-}
-#crimea-map .resorts {
 }
 #crimea-map .resorts ul {
     position: relative;
