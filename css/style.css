@@ -177,9 +177,13 @@ input[type="button"] {
 #filters-form .program-submit {
     display: block;
     position: absolute;
-    right: 0;
+    right: 0px;
     top: 0;
-    border: 1px solid #CCC;
+    margin: -3px 0 0 0;
+    border: 1px solid #16960B;
+    padding: 3px 7px;
+    background: #FFF;
+    border-radius: 3px;
 }
 
 /* Карта Крыма */

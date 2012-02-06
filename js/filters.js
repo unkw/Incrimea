@@ -66,7 +66,8 @@ var FilterManager = {
                 if (ui.values[0] < 0) ui.values[0] = 0;
                 if (ui.values[0]!=pMin.val()) pMin.val(ui.values[0]);
                 if (ui.values[1]!=max || pMax.val()!='') pMax.val(ui.values[1]);
-            }
+            },
+            stop: function(e, ui) {pMax.change();}
         });
 
     }

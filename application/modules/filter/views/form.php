@@ -3,26 +3,17 @@
     <h4>Тип контента</h4>
     <div>
         <label>
-            <input type="radio" name="type" value="objects"
-            <?php if ('objects' == $params['type']) echo 'checked="checked"'; ?>
-                />
-            Отели
+        <?php echo form_radio(array('name'=>'type','value'=>'objects','checked'=>'objects' == $params['type'])); ?> Отели
         </label>
     </div>
     <div>
         <label>
-            <input type="radio" name="type" value="events"
-            <?php if ('events' == $params['type']) echo 'checked="checked"'; ?>
-                />
-            События
+        <?php echo form_radio(array('name'=>'type','value'=>'articles','checked'=>'articles' == $params['type'])); ?> Статьи
         </label>
     </div>
     <div>
         <label>
-            <input type="radio" name="type" value="articles"
-            <?php if ('articles' == $params['type']) echo 'checked="checked"'; ?>
-                />
-            Статьи
+        <?php echo form_radio(array('name'=>'type','value'=>'events','checked'=>'events' == $params['type'])); ?> События
         </label>
     </div>
 

@@ -55,7 +55,7 @@
         });
 
         // Добавление ссылки "Показать" при вводе символов
-        $(this).find('input[type="text"]').keyup(function(){
+        $(this).find('input[type="text"]').change(function(){
             addCustomSubmitLink.call(this, self);
         });
     });
@@ -69,6 +69,7 @@
         if (hider) clearTimeout(hider);
         programSubmit.show();
         $(this).parent().parent().append(programSubmit);
+
         hider = setTimeout(function(){
             programSubmit.hide();
         }, 4000);
