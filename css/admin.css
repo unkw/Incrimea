@@ -36,9 +36,30 @@ q:before,q:after {
 abbr,acronym {
     border:0;
 }
-input[type="text"] {
-    
+input[type="text"], textarea, select, input[type="submit"], input[type="button"], input[type="file"] {
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #a3d7ff;
+    box-shadow: 0px 0px 6px #CCC;
+    background: #f0f9ff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #f0f9ff 0%, #ffffff 99%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f0f9ff), color-stop(99%,#ffffff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #f0f9ff 0%,#ffffff 99%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f0f9ff 0%,#ffffff 99%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f0f9ff 0%,#ffffff 99%); /* IE10+ */
+    background: linear-gradient(top,  #f0f9ff 0%,#ffffff 99%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f9ff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
 }
+input[type="text"]:focus, textarea:focus, select:focus {
+    border: 1px solid #FCD083;
+    box-shadow: 0px 0px 6px #FFDB9C;
+}
+#edit-content input[type="button"]:hover,
+#edit-content input[type="submit"]:hover {
+    border: 1px solid #FCD083;
+    box-shadow: 0px 0px 6px #FFDB9C;
+}
+
 input[type="submit"],
 input[type="button"] {
     cursor: pointer;
@@ -51,7 +72,7 @@ a:hover {
     text-decoration: underline;
 }
 #container {
-    width: 1000px;
+    width: 1260px;
     margin: 0 auto;
     position: relative;
     font-family: 'Andika', sans-serif;
@@ -245,6 +266,9 @@ a:hover {
 #edit-content {
     clear: both;
 }
+#edit-content input[type="text"], textarea {
+    width: 100%;
+}
 #content h3 {
     font-size: 17px;
     font-weight: bold;
@@ -253,7 +277,13 @@ a:hover {
     width: 100%;
     border-collapse: collapse;
 }
-#content table thead {
+#content .error {
+    color: red;
+    font-size: 12px;
+}
+
+/** Content table lists */
+.content-list thead {
     background: #8b8b8b; /* for non-css3 browsers */
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#5F8AAD', endColorstr='#364F63'); /* for IE */
     background: -webkit-gradient(linear, left top, left bottom, from(#5F8AAD), to(#364F63)); /* for webkit browsers */
@@ -261,23 +291,17 @@ a:hover {
     background: -o-linear-gradient(top, #5F8AAD,  #364F63); /* Opera */
     color: #EEE;
 }
-#content table thead th,
-#content table td {
+.content-list thead th,
+.content-list td {
     border: 1px solid #FFF;
     padding: 2px 5px;
 }
-#content table tbody {
+.content-list tbody {
     background: #EEE;
 }
-#content table td.pager {
+.content-list td.pager {
     text-align: center;
 }
-#content .error {
-    color: red;
-    font-size: 12px;
-}
-
-/** Content table lists */
 .content-list td {
     text-align: center;
 }
@@ -299,6 +323,46 @@ a:hover {
 }
 .content-list .actions {
     width: 60px;
+}
+
+/** Content edit tables */
+#edit-content .left-col {
+    vertical-align: top;
+    width: 450px;
+}
+#edit-content .right-col {
+    vertical-align: top;
+    padding: 0 0 0 30px;
+}
+#edit-content input[name="edit-image-desc"] {
+    width: 250px;
+}
+#edit-content .field-wrapper {
+    clear: both;
+}
+#edit-content #img-container {
+    position: relative;
+}
+#edit-content #img-container img {
+    border: 2px solid #CCC;
+    padding: 1px;
+}
+#edit-content #img-remove {
+    position: absolute;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/off.png) 0 0 no-repeat;
+    top: -5px;
+    left: 96px;
+}
+#edit-content input[type="button"],
+#edit-content input[type="submit"] {
+    margin: 10px 5px 0 0;
+}
+#edit-content input[type="button"]:focus,
+#edit-content input[type="submit"]:focus {
+    background: #FFF;
 }
 
 
