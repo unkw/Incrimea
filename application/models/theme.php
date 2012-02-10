@@ -61,6 +61,8 @@ class Theme extends CI_Model {
         $this->vars['filters'] = FALSE;
         // "Хлебные крошки"
         $this->vars['breadcrumb'] = array();
+        // Подменю
+        $this->vars['submenu'] = array();
     }
 
     /** Назначить переменную в шаблоне */
@@ -161,6 +163,10 @@ class Theme extends CI_Model {
     /** Генерация регионов для блоков ($left, $content_top, etc.) */
     function generate_regions()
     {
+        // Выключить генерацию блоков для админ страниц
+        if ( $this->path->is_admin_url() )
+            return FALSE;
+
         // Вставляем блоки в регионы
         foreach ($this->blocks as $name => $data)
         {
@@ -187,6 +193,33 @@ class Theme extends CI_Model {
 
             $this->setVar($region, implode('', $html));
         }
+
+        return TRUE;
+    }
+
+    function add_submenu_item($items)
+    {
+        foreach ($items as $item)
+            $this->vars['submenu'][] = $item;
+    }
+
+    /** Html подменю */
+    function get_submenu_html()
+    {
+        $menu = $this->vars['submenu'];
+        if ( ! $menu )
+            return FALSE;
+
+        $html = array('<ul id="submenu">');
+
+        foreach ($menu as $data) {
+
+            $html[] = '<li><a href="'.base_url().$data['href'].'">'.$data['text'].'</a></li>';
+        }
+
+        $html[] = '</ul>';
+
+        return implode('', $html);
     }
 
     /** Отображение шаблона */
@@ -203,6 +236,9 @@ class Theme extends CI_Model {
 
         // Хлебные крошки
         $this->vars['breadcrumb'] = $this->get_breadcrumb_html();
+
+        // Подменю
+        $this->vars['submenu'] = $this->get_submenu_html();
 
         // Регионы
         $this->generate_regions();

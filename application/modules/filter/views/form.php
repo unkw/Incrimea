@@ -34,18 +34,17 @@
     <!-- Пляж -->
     <h4>Расстояние до пляжа</h4>
     <div class="filters-box">
-        <div><label>До </label> <input type="text" name="distance" size="3" value="<?php echo $params['distance']; ?>"/>м</div>
+        <div><label>До <input type="text" name="distance" size="3" autocomplete="off" value="<?php echo $params['distance']; ?>"/>м</label></div>
     </div>
 
     <a href="#" class="filters-title">Тип пляжа</a>
     <div class="filters-box">
         <?php foreach ($beachs as $bch) : ?>
-            <div><label>
-                <input type="checkbox" name="beachs[]" value="<?php echo $bch['url_name']; ?>"
-                <?php if (in_array($bch['url_name'], $params['beachs'])) echo 'checked="checked"'; ?>
-                />
-                <?php echo $bch['name']; ?>
-            </label></div>
+        <div>
+            <label>
+            <?php echo form_checkbox(array('name'=>'beachs[]','autocomplete'=>'off','value'=>$bch['url_name'],'checked'=>in_array($bch['url_name'], $params['beachs']))); ?> <?php echo $bch['name']; ?>
+            </label>
+        </div>
         <?php endforeach; ?>
     </div>
 

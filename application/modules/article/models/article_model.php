@@ -73,7 +73,7 @@ class Article_Model extends CI_Model {
         // Сохранение синонима
         $this->save_path($id, & $data);
         
-        $this->db->where('id', $id)->update('articles', $data);
+        $this->db->update('articles', $data, array('id' => $id));
     }
 
     /** Сохранение синонима */

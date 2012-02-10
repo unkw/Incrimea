@@ -14,7 +14,7 @@
 
 <div>
     <div><label class="title-label">Заголовок</label></div>
-    <input type="text" name="edit-title" size="50" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
+    <input type="text" name="edit-title" size="80" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
 </div>
 
 <!-- Метатеги -->

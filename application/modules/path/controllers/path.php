@@ -53,32 +53,44 @@ class Path extends MX_Controller {
         return $this->load->view($this->module_name . '/form_field.php', $data, TRUE);
     }
 
+    /**
+     * Detection admin url
+     * @return bool
+     */
+    public function is_admin_url()
+    {
+        return $this->uri->segment(1) == 'admin' ? TRUE : FALSE;
+    }
+
     /** Создать url синоним */
     public function create($data)
     {
-        $data['alias'] = $this->clear_alias($data);
+        $data['alias'] = $this->valid_alias($data);
         return $this->model->create($data);
     }
 
     /** Обновить url синоним */
     public function update($data, $alias_id)
     {
-        $data['alias'] = $this->clear_alias($data);
+        $data['alias'] = $this->valid_alias($data);
         return $this->model->update($data, $alias_id);
     }
 
     /** Очистка алиаса от недопустимых символов */
-    private function clear_alias($data)
+    private function valid_alias($data)
     {
-        $alias = $data['alias'];
-        // Транслитерация
+//        print_r($data['alias']);
+        $alias = explode('/', $data['alias']);
+
+        $valid_alias = array();
         $this->load->helper('text');
-        $alias = strtolower(convert_accented_characters($alias));
 
-        // Очистка
-        $alias = preg_replace('/[^a-z 0-9~%.:_\-\/]/i', '', $alias);
-        $alias = preg_replace('/\s+/', '_', $alias);
+        foreach ($alias as $a) {
 
+            $valid_alias[] = strtolower(url_title(convert_accented_characters($a)));
+        }
+
+        $alias = implode('/', $valid_alias);
         if ($data['auto'])
             $alias .= $this->suffix;
 

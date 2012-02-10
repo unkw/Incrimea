@@ -201,12 +201,13 @@ input[type="button"] {
     position: relative;
 }
 #crimea-map .map .resort-label {
+    display: block;
     width: 12px;
     height: 12px;
     border: 1px solid #333;
     cursor: pointer;
     background: #4F8A10;
-    border-radius: 8px;
+/*    border-radius: 8px;*/
     margin: 5px;
     behavior: url(/PIE.php);
 }
@@ -222,7 +223,7 @@ input[type="button"] {
 }
 #crimea-map .map #label-yalta {
     left: 200px;
-    bottom: 5px;
+    top: 25px;
 }
 #crimea-map .resorts ul {
     position: relative;

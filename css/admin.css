@@ -5,7 +5,6 @@
     Description:
         Purpose of the stylesheet follows.
 */
-
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
     margin:0;
     padding:0;
@@ -37,109 +36,214 @@ q:before,q:after {
 abbr,acronym {
     border:0;
 }
+input[type="text"] {
+    
+}
 input[type="submit"],
 input[type="button"] {
     cursor: pointer;
 }
-/*
-    Global styles
-*/
-
-.red {
-    color: red;
+a {
+    color: #E84310;
+    text-decoration: none;
 }
-.green {
-    color: green;
+a:hover {
+    text-decoration: underline;
 }
-.yellow {
-    color: #FFE680;
-}
-
-/*
-    End of Global styles
-*/
-
-
 #container {
     width: 1000px;
     margin: 0 auto;
+    position: relative;
+    font-family: 'Andika', sans-serif;
 }
 
-#menu {
-	margin:5px 0 0 0;
-	border-radius:20px 20px 0 0;
-    width: 100%;
-    height: 33px;
-    background: #44b3d7;
-}
+/** Menu */
+#nav {
+    margin: 5px 0 0 0;
+    padding: 7px 6px 0;
+    line-height: 100%;
+    border-radius: 1em 1em 0 0;
 
-ul.menu {
-    margin: 0 0 0 0px;
-}
+    -webkit-border-radius: 1em 1em 0 0;
+    -moz-border-radius: 1em 1em 0 0;
 
-ul.menu li {
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    background: #8b8b8b; /* for non-css3 browsers */
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#5F8AAD', endColorstr='#364F63'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#5F8AAD), to(#364F63)); /* for webkit browsers */
+    background: -moz-linear-gradient(top, #5F8AAD,  #364F63); /* for firefox 3.6+ */
+    background: -o-linear-gradient(top, #5F8AAD,  #364F63); /* Opera */
+
+    border: solid 1px #6d6d6d;
+    font-size: 15px;
+}
+#nav li {
+    margin: 0 5px;
+    padding: 0 0 8px;
     float: left;
-	position:relative;
+    position: relative;
+    list-style: none;
 }
-
-.first-item:hover{border-radius:20px 0 0 0;}
-
-ul.menu li a {
-    display: block;
-    color: #FFF;
-    padding: 5px 30px 8px;
+#nav a {
+    font-weight: bold;
+    color: #e7e5e5;
     text-decoration: none;
-}
-
-ul.menu li a:hover {
-    background: #3695b4;
-}
-
-ul.menu li:hover ul.submenu {
     display: block;
-	
+    padding:  8px 20px;
+    margin: 0;
+    border-radius: 0.7em;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
 }
+#nav .current a, #nav li:hover > a {
+    background: #d1d1d1; /* for non-css3 browsers */
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebebeb', endColorstr='#a1a1a1'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#a1a1a1)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #ebebeb,  #a1a1a1); /* for firefox 3.6+ */
+    background: -o-linear-gradient(top,  #ebebeb,  #a1a1a1); 
 
-ul.menu li ul.submenu {
-    position: absolute;
-    top: 33px;
-	left:10px;
+    color: #444;
+    border-top: solid 1px #f8f8f8;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .8);
+}
+#nav ul li:hover a, #nav li:hover li a {
+    background: none;
+    border: none;
+    color: #666;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+#nav ul a:hover {
+    background: #0399d4 !important; /* for non-css3 browsers */
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#04acec', endColorstr='#0186ba'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#04acec), to(#0186ba)) !important; /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #04acec,  #0186ba) !important; /* for firefox 3.6+ */
+    background: -o-linear-gradient(top,  #04acec,  #0186ba) !important; /* for Opera */
+
+    color: #fff !important;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+}
+#nav ul {
+    background: #ddd; /* for non-css3 browsers */
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#cfcfcf'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#cfcfcf)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #fff,  #cfcfcf); /* for firefox 3.6+ */
+    background: -o-linear-gradient(top,  #fff,  #cfcfcf); /* for Opera */
+
     display: none;
+    margin: 0;
+    padding: 0;
+    width: 185px;
+    position: absolute;
+    top: 35px;
+    left: 0;
+    border: solid 1px #b4b4b4;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+}
+#nav li:hover > ul {
+    display: block;
+}
+#nav ul li {
+    float: none;
+    margin: 0;
+    padding: 0;
+}
+#nav ul a {
+    font-weight: normal;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, .9);
+}
+#nav ul ul {
+    left: 181px;
+    top: -3px;
+}
+#nav ul li:first-child > a {
+    border-radius: 9px 9px 0 0;
+}
+#nav ul li:last-child > a {
+    border-radius: 0 0 9px 9px;
+}
+#nav:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
 }
 
-ul.menu li ul li{
-	float:none !important;
+/** Breadcrumb */
+#breadcrumb {
+    
+}
+/** Submenu */
+#submenu {
+    float: right;
+}
+#submenu li {
+    float: left;
+    margin: 0 6px 6px 0;
+}
+#submenu li a {
+    display: block;
+    border-radius: 0.5em 0.5em 0.5em 0.5em;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font: 14px/100% Arial,Helvetica,sans-serif;
+    margin: 0 2px;
+    outline: medium none;
+    padding: 0.3em 1.5em 0.35em;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    vertical-align: baseline;
+    background: #F47A20;
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAA51A', endColorstr='#F47A20'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#FAA51A), to(#F47A20)); /* for webkit browsers */
+    background: -moz-linear-gradient(center top , #FAA51A, #F47A20) repeat scroll 0 0 transparent;
+    background: -o-linear-gradient(top , #FAA51A, #F47A20) repeat scroll 0 0 transparent;
+    border: 1px solid #DA7C0C;
+    color: #FEF4E9;
+}
+#submenu li a:hover {
+    background: #F47A20;
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#F88E11', endColorstr='#F06015'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#F88E11), to(#F06015)); /* for webkit browsers */
+    background: -moz-linear-gradient(center top , #F88E11, #F06015) repeat scroll 0 0 transparent;
+    background: -o-linear-gradient(top , #F88E11, #F06015) repeat scroll 0 0 transparent;
 }
 
-ul.menu li ul.submenu li a{
-    color: #fff;
-    padding: 3px 15px;
-    background: #44b3d7;
-}
-
-ul.menu li ul.submenu li a:hover {
-    color: #FFF;
-    background: #3695b4;
-}
-
+/** Content */
 #content {
     border: 1px solid #44b3d7;
-	border-radius: 0 0 20px 20px;
-	border-top:none;
+    border-radius: 0 0 10px 10px;
+    border-top:none;
     min-height: 400px;
     height: auto !important;
     height: 400px;
     padding: 10px 20px;
-	background:#e8f3f8; 
-	font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
-	font-size:14px;
+    background: #FFF;
+    font-size:14px;
 }
 
 #content h1 {
-	padding: 5px 0 0;
+    padding: 5px 0 0;
     font-size: 18px;
     font-weight: bold;
-	color:#565758;
+    color:#565758;
+}
+#edit-content {
+    clear: both;
 }
 #content h3 {
     font-size: 17px;
@@ -147,23 +251,20 @@ ul.menu li ul.submenu li a:hover {
 }
 #content table {
     width: 100%;
+    border-collapse: collapse;
 }
 #content table thead {
-    background: #44b3d7;
-	color:#333839;
+    background: #8b8b8b; /* for non-css3 browsers */
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#5F8AAD', endColorstr='#364F63'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#5F8AAD), to(#364F63)); /* for webkit browsers */
+    background: -moz-linear-gradient(top, #5F8AAD,  #364F63); /* for firefox 3.6+ */
+    background: -o-linear-gradient(top, #5F8AAD,  #364F63); /* Opera */
+    color: #EEE;
 }
-
-
-#content  a{
-	color:#4946cd;
-	padding:3px 0;
-	text-decoration:none;
-}
-
 #content table thead th,
 #content table td {
-    border: 3px solid #FFF;
-    padding: 2px 10px;
+    border: 1px solid #FFF;
+    padding: 2px 5px;
 }
 #content table tbody {
     background: #EEE;
@@ -175,6 +276,31 @@ ul.menu li ul.submenu li a:hover {
     color: red;
     font-size: 12px;
 }
+
+/** Content table lists */
+.content-list td {
+    text-align: center;
+}
+.content-list .title {
+    text-align: left;
+}
+.content-list .created-date {
+    width: 65px;
+    font-size: 12px;
+}
+.content-list .status {
+    width: 30px;
+}
+.content-list .status a {
+    margin: 0 auto;
+}
+.content-list .views {
+    width: 75px;
+}
+.content-list .actions {
+    width: 60px;
+}
+
 
 /** Forms */
 #content .title-label {
@@ -216,8 +342,8 @@ ul.menu li ul.submenu li a:hover {
 /** Messages */
 .message-box {
     border: 1px solid;
-    margin: 10px 0px;
-    padding:10px 10px 10px 10px;
+    margin: 10px 0 0 0;
+    padding: 10px 10px 10px 10px;
     background-repeat: no-repeat;
     background-position: 10px center;
 }
@@ -238,26 +364,41 @@ ul.menu li ul.submenu li a:hover {
     color: #D8000C;
     background-color: #FFBABA;
 }
-
 .clear {
     clear: both;
 }
 
-.select-all{background: #44b3d7;}
-
-.button{
-	width:120px;
-	text-align:center;
-	line-height:20px;
-	vertical-align:middle;
-	margin:0 0 15px 10px;
-	display:block;
-	background:#44b3d7;
-	border-radius:5px;
-	color:#fff !important;
-	float:right;
+/** Global styles */
+.red {
+    color: red;
 }
-
-.button:hover {
-	background:#3695b4;
+.green {
+    color: green;
+}
+.yellow {
+    color: #FFE680;
+}
+.on {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/on.gif) 0 0 no-repeat;
+}
+.off {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/off.png) 0 0 no-repeat;
+}
+.edit {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/edit.png) 0 0 no-repeat;
+}
+.remove {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/remove.png) 0 0 no-repeat;
 }

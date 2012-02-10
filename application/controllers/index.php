@@ -33,7 +33,7 @@ class Index extends MX_Controller {
         $this->theme->set_breadcrumb('Главная', '');
         
         if ($this->uri->segment(1))
-            if ($this->is_admin_url())
+            if ( $this->path->is_admin_url() )
                 if ($this->auth->is_admin())
                     $this->load_admin_page();
                 else
@@ -98,15 +98,6 @@ class Index extends MX_Controller {
             call_user_func_array(array($this->$module, $method), $params);
         else
             show_404();
-    }
-
-    /**
-     * Detection admin url
-     * @return bool 
-     */
-    function is_admin_url()
-    {
-        return $this->uri->segment(1) == 'admin' ? TRUE : FALSE;
     }
 
     /** Update session */

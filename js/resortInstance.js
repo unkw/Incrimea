@@ -95,8 +95,9 @@ function ResortInstance(data) {
 
     /** Html курорта на карте */
     this.tooltip = $('<div class="resort-tooltip">'+this.name+'</div>');
-    this.html = $('<div id="label-'+this.url_name+'" class="resort-label"></div>')
-        .appendTo($(ResortManager.mapSelector)).addClass(this.checked ? 'checked-label' : '')
+    this.html = $('<a href="#" id="label-'+this.url_name+'" class="resort-label"></a>')
+        .appendTo($(ResortManager.mapSelector))
+        .addClass(this.checked ? 'checked-label' : '')
         .hover(function(){
             var pos = $(this).position();
             $(this).before(self.tooltip.css({
@@ -111,6 +112,7 @@ function ResortInstance(data) {
                 self.uncheck();
             else
                 self.check();
+            return false;
         });
 };
 

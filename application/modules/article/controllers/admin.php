@@ -21,6 +21,9 @@ class Admin extends MX_Controller {
 
         // Подгружаем конфиги модуля
         $this->load->config();
+
+        // Подменю
+        $this->theme->add_submenu_item($this->config->config['admin_submenu']);
     }
 
     function action_index()
