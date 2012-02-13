@@ -21,6 +21,27 @@
         <input type="text" name="edit-title" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
     </div>
 
+    <div>
+        <div><label class="title-label">Титульное изображение</label></div>
+
+        <input type="file" name="upload-image" />
+
+        <div id="img-container">
+            <a href="#" id="img-remove"></a>
+            <img id="img-main" src="<?php echo base_url().'images/article/thumb/'.set_value('edit-image', $content['image_src']); ?>" alt=""/>
+        </div>
+
+        <div>
+            <input type="button" id="img-upload" value="Загрузить" />
+            <span id="img-msg"></span>
+        </div>
+
+        <p><label>Описание</label></p>
+        <input type="text" name="edit-image-desc" value="<?php echo set_value('edit-image-desc', $content['image_desc']) ?>"/>
+        <input type="hidden" name="edit-image" value="<?php echo set_value('edit-image', $content['image_src']); ?>"/>
+
+    </div>
+
     <!-- Метатеги -->
     <?php print $metatags; ?>
 
@@ -57,27 +78,6 @@
 </td>
 
 <td class="right-col">
-
-    <div>
-        <div><label class="title-label">Титульное изображение</label></div>
-
-        <input type="file" name="upload-image" />
-
-        <div id="img-container">
-            <a href="#" id="img-remove"></a>
-            <img id="img-main" src="<?php echo base_url().'images/article/thumb/'.set_value('edit-image', $content['image_src']); ?>" alt=""/>
-        </div>
-
-        <p><label>Описание</label></p>
-        <input type="text" name="edit-image-desc" value="<?php echo set_value('edit-image-desc', $content['image_desc']) ?>"/>
-        <input type="hidden" name="edit-image" value="<?php echo set_value('edit-image', $content['image_src']); ?>"/>
-
-        <div>
-            <input type="button" id="img-upload" value="Загрузить" />
-            <span id="img-msg"></span>
-        </div>
-
-    </div>
 
     <div class="field-wrapper">
         <div><label class="title-label">Текст страницы</label></div>

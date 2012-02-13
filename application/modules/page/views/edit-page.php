@@ -7,33 +7,47 @@
 
 <?php echo form_open('', array('id' => 'edit-content')); ?>
 
-<div>
-    <div><label>Заголовок</label></div>
-    <input type="text" name="edit-title" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
-</div>
+<table><tbody><tr>
 
-<!-- Метатеги -->
-<?php echo $metatags; ?>
+<td class="left-col">
 
-<div>
-    <div><label>Текст страницы</label></div>
-    <?php $this->ckeditor->editor('edit-body', html_entity_decode(set_value('edit-body', $content['body']))); ?>
-</div>
+    <div class="field-wrapper">
+        <div><label class="title-label">Заголовок</label></div>
+        <input type="text" name="edit-title" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
+    </div>
 
-<div>
-    <div><label>Настройки публикации</label></div>
-    <label>
-        <input type="checkbox" name="edit-status" value="1" <?php echo set_checkbox('edit-status', '1', $content['status'] ? TRUE : FALSE); ?> />
-        Опубликовано
-    </label>
-    <label>
-        <input type="checkbox" name="edit-sticky" value="1" <?php echo set_checkbox('edit-sticky', '1', $content['sticky'] ? TRUE : FALSE); ?>/>
-        Закреплять вверху списка
-    </label>
-</div>
+    <!-- Метатеги -->
+    <?php echo $metatags; ?>
 
-<?php print $alias; ?>
+    <div class="field-wrapper">
+        <div><label class="title-label">Настройки публикации</label></div>
+        <label>
+            <input type="checkbox" name="edit-status" value="1" <?php echo set_checkbox('edit-status', '1', $content['status'] ? TRUE : FALSE); ?> />
+            Опубликовано
+        </label>
+        <label>
+            <input type="checkbox" name="edit-sticky" value="1" <?php echo set_checkbox('edit-sticky', '1', $content['sticky'] ? TRUE : FALSE); ?>/>
+            Закреплять вверху списка
+        </label>
+    </div>
 
-<input type="submit" value="Сохранить" />
+    <?php print $alias; ?>
+
+    <input type="submit" value="Сохранить" />
+    <input type="button" value="Применить" />
+    <a href="<?php echo base_url().'admin/page' ?>">Отмена</a>
+
+</td>
+
+<td class="right-col">
+
+    <div class="field-wrapper">
+        <div><label class="title-label">Текст страницы</label></div>
+        <?php $this->ckeditor->editor('edit-body', html_entity_decode(set_value('edit-body', $content['body']))); ?>
+    </div>
+
+</td>
+
+</tr></tbody></table>
 
 <?php echo form_close(); ?>

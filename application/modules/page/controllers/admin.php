@@ -22,6 +22,9 @@ class Admin extends MX_Controller {
 
         // Подгружаем конфиги модуля
         $this->load->config();
+
+        // Подменю
+        $this->theme->add_submenu_item($this->config->config['admin_submenu']);
     }
 
     function action_index()
@@ -167,5 +170,6 @@ class Admin extends MX_Controller {
         $this->ckeditor->basePath = base_url().'asset/ckeditor/';
         $this->ckeditor->config['toolbar'] = 'Full';
         $this->ckeditor->config['language'] = 'ru';
+        $this->ckeditor->config['height'] = '350';
     }
 }

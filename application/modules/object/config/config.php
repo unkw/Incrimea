@@ -42,7 +42,7 @@ $config['validation_new'] = array(
     array(
         'field' => 'edit-beach-type',
         'label' => 'Тип пляжа',
-        'rules' => 'is_natural_no_zero'
+        'rules' => 'alpha'
     ),
     array(
         'field' => 'edit-room[]',
@@ -139,4 +139,15 @@ $config['thumb'] = array(
     'height' => 90
 );
 
+// Подменю админ. страниц
+$config['admin_submenu'] = array(
+    array(
+        'text' => 'Создать объект',
+        'href' => 'admin/object/new'
+    ),
+    array(
+        'text' => 'Управлениями полями',
+        'href' => 'admin/object/fields'
+    ),
+);
 

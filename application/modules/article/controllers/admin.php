@@ -189,5 +189,6 @@ class Admin extends MX_Controller {
         $this->ckeditor->basePath = base_url().'asset/ckeditor/';
         $this->ckeditor->config['toolbar'] = 'Full';
         $this->ckeditor->config['language'] = 'ru';
+        $this->ckeditor->config['height'] = '500';
     }
 }

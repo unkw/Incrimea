@@ -305,8 +305,20 @@ a:hover {
 .content-list td {
     text-align: center;
 }
+.content-list .selected {
+    width: 12px;
+}
 .content-list .title {
     text-align: left;
+}
+.content-list .resort {
+    width: 100px;
+}
+.content-list .priority {
+    width: 70px;
+}
+.content-list .price {
+    width: 60px;
 }
 .content-list .created-date {
     width: 65px;
@@ -324,6 +336,30 @@ a:hover {
 .content-list .actions {
     width: 60px;
 }
+.content-list .on {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/on.gif) 0 0 no-repeat;
+}
+.content-list .off {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/off.png) 0 0 no-repeat;
+}
+.content-list .edit {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/edit.png) 0 0 no-repeat;
+}
+.content-list .remove {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/remove.png) 0 0 no-repeat;
+}
 
 /** Content edit tables */
 #edit-content .left-col {
@@ -337,8 +373,18 @@ a:hover {
 #edit-content input[name="edit-image-desc"] {
     width: 250px;
 }
+#edit-content input[name="edit-beach-distance"] {
+    width: 60px;
+}
 #edit-content .field-wrapper {
     clear: both;
+}
+#edit-content .checkboxes-field {
+    float: left;
+    margin-right: 25px;
+}
+#edit-content .checkboxes-field:last-child {
+    margin-right: 0;
 }
 #edit-content #img-container {
     position: relative;
@@ -353,8 +399,8 @@ a:hover {
     width: 16px;
     height: 16px;
     background: url(../css/images/off.png) 0 0 no-repeat;
-    top: -5px;
-    left: 96px;
+    top: -4px;
+    left: -2px;
 }
 #edit-content input[type="button"],
 #edit-content input[type="submit"] {
@@ -364,7 +410,13 @@ a:hover {
 #edit-content input[type="submit"]:focus {
     background: #FFF;
 }
-
+#edit-content .beach-distance {
+    float: left;
+    margin-right: 15px;
+}
+#edit-content .sub-label {
+    color: #666;
+}
 
 /** Forms */
 #content .title-label {
@@ -377,6 +429,9 @@ a:hover {
 }
 
 /** Object gallery upload images */
+#edit-gallery {
+    margin: 10px 0 0;
+}
 #edit-gallery li {
     float: left;
     margin-right: 5px;
@@ -401,6 +456,9 @@ a:hover {
 #edit-gallery li progress {
     width: 120px;
     display: block;
+}
+#edit-gallery-wrapper #upload-submit {
+    margin: 0 0 10px 0;
 }
 
 /** Messages */
@@ -441,28 +499,4 @@ a:hover {
 }
 .yellow {
     color: #FFE680;
-}
-.on {
-    display: block;
-    width: 16px;
-    height: 16px;
-    background: url(../css/images/on.gif) 0 0 no-repeat;
-}
-.off {
-    display: block;
-    width: 16px;
-    height: 16px;
-    background: url(../css/images/off.png) 0 0 no-repeat;
-}
-.edit {
-    display: block;
-    width: 16px;
-    height: 16px;
-    background: url(../css/images/edit.png) 0 0 no-repeat;
-}
-.remove {
-    display: block;
-    width: 16px;
-    height: 16px;
-    background: url(../css/images/remove.png) 0 0 no-repeat;
 }

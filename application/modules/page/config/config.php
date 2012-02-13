@@ -24,3 +24,11 @@ $config['validation_new'] = array(
         'rules' => ''
     ),
 );
+
+// Подменю админ. страниц
+$config['admin_submenu'] = array(
+    array(
+        'text' => 'Создать страницу',
+        'href' => 'admin/page/new'
+    ),
+);

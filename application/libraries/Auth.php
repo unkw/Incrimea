@@ -9,6 +9,7 @@ class Auth {
      * 2 - editor
      */
     var $admin_roles = array(1, 2);
+    private $is_admin = null;
 
     public function __construct()
     {
@@ -22,8 +23,8 @@ class Auth {
      * @param string $pass - пароль
      * @return bool
      */
-    function login($login, $pass){
-
+    function login($login, $pass)
+    {
         $query = $this->CI->db->query(''
             . 'SELECT * FROM users'
             . ' WHERE (username = ? OR email = ?) AND password = ?',
@@ -59,6 +60,9 @@ class Auth {
     {
         if ($this->loggin_in())
         {
+            if ( ! is_null($this->is_admin) )
+                return $this->is_admin;
+
             $this->CI->db
                 ->select('role_id')
                 ->from('users')
@@ -66,7 +70,7 @@ class Auth {
 
             $q = $this->CI->db->get()->row();
 
-            return in_array($q->role_id, $this->admin_roles) ? TRUE : FALSE;
+            return $this->is_admin = in_array($q->role_id, $this->admin_roles) ? TRUE : FALSE;
         }
         else
             return FALSE;

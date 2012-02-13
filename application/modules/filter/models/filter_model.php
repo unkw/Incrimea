@@ -31,8 +31,11 @@ class Filter_Model extends CI_Model {
             ->get()
             ->result_array();
 
+        // Дополнительные поля объекта (в номерах, сервис, развлечения и т.п.)
+        $addition_fields = $this->object->get_additional_fields();
+
         // Инфраструктура - все чекбоксы
-        $structure_all = $this->db->get('obj_infrastructure')->result_array();
+        $infr_all = $addition_fields['infrastructure'];
 
         /** Преобразование данных */
         foreach ($data as &$obj)
@@ -43,7 +46,7 @@ class Filter_Model extends CI_Model {
             /** Инфраструктура */
             $obj['infrastructure'] = $obj['infrastructure'] ? json_decode($obj['infrastructure']) : array();
             $_structure = array();
-            foreach ($structure_all as $s)
+            foreach ($infr_all as $s)
             {
                 $index = array_search($s['url_name'], $obj['infrastructure']);
                 if ($index !== FALSE)

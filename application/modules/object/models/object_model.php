@@ -1,6 +1,9 @@
 <?php
 class Object_Model extends CI_Model {
     
+    /** Дополнительные поля */
+    private $additional_fields = null;
+
     public function __construct() {
         parent::__construct();
     }
@@ -14,8 +17,9 @@ class Object_Model extends CI_Model {
     public function get_list($num, $offset)
     {
         $this->db
-            ->select('o.*, a.alias, u.username')
+            ->select('o.*, a.alias, u.username, r.name as resort')
             ->from('objects o')
+            ->join('resorts r', 'r.id = o.resort_id')
             ->join('alias a', 'a.id = o.alias_id', 'left')
             ->join('users u', 'u.id = o.uid')
             ->order_by('o.created_date', 'desc')
@@ -33,40 +37,61 @@ class Object_Model extends CI_Model {
             ->from('resorts')
             ->order_by('name', 'asc');
 
-        $q = $this->db->get();
-
-        return $q->result_array();
+        return $this->db->get()->result_array();
     }
 
-    /** Получить список регионов */
-    public function get_regions()
+    /** Дополнительные поля (тип, сервис, инфраструктура и т.д.) */
+    public function get_addition_fields()
     {
-        $this->db->select('*')
-            ->from('regions')
-            ->order_by('name', 'asc');
+        if ( ! is_null($this->additional_fields) )
+            return $this->additional_fields;
 
-        $q = $this->db->get();
+        $fields = $this->db->select('*')
+            ->from('obj_fields')->get()->result_array();
 
-        return $q->result_array();
+        $data = array(
+            'types' => array(),
+            'beachs' => array(),
+            'room' => array(),
+            'infrastructure' => array(),
+            'service' => array(),
+            'entertainment' => array(),
+            'for_children' => array(),
+        );
+        foreach ($fields as $row) {
+
+            switch ($row['field_id']) {
+
+                case 1: $data['beachs'][] = $row; break;
+                case 2: $data['room'][] = $row; break;
+                case 3: $data['infrastructure'][] = $row; break;
+                case 4: $data['entertainment'][] = $row; break;
+                case 5: $data['service'][] = $row; break;
+                case 6: $data['for_children'][] = $row; break;
+                case 7: $data['types'][] = $row; break;
+            }
+        }
+
+        return $this->additional_fields = $data;
     }
 
-    /** Получить список пунктов поля */
-    public function get_field($field, $where = FALSE)
+    /** Получить полные данные json полей по url идентификатору */
+    public function value_from_additional_field($field, $json)
     {
-        if (is_array($where) && !$where)
-            return array();
+        $data = $this->get_addition_fields();
 
-        $prefix = 'obj_';
+        $output = array();
 
-        $this->db->select('*')
-            ->from($prefix.$field)
-            ->order_by('name', 'asc');
+        if (isset($data[$field]))
+        {
+            foreach ($data[$field] as $row)
+            {
+                if (in_array($row['url_name'], $json))
+                    $output[] = $row;
+            }
+        }
 
-        $this->db->where_in('url_name', $where);
-
-        $q = $this->db->get();
-
-        return $q->result_array();
+        return $output;
     }
 
     /** Получить основные данные отеля для редактирования */
@@ -98,17 +123,16 @@ class Object_Model extends CI_Model {
             'o.published' => 1,
         );
 
-        $this->db->select('o.*, r.name as resort, reg.name as region, t.name as type, b.name as beach')
+        $this->db->select('o.*, r.name as resort, f1.name as type, f2.name as beach')
             ->from('objects o')
             ->join('resorts r', 'r.id = o.resort_id')
-            ->join('regions reg', 'reg.id = o.region_id')
-            ->join('obj_types t', 't.id = o.type_id')
-            ->join('obj_beachs b', 'b.id = o.beach_id')
+            ->join('obj_fields f1', 'f1.url_name = o.type_id')
+            ->join('obj_fields f2', 'f2.url_name = o.beach_id')
+            ->where_in('f1.field_id', array(1, 7))
+            ->where_in('f2.field_id', array(1, 7))
             ->where($where);
 
-        $q = $this->db->get();
-
-        $data = $q->row_array();
+        $data = $this->db->get()->row_array();
 
         $data = $this->convert_data_to_view($data);
 
@@ -136,7 +160,7 @@ class Object_Model extends CI_Model {
     {
         // Преобразование данных
         $data = $this->convert_data_to_save($data);
-
+        
         // Сохранение метатегов
         if ( ! $this->metatags->update($data['meta_id']) )
             $data['meta_id'] = $this->metatags->create();
@@ -177,6 +201,7 @@ class Object_Model extends CI_Model {
     /** Преобразование данных для сохранения отеля */
     private function convert_data_to_save($data)
     {
+        print_r($data); die;
         /** Сохраняем значения чекбоксов  в формате json */
         $data['room'] = json_encode($data['room'] ? $data['room'] : array());
         $data['infrastructure'] = json_encode($data['infrastructure'] ? $data['infrastructure'] : array());

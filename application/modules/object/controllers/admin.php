@@ -21,6 +21,9 @@ class Admin extends MX_Controller {
 
         // Подгружаем конфиги модуля
         $this->load->config();
+
+        // Подменю
+        $this->theme->add_submenu_item($this->config->config['admin_submenu']);
     }
 
     public function action_index()
@@ -228,22 +231,23 @@ class Admin extends MX_Controller {
 
         // Места отдыха
         $data['resorts'] = $this->model->get_resorts();
-        // Регионы
-        $data['regions'] = $this->model->get_regions();
-        // Типы объектов
-        $data['types'] = $this->model->get_field('types');
-        // Типы объектов
-        $data['beachs'] = $this->model->get_field('beachs');
-        // Типы объектов
-        $data['room'] = $this->model->get_field('room');
-        // Инфраструктура
-        $data['infrastructure'] = $this->model->get_field('infrastructure');
-        // Сервис
-        $data['service'] = $this->model->get_field('service');
-        // Развлечения и спорт
-        $data['entertainment'] = $this->model->get_field('entertainment');
-        // Для детей
-        $data['for_children'] = $this->model->get_field('for_children');
+
+        $data = array_merge($data, $this->model->get_addition_fields());
+        
+//        // Типы объектов
+//        $data['types'] = $this->model->get_field('types');
+//        // Типы объектов
+//        $data['beachs'] = $this->model->get_field('beachs');
+//        // В номерах
+//        $data['room'] = $this->model->get_field('room');
+//        // Инфраструктура
+//        $data['infrastructure'] = $this->model->get_field('infrastructure');
+//        // Сервис
+//        $data['service'] = $this->model->get_field('service');
+//        // Развлечения и спорт
+//        $data['entertainment'] = $this->model->get_field('entertainment');
+//        // Для детей
+//        $data['for_children'] = $this->model->get_field('for_children');
 
         return $data;
     }

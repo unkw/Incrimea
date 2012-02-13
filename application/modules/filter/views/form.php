@@ -86,7 +86,7 @@
 
     <a href="" class="filters-title">Развлечения и спорт</a>
     <div class="filters-box">
-        <?php foreach ($entment as $ent) : ?>
+        <?php foreach ($entertainment as $ent) : ?>
             <div><label>
                 <input type="checkbox" name="entment[]" value="<?php echo $ent['url_name']; ?>"
                 <?php if (in_array($ent['url_name'], $params['entment'])) echo 'checked="checked"'; ?>
@@ -98,7 +98,7 @@
 
     <a href="" class="filters-title">Для детей</a>
     <div class="filters-box">
-        <?php foreach ($child as $ch) : ?>
+        <?php foreach ($for_children as $ch) : ?>
             <div><label>
                 <input type="checkbox" name="child[]" value="<?php echo $ch['url_name']; ?>"
                 <?php if (in_array($ch['url_name'], $params['child'])) echo 'checked="checked"'; ?>

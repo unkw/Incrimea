@@ -13,7 +13,7 @@
     <tbody>
         <?php foreach ($content as $c) : ?>
         <tr>
-            <td class="select-all"><input type="checkbox" title="Выделить все страницы" /></td>
+            <td class="selected"><input type="checkbox" title="Выделить все страницы" /></td>
             <td class="title"><a href="<?php echo base_url().$c['alias']; ?>"><?php print $c['title']; ?></a></td>
             <td class="created-date"><?php print date('d.m.Y', $c['created_date']); ?></td>
             <td class="status">

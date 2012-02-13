@@ -21,9 +21,7 @@ class Article_Model extends CI_Model {
             ->order_by('a.created_date', 'desc')
             ->limit($num, $offset);
 
-        $query = $this->db->get();
-
-        return $query->result_array();
+        return $this->db->get()->result_array();
     }
 
     /** Получить список всех курортов */
@@ -33,9 +31,7 @@ class Article_Model extends CI_Model {
             ->from('resorts')
             ->order_by('name', 'asc');
 
-        $q = $this->db->get();
-
-        return $q->result_array();
+        return $this->db->get()->result_array();
     }
 
     /** Получить страницу */
@@ -46,9 +42,7 @@ class Article_Model extends CI_Model {
         if ($published)
             $where['status'] = 1;
 
-        $q = $this->db->get_where('articles', $where);
-
-        return $q->row_array();
+        return $this->db->get_where('articles', $where)->row_array();
     }
     
     /** Добавить страницу */

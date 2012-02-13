@@ -23,6 +23,9 @@ class Filter extends MX_Controller {
 
         // Все GET параметры проверенные на XSS
         $this->params = $this->input->get(NULL, TRUE);
+
+        // Подключение модуля "Object"
+        $this->common->load_module('object');
     }
 
     /** Главная страницы фильтров */
@@ -114,7 +117,6 @@ class Filter extends MX_Controller {
         return $this->model->$method($this->params, $config['per_page'], $offset);
     }
     
-
     /** Форма фильтров */
     public function form()
     {
@@ -134,14 +136,7 @@ class Filter extends MX_Controller {
         switch ($data['params']['type'])
         {
             case 'objects':
-
-                $data['room'] = $this->model->get_field('room');
-                $data['infrastructure'] = $this->model->get_field('infrastructure');
-                $data['service'] = $this->model->get_field('service');
-                $data['entment'] = $this->model->get_field('entertainment');
-                $data['child'] = $this->model->get_field('for_children');
-                $data['beachs'] = $this->model->get_field('beachs');
-
+                $data = array_merge($data, $this->object->get_additional_fields());
                 $data['params'] = array_merge($data['params'], $this->obj_form_params());
                 break;
         }
