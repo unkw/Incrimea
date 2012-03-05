@@ -64,8 +64,7 @@ var ObjectGallery = {
                 
                 return false;
             },
-            onLimitExceeded: function(){
-            }
+            onLimitExceeded: function(){}
         });
 
         // Удаление уже имеющихся картинок
@@ -81,12 +80,12 @@ var ObjectGallery = {
         var self = this;
 
         if (file.size > 2000000) {
-            trace('Размер файла не более 2MB ('+file.name+')');
+            alert('Размер файла не более 2MB ('+file.name+')');
             return;
         }
 
         if (file.name.match(/[А-Яа-я]+/)) {
-            trace('Русские символы в названии файла недопустимы');
+            alert('Русские символы в названии файла недопустимы');
             return;
         }
 
@@ -124,6 +123,7 @@ var ObjectGallery = {
         var reader = new FileReader();
 
         reader.onload = (function(aImg) {
+
             return function(e) {
                 aImg.css('opacity', 0.6);
                 aImg.attr('src', e.target.result);

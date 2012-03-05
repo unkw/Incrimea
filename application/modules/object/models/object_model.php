@@ -25,19 +25,15 @@ class Object_Model extends CI_Model {
             ->order_by('o.created_date', 'desc')
             ->limit($num, $offset);
 
-        $query = $this->db->get();
-
-        return $query->result_array();
+        return $this->db->get()->result_array();
     }
 
     /** Получить список всех курортов */
     public function get_resorts()
     {
-        $this->db->select('*')
+        return $this->db->select('*')
             ->from('resorts')
-            ->order_by('name', 'asc');
-
-        return $this->db->get()->result_array();
+            ->order_by('name', 'asc')->get()->result_array();
     }
 
     /** Дополнительные поля (тип, сервис, инфраструктура и т.д.) */
@@ -102,22 +98,27 @@ class Object_Model extends CI_Model {
         if ($published)
             $where['o.published'] = 1;
 
-        $this->db->select('o.*')
+        $data = $this->db->select('o.*')
             ->from('objects o')
-            ->where($where);
-
-        $q = $this->db->get();
-
-        $data = $q->row_array();
+            ->where($where)
+            ->get()->row_array();
         
-        $data = $this->convert_data_to_view($data);
+        // Номерной фонд
+        $data['room_found'] = $this->input->post('room')
+            ? array()
+            : $this->db->get_where('obj_rooms', array('obj_id' => $id))->result_array();        
 
+        $data = $this->convert_data_to_view($data);
+        
+        if ($this->input->post('room'))
+            $data['room_found'] = $this->input->post('room');
+        
         return $data;
     }
 
     /** Получить данные объекта для отображения */
-    public function get_obj($id){
-
+    public function get_obj($id)
+    {
         $where = array(
             'o.id' => $id,
             'o.published' => 1,
@@ -128,12 +129,14 @@ class Object_Model extends CI_Model {
             ->join('resorts r', 'r.id = o.resort_id')
             ->join('obj_fields f1', 'f1.url_name = o.type_id')
             ->join('obj_fields f2', 'f2.url_name = o.beach_id')
-            ->where_in('f1.field_id', array(1, 7))
-            ->where_in('f2.field_id', array(1, 7))
+            ->where(array(
+                'f1.field_id' => 7,
+                'f2.field_id' => 1,
+            ))
             ->where($where);
 
         $data = $this->db->get()->row_array();
-
+        
         $data = $this->convert_data_to_view($data);
 
         return $data;
@@ -150,58 +153,98 @@ class Object_Model extends CI_Model {
 
         // Сохранение отеля
         $this->db->insert('objects', $data);
+        $obj_id = $this->db->insert_id();
 
-        // Сохранение алиаса
-        $this->save_path($this->db->insert_id(), $data, TRUE);
+        // Сохранение синонима
+        $path_data = $this->generate_path($obj_id, $data);
+        $alias_id = $this->path->create($path_data);
+        $this->db->update('objects', array('alias_id' => $alias_id), array('id' => $obj_id));
+        
+        // Сохранение комнат
+        $this->room_foundation_save($obj_id);
     }
 
-    /** Обновить отель */
-    public function update($id, $data)
+    /**
+     * Обновление отеля
+     * @param int $obj_id - ID отеля
+     * @param array $data - данные
+     */
+    public function update($obj_id, $data)
     {
         // Преобразование данных
         $data = $this->convert_data_to_save($data);
         
         // Сохранение метатегов
-        if ( ! $this->metatags->update($data['meta_id']) )
-            $data['meta_id'] = $this->metatags->create();
+        $this->metatags->update($data['meta_id']);
 
-        // Сохранение синонима
-        $this->save_path($id, & $data);
-
-        $this->db->where('id', $id)
+        // Сохранение основных данных отеля
+        $this->db->where('id', $obj_id)
             ->update('objects', $data);
+        
+        // Сохранение синонима
+        $path_data = $this->generate_path($obj_id, $data);
+        $this->path->update($data['alias_id'], $path_data);
+        
+        // Сохранение номерного фонда
+        $this->room_foundation_save($obj_id);
     }
-
-    /** Сохранение синонима */
-    private function save_path($id, & $data, $create = FALSE)
+    
+    /**
+     * Генерация url синонима
+     * @param int $obj_id - ID отеля
+     * @param array $data - данные
+     * @return array
+     */
+    public function generate_path($obj_id, $data)
     {
         $pathdata = array(
-            'realpath' => 'object/view/'.$id,
-            'auto'     => $this->input->post('pathauto') ? 1 : 0,
+            'realpath' => 'object/view/'.$obj_id,
+            'auto' => $this->input->post('pathauto') ? 1 : 0,
         );
-
-        // Формируем алиас
-        $resort = $this->db->get_where('resorts', array('id' => $data['resort_id']))->row_array();
-        if (!$pathdata['auto'] && trim($this->input->post('path')))
-            $pathdata['alias'] = $this->input->post('path');
+        
+        if ($pathdata['auto'])
+        {
+            $resort = $this->db->get_where('resorts', array('id' => $data['resort_id']))->row_array();
+            $pathdata['alias'] = array('object', $resort['name'], $data['title']);
+        }
         else
-            $pathdata['alias'] = 'object/'.$resort['name'].'/'.$data['title'];
+        {
+            $pathdata['alias'] = array($this->input->post('path'));
+        }
+        
+        return $pathdata;
+    }
 
-        // Сохранение
-        if ( $create || !$data['alias_id'] || !$this->path->update($pathdata, $data['alias_id']) )
-            $data['alias_id'] = $this->path->create($pathdata);
-
-        // Обновить alias_id контента при создании контента
-        if ($create)
-            $this->db->update('objects', array('alias_id'=>$data['alias_id']), array('id'=>$id));
-
-        return TRUE;
+    /** Сохранение комнат отеля */
+    public function room_foundation_save($obj_id)
+    {
+        $data = $this->input->post('room');
+        
+        if ( ! $data && ! is_array($data) )
+            return FALSE;
+        
+        $this->db->delete('obj_rooms', array('obj_id' => $obj_id));
+        
+        $rooms = array();
+        foreach ($data as $d) {
+            
+            $rooms[] = array(
+                'obj_id' => $obj_id,
+                'title' => $d['title'],
+                'num_beds' => $d['num_beds'],
+                'num_rooms' => $d['num_rooms'],
+                'in_room' => json_encode(isset($d['in_room']) ? $d['in_room'] : array()),
+                'tarifs' => json_encode(isset($d['tarifs']) ? $d['tarifs'] : array()),
+                'pics' => json_encode(isset($d['pics']) ? $d['pics'] : array()),
+            );
+        } 
+        
+        $this->db->insert_batch('obj_rooms', $rooms);
     }
 
     /** Преобразование данных для сохранения отеля */
     private function convert_data_to_save($data)
     {
-        print_r($data); die;
         /** Сохраняем значения чекбоксов  в формате json */
         $data['room'] = json_encode($data['room'] ? $data['room'] : array());
         $data['infrastructure'] = json_encode($data['infrastructure'] ? $data['infrastructure'] : array());
@@ -211,7 +254,7 @@ class Object_Model extends CI_Model {
 
         // Преобразование изображений в json формат
         $data['images'] = json_encode($data['images']);
-
+        
         return $data;
     }
 
@@ -225,7 +268,18 @@ class Object_Model extends CI_Model {
         $data['for_children'] = json_decode($data['for_children']);
 
         $data['images'] = $data['images'] ? json_decode($data['images']) : array();
-
+        
+        // Преобразование данных номерного фонда
+        if (isset($data['room_found']) && $data['room_found'])
+        {
+            foreach ($data['room_found'] as & $room) {
+                
+                $room['pics'] = json_decode($room['pics'], true);
+                $room['in_room'] = json_decode($room['in_room'], true);
+                $room['tarifs'] = json_decode($room['tarifs'], true);
+            }
+        }
+        
         return $data;
     }
 

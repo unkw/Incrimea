@@ -1,4 +1,4 @@
-
+<!-- System messages -->
 <?php if (validation_errors() || isset($errors)): ?>
 
 <div id="error_msg" class="message-box">
@@ -8,6 +8,7 @@
 
 <?php endif; ?>
 
+<!-- Edit Form -->
 <?php echo form_open_multipart('', array('id' => 'edit-content')); ?>
 
 <table><tbody><tr>
@@ -74,10 +75,11 @@
             <div class="sub-label">До пляжа(м):</div><input type="text" name="edit-beach-distance" value="<?php echo set_value('edit-beach-distance', $obj['beach_distance']); ?>"/>
         </div>
         <div class="beach-type">
-            <div class="sub-label">Тип:</div><select name="edit-beach-type">
-                <option value="0"></option>
+            <div class="sub-label">Тип:</div>
+            <select name="edit-beach-type">
+                <option value=""></option>
                 <?php foreach ($beachs as $b) : ?>
-                <option value="<?php echo $b['url_name'] ?>" <?php echo set_select('edit-beach-type', $b['url_name'], $b['url_name'] == $obj['beach_id'] ? TRUE : FALSE); ?> ><?php echo $b['name'] ?></option>
+                <option value="<?php echo $b['url_name'] ?>" <?php echo set_select('edit-beach-type', $b['url_name'], $b['url_name'] == $obj['beach_id']); ?> ><?php echo $b['name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -140,10 +142,17 @@
             <div><label class="title-label">В номерах</label></div>
             <?php foreach ($room as $rm) : ?>
                 <div>
+                <?php
+                    $data = array(
+                        'class' => 'edit-room-'.$rm['url_name'],
+                        'name' => 'edit-room[]',
+                        'value' => $rm['url_name'],
+                        'checked' => in_array($rm['url_name'], $obj['room']),
+                        'onchange' => 'Room.syncInRoomParent(this);'
+                    );
+                ?>
                     <label>
-                        <input type="checkbox" name="edit-room[]" value="<?php echo $rm['url_name'];?>"
-                            <?php echo set_checkbox('edit-room[]', $rm['url_name'], in_array($rm['url_name'], $obj['room']) ? TRUE : FALSE); ?>
-                        />
+                        <?php echo form_checkbox($data); ?>
                         <?php echo $rm['name']; ?>
                     </label>
                 </div>
@@ -219,9 +228,20 @@
     </div>
 
     <!-- Номерной фонд -->
-    <div>
+    <div class="field-wrapper">
+
         <div><label class="title-label">Номерной фонд</label></div>
-        <input name="add-room" type="button" value="добавить" />
+
+        <div class="rooms-foundation">
+        <?php $i = 0; ?>
+        <?php foreach ($obj['room_found'] as $r) : ?>
+            <?php $r['counter'] = $i; ?>
+            <?php echo $this->load->view('object/edit-room', array('r'=>$r)); ?>
+            <?php $i++; ?>
+        <?php endforeach; ?>
+        </div>
+
+        <input id="add-room" type="button" value="Добавить номер" />
     </div>
 
 </td>
@@ -229,3 +249,212 @@
 </tr></tbody></table>
 
 <?php echo form_close(); ?>
+
+<script type="text/javascript">
+
+    $(function(){
+
+        // Календарь для тарифов
+        Room.setDatepicker($('.tarifs-field .date'));
+        
+        // Загрузчик изображений
+        $('.uploader').each(function(i){
+            Room.initUploader($(this), i);
+        });
+
+        // Добавить комнату
+        $('#add-room').click(function(){
+
+            var btn = $(this);
+
+            btn.prop('disabled', true);
+
+            $.post('/admin/object/load_edit_room_form', function(html){
+
+                var form = $(html);
+
+                // Порядковый номер
+                var id = $('.room-field').length;
+                
+                // Генерируем name
+                form.find('.title').attr('name', 'room['+id+'][title]');
+                form.find('.num_beds').attr('name', 'room['+id+'][num_beds]');
+                form.find('.num_rooms').attr('name', 'room['+id+'][num_rooms]');
+                form.find('.in-room-chbx').attr('name', 'room['+id+'][in_room][]')
+                    .change(function(){
+                        Room.syncInRoomChild(this);
+                    });
+                form.find('.date').attr('name', 'room['+id+'][tarifs][0][date][]');
+                form.find('.price').attr('name', 'room['+id+'][tarifs][0][price]');
+                form.find('.room-id').val(id);
+
+                // Календарь для дат
+                Room.setDatepicker(form.find('.tarifs-field .date'));
+                
+                // Инициализация загрузчика изображений
+                Room.initUploader(form.find('.uploader'), id);
+                
+                // Добавляем в DOM
+                $('.rooms-foundation').append(form);
+
+                btn.prop('disabled', false);
+            });
+
+            return false;
+        });
+    });
+
+    var Room = {
+
+        setDatepicker: function(jQueryObj){
+
+            jQueryObj.datepicker({dateFormat: 'dd-mm-yy'});
+        },
+        
+        initUploader: function(jQueryObj, id){
+            
+            var self = this;
+            var picsWrap = jQueryObj.parent('.pics-field');
+            
+            jQueryObj.damnUploader({
+                url: '/admin/object/upload',
+                fieldName: 'edit-images',
+                onSelect: function(file){
+                    self.addImage.call(this, file, id);
+                },
+                onAllComplete: function(){
+                    picsWrap.find('.ajaxloader').hide();
+                }
+            });
+            
+            picsWrap.find('#upload-pic').click(function(){
+                
+                picsWrap.find('.ajaxloader').css('display', 'inline-block');
+                
+                jQueryObj.damnUploader('startUpload');
+                return false;
+            });
+        },
+
+        addPeriod: function(link){
+
+            var table = $(link).parent().find('.tarifs-table');
+            
+            var id = $(link).parent().find('.room-id').val();
+            var tid = table.find('tr').length;
+            
+            var tr = $('<tr />');
+            $('<td />').html('От: <input type="text" class="date" name="room['+id+'][tarifs]['+tid+'][date][]" value="" >')
+                .appendTo(tr);
+            $('<td />').html('До: <input type="text" class="date" name="room['+id+'][tarifs]['+tid+'][date][]" value="" >')
+                .appendTo(tr);
+            $('<td />').html('Цена: <input type="text" class="price" name="room['+id+'][tarifs]['+tid+'][price]" value="" >')
+                .appendTo(tr);
+                
+            this.setDatepicker(tr.find('.date'));
+            
+            table.append(tr);
+        },
+        
+        addImage: function(file, id){
+            
+            var self = this;
+            
+            if (file.size > 2000000) {
+                alert('Размер файла не более 2MB ('+file.name+')');
+                return;
+            }
+
+            if (file.name.match(/[А-Яа-я]+/)) {
+                alert('Русские символы в названии файла недопустимы');
+                return;
+            }
+            
+            var li = $('<li />');
+            var img = $('<img src="" alt="" width="120" />').appendTo(li);
+            
+            var picList = this.parent('.pics-field').find('.pics-wrapper');
+            li.appendTo(picList);
+            
+            var uploadId = this.damnUploader('addItem', {
+                file: file,
+                onProgress: function(value) {
+                },
+                onComplete: function(successfully, data, errorCode) {
+                    if(successfully) {
+                        img.css('opacity', 1);
+                        li.append('<input type="hidden" name="room['+id+'][pics][]" value="'+data+'" />');
+                    } else {
+                        alert('Ошибка при загрузке. Код ошибки: '+errorCode); // errorCode содержит код HTTP-ответа, либо 0 при проблеме с соединением
+                    }
+                }
+            });
+            
+            $('<a href="#" class="remove">Удалить</a>').click(function(){
+                
+                li.remove();
+                self.damnUploader('cancel', uploadId);
+                return false;
+            }).appendTo(li);
+
+            var reader = new FileReader();
+
+            reader.onload = (function(aImg) {
+
+                return function(e) {
+                    aImg.css('opacity', 0.6);
+                    aImg.attr('src', e.target.result);
+                    aImg.attr('width', 120);
+                };
+            })(img);
+
+            reader.readAsDataURL(file);
+        },
+        
+        /** Синхронизация поля "В номере" (основное поле) */
+        syncInRoomParent: function(chbx){
+            
+            var childChbx = $('input.in-room-'+$(chbx).val());
+            
+            if ( $(chbx).prop('checked') )
+                childChbx.prop('checked', true);
+            else
+                childChbx.prop('checked', false);
+        },
+        
+        /** Синхронизация поля "В номере" при изменении данных "Номерного фонда" */
+        syncInRoomChild: function(chbx){
+            
+            var mainChbx = $('input.edit-room-'+$(chbx).val());
+            
+            if ($(chbx).prop('checked')) {
+                
+                mainChbx.prop('checked', true);
+            } else {
+                
+                var unCheck = true;
+                $('input.in-room-'+$(chbx).val()).each(function(){
+                    if ( $(this).prop('checked') ) {
+                        unCheck = false;
+                        return false;
+                    }
+                });
+                if (unCheck)
+                    mainChbx.prop('checked', false);
+            }
+        },
+        
+        remove: function(link){
+          
+            $(link).parent().fadeOut(1000, function(){
+                $(this).remove();
+            });  
+        },
+        
+        removeImage: function(link) {
+            
+            $(link).parent().remove();
+        }
+    };
+
+</script>

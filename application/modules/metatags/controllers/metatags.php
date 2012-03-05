@@ -59,7 +59,7 @@ class Metatags extends MX_Controller {
         if ($path)
             $metadata['path'] = $path;
 
-        return $this->model->update($meta_id, $metadata);
+        $this->model->update($meta_id, $metadata);
     }
 
     public function html_form_fields_by_path($path = 0)

@@ -16,12 +16,13 @@
 
 <td class="left-col">
 
-    <div>
+    <div class="field-wrapper">
         <div><label class="title-label">Заголовок</label></div>
         <input type="text" name="edit-title" value="<?php echo set_value('edit-title', $content['title']) ?>"/>
     </div>
 
-    <div>
+    <div class="field-wrapper">
+        
         <div><label class="title-label">Титульное изображение</label></div>
 
         <input type="file" name="upload-image" />

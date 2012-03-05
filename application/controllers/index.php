@@ -20,10 +20,15 @@ class Index extends MX_Controller {
     /** Point of entry to the site */
     function index()
     {
+        // При ajax запросе меняем префикс контроллеров
+        if ( $this->input->is_ajax_request() )
+            $this->pre = 'ajax_';
+
         // Роутер
         $this->load_page_by_path();
+        
         // Отображение страницы
-        if (!$this->input->is_ajax_request())
+        if ( ! $this->input->is_ajax_request() )
             $this->theme->render();
     }
 
@@ -47,6 +52,7 @@ class Index extends MX_Controller {
     /** Display home page */
     function load_main_page()
     {
+        // Флаг - главная страница
         $this->theme->setVar('is_front', TRUE);
 
         $this->common->load_module('filter');

@@ -30,10 +30,7 @@ class Metatags_Model extends CI_Model {
 
     public function update($meta_id, $metadata)
     {
-        if ( ! $this->db->get_where($this->table, array('id' => (int)$meta_id))->row_array() )
-            return FALSE;
-
-        return $this->db->update($this->table, $metadata, array('id' => (int)$meta_id));
+        $this->db->update($this->table, $metadata, array('id' => (int)$meta_id));
     }
 
     /**
@@ -68,8 +65,8 @@ class Metatags_Model extends CI_Model {
     /** Дополнительные условия */
     private function add_condition($params)
     {
-        if ($params['list'] && $params['list'] != 'all')
-            $this->db->where('path <>', '');
+        // Показывать только метатеги для произвольных страниц
+        $this->db->where('path <>', '');
     }
 
 }

@@ -21,6 +21,9 @@ class Admin extends MX_Controller {
 
         // Подгружаем конфиги модуля
         $this->load->config();
+        
+        // Подменю
+        $this->theme->add_submenu_item($this->config->config['admin_submenu']);        
     }
 
     function action_index()
@@ -131,7 +134,7 @@ class Admin extends MX_Controller {
     }
 
     /** Загрузка картинки */
-    public function action_upload()
+    public function ajax_upload()
     {
         $this->load->library('upload', $this->config->config['upload']);
 

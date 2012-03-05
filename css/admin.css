@@ -402,6 +402,44 @@ a:hover {
     top: -4px;
     left: -2px;
 }
+#edit-content .room-field {
+    margin: 15px 0 0 0;
+    padding: 0 0 15px 0;
+    border-bottom: 1px solid #CCC;
+}
+#edit-content .room-field .sub-field {
+    float: left;
+    margin-right: 10px;
+}
+#edit-content .room-field .title {
+    width: 350px;
+}
+#edit-content .room-field .num_beds,
+#edit-content .room-field .num_rooms {
+    width: 25px;
+}
+#edit-content .room-field .in-room-field {
+    width: 320px;
+}
+#edit-content .room-field .in-room-field li {
+    float: left;
+    width: 160px;
+}
+#edit-content .tarifs-field .tarifs-table {
+    width: 400px;
+}
+#edit-content .tarifs-field .date {
+    width: 80px;
+}
+#edit-content .tarifs-field .price {
+    width: 40px;
+}
+#edit-content .pics-wrapper li {
+    float: left;
+    margin: 5px 5px 0 0;
+    width: 125px;
+}
+
 #edit-content input[type="button"],
 #edit-content input[type="submit"] {
     margin: 10px 5px 0 0;
@@ -491,6 +529,12 @@ a:hover {
 }
 
 /** Global styles */
+.ajaxloader {
+    display: none;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/ajax-loader.gif) 0 0 no-repeat;
+}
 .red {
     color: red;
 }

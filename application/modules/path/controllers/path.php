@@ -4,8 +4,6 @@ class Path extends MX_Controller {
      
     private $module_name;
 
-    private $suffix = '.html';
-    
     function __construct()
     {
         // Имя модуля
@@ -63,37 +61,15 @@ class Path extends MX_Controller {
     }
 
     /** Создать url синоним */
-    public function create($data)
+    public function create($path_data)
     {
-        $data['alias'] = $this->valid_alias($data);
-        return $this->model->create($data);
+        return $this->model->create($path_data);
     }
 
     /** Обновить url синоним */
-    public function update($data, $alias_id)
+    public function update($alias_id, $path_data)
     {
-        $data['alias'] = $this->valid_alias($data);
-        return $this->model->update($data, $alias_id);
+        $this->model->update($alias_id, $path_data);
     }
 
-    /** Очистка алиаса от недопустимых символов */
-    private function valid_alias($data)
-    {
-//        print_r($data['alias']);
-        $alias = explode('/', $data['alias']);
-
-        $valid_alias = array();
-        $this->load->helper('text');
-
-        foreach ($alias as $a) {
-
-            $valid_alias[] = strtolower(url_title(convert_accented_characters($a)));
-        }
-
-        $alias = implode('/', $valid_alias);
-        if ($data['auto'])
-            $alias .= $this->suffix;
-
-        return $alias;
-    }
 }

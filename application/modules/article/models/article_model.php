@@ -45,55 +45,59 @@ class Article_Model extends CI_Model {
         return $this->db->get_where('articles', $where)->row_array();
     }
     
-    /** Добавить страницу */
+    /** Добавить статью */
     public function add($data)
     {
         // Сохранение метатегов
         $data['meta_id'] = $this->metatags->create();    
-
+        
+        // Создание статьи
         $this->db->insert('articles', $data);
+        $art_id = $this->db->insert_id();
 
-        // Сохранение алиаса
-        $this->save_path($this->db->insert_id(), $data, TRUE);
+        // Сохранение синонима
+        $path_data = $this->generate_path($art_id, $data);
+        $alias_id = $this->path->create($path_data);
+        $this->db->update('articles', array('alias_id' => $alias_id), array('id' => $art_id));
     }
 
-    /** Обновить страницу */
+    /** Обновить статью */
     public function update($id, $data)
     {
         // Сохранение метатегов
-        if ( ! $this->metatags->update($data['meta_id']) )
-            $data['meta_id'] = $this->metatags->create();
+        $this->metatags->update($data['meta_id']);
 
         // Сохранение синонима
-        $this->save_path($id, & $data);
+        $path_data = $this->generate_path($id, $data);
+        $this->path->update($data['alias_id'], $path_data);
         
         $this->db->update('articles', $data, array('id' => $id));
     }
 
-    /** Сохранение синонима */
-    private function save_path($id, & $data, $create = FALSE)
+    /**
+     * Генерация url синонима
+     * @param int $obj_id - ID
+     * @param array $data - данные
+     * @return array
+     */
+    public function generate_path($obj_id, $data)
     {
         $pathdata = array(
-            'realpath' => 'article/view/'.$id,
-            'auto'     => $this->input->post('pathauto') ? 1 : 0,
+            'realpath' => 'article/view/'.$obj_id,
+            'auto' => $this->input->post('pathauto') ? 1 : 0,
         );
-
-        // Формируем алиас
-        $resort = $this->db->get_where('resorts', array('id' => $data['resort_id']))->row_array();
-        if (!$pathdata['auto'] && trim($this->input->post('path')))
-            $pathdata['alias'] = $this->input->post('path');
+        
+        if ($pathdata['auto'])
+        {
+            $resort = $this->db->get_where('resorts', array('id' => $data['resort_id']))->row_array();
+            $pathdata['alias'] = array('article', $resort['name'], $data['title']);
+        }
         else
-            $pathdata['alias'] = 'article/'.$resort['name'].'/'.$data['title'];
-
-        // Сохранение
-        if ( $create || !$data['alias_id'] || !$this->path->update($pathdata, $data['alias_id']) )
-            $data['alias_id'] = $this->path->create($pathdata);
-
-        // Обновить alias_id контента при создании контента
-        if ($create)
-            $this->db->update('articles', array('alias_id'=>$data['alias_id']), array('id'=>$id));
-
-        return TRUE;
+        {
+            $pathdata['alias'] = array($this->input->post('path'));
+        }
+        
+        return $pathdata;
     }
 
     /** Ресайз изображения и создание его превьюшки */

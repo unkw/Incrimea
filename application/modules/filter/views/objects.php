@@ -1,10 +1,11 @@
 <h2>Отели</h2>
 <?php if ($objects): ?>
+
 <?php foreach ($objects as $obj) : ?>
 
     <div class="content-items">
         <!-- Название -->
-        <h3><?php echo href($obj['alias'], $obj['title']); ?></h3>
+        <h3><?php print href($obj['alias'], $obj['title']); ?></h3>
         <!-- Место отдыха -->
         <div><?php echo $obj['resort']; ?></div>
         <div>
@@ -29,6 +30,7 @@
 
 <?php endforeach; ?>
 <?php if ($pager) echo $pager; ?>
+
 <?php else: ?>
     <div>Ничего не найдено</div>
 <?php endif; ?>

@@ -23,6 +23,7 @@ class Object extends MX_Controller {
         // Контент
         $data = array();
 
+        // Основные данные
         $data = $this->model->get_obj($id);
 
         if (!$data)

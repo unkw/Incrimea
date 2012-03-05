@@ -42,7 +42,7 @@ $config['validation_new'] = array(
     array(
         'field' => 'edit-beach-type',
         'label' => 'Тип пляжа',
-        'rules' => 'alpha'
+        'rules' => 'required'
     ),
     array(
         'field' => 'edit-room[]',
@@ -75,6 +75,11 @@ $config['validation_new'] = array(
         'rules' => 'required'
     ),
     array(
+        'field' => 'room',
+        'label' => '',
+        'rules' => ''
+    ),
+    array(
         'field' => 'edit-published',
         'label' => 'Опубликовано',
         'rules' => ''
@@ -98,7 +103,7 @@ $config['default_fields'] = array(
     'price' => '',
     'food' => '',
     'beach_distance' => '',
-    'beach_id' => 0,
+    'beach_id' => '',
     'room' => array(),
     'infrastructure' => array(),
     'service' => array(),
@@ -107,6 +112,7 @@ $config['default_fields'] = array(
     'body' => '',
     'published' => 1,
     'priority' => 0,
+    'room_found' => array(),
 );
 
 // Загрузка файла

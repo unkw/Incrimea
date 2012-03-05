@@ -18,9 +18,9 @@ class Filter_Model extends CI_Model {
         /** Основные данные отелей */
         $this->db->select('o.id, o.title, o.body, o.images, o.price, o.infrastructure, a.alias, r.name as resort')
             ->from('objects o')
+            ->join('obj_fields b', 'b.url_name = o.beach_id')
             ->join('alias a', 'a.id = o.alias_id', 'left')
-            ->join('resorts r', 'o.resort_id = r.id')
-            ->join('obj_beachs b', 'o.beach_id = b.id');
+            ->join('resorts r', 'o.resort_id = r.id');
 
         // Дополнительные фильтры
         $this->obj_add_filters($params);
@@ -38,7 +38,7 @@ class Filter_Model extends CI_Model {
         $infr_all = $addition_fields['infrastructure'];
 
         /** Преобразование данных */
-        foreach ($data as &$obj)
+        foreach ($data as & $obj)
         {
             // Галерея изображений
             $obj['images'] = $obj['images'] ? json_decode($obj['images']) : array();
@@ -46,6 +46,7 @@ class Filter_Model extends CI_Model {
             /** Инфраструктура */
             $obj['infrastructure'] = $obj['infrastructure'] ? json_decode($obj['infrastructure']) : array();
             $_structure = array();
+           
             foreach ($infr_all as $s)
             {
                 $index = array_search($s['url_name'], $obj['infrastructure']);
@@ -121,29 +122,7 @@ class Filter_Model extends CI_Model {
             ->from('resorts')
             ->order_by('name', 'asc');
 
-        $q = $this->db->get();
-
-        return $q->result_array();
-    }
-
-    /** Получить список того, что входит в инфраструктуру */
-    public function get_field($field, $where = FALSE)
-    {
-        if (is_array($where) && !$where)
-            return array();
-
-        $prefix = 'obj_';
-
-        $this->db->select('*')
-            ->from($prefix.$field)
-            ->order_by('name', 'asc');
-
-        if ($where)
-            $this->db->where_in('url_name', $where);
-
-        $q = $this->db->get();
-
-        return $q->result_array();
+        return $this->db->get()->result_array();
     }
 
     /** Кол-во всех отелей */
@@ -151,7 +130,7 @@ class Filter_Model extends CI_Model {
     {
         $this->db->from('objects o')
             ->join('resorts r', 'r.id = o.resort_id')
-            ->join('obj_beachs b', 'b.id = o.beach_id')
+            ->join('obj_fields b', 'b.url_name = o.beach_id')
             ->where('o.published', 1);
 
         $this->obj_add_filters($params);

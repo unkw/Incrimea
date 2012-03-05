@@ -15,6 +15,7 @@
 |
 */
 error_reporting(E_ALL | E_STRICT);
+
 $config['base_url'] = '';
 define('SITEURL', $config['base_url']);
 /*

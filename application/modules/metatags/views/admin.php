@@ -1,20 +1,9 @@
-<!-- Подменю -->
-<ul id="submenu">
-    <li><a href="<?php echo base_url() .'admin/metatags/new'; ?>">Создать метатег для произвольной страницы</a></li>
-</ul>
-
 <!-- Фильтр -->
 <?php echo form_open('', array('class' => 'admin-filters', 'method'=>'GET')); ?>
-<label>Фильтр:
-<select name="list">
-    <option value="all">Все</option>
-    <option value="custom" <?php if ($params['list'] == 'custom') echo 'selected="selected"'; ?>>Метатеги произвольных страниц</option>
-</select>
-</label>
 <?php echo form_close(); ?>
 
 <!-- Список -->
-<table>
+<table id="metatags-table" class="content-list">
 
     <thead class="select-all">
         <th><input type="checkbox" title="Выделить все метатеги" /></th>
@@ -35,7 +24,9 @@
             <td><?php print $m['title']; ?></td>
             <td><?php print $m['keywords']; ?></td>
             <td><?php print $m['description']; ?></td>
-            <td><a href="<?php print base_url() . 'admin/metatags/edit/' . $m['id']; ?>">Изменить</a></td>
+            <td class="actions">
+                <?php echo anchor('admin/metatags/edit/'.$m['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?>
+            </td>
         </tr>
         <?php endforeach; ?>
     </tbody>

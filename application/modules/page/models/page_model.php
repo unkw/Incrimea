@@ -58,48 +58,51 @@ class Page_Model extends CI_Model {
         $data['meta_id'] = $this->metatags->create();  
 
         $this->db->insert('page', $data);
+        $page_id = $this->db->insert_id();
 
-        // Сохранение алиаса
-        $this->save_path($this->db->insert_id(), $data, TRUE);
+        // Сохранение синонима
+        $path_data = $this->generate_path($page_id, $data);
+        $alias_id = $this->path->create($path_data);
+        $this->db->update('page', array('alias_id' => $alias_id), array('id' => $page_id));
     }
 
     /** Обновить страницу */
     public function update($id, $data)
     {
         // Сохранение метатегов
-        if ( ! $this->metatags->update($data['meta_id']) )
-            $data['meta_id'] = $this->metatags->create();   
+        $this->metatags->update($data['meta_id']);   
 
         // Сохранение синонима
-        $this->save_path($id, & $data);
+        $path_data = $this->generate_path($id, $data);
+        $this->path->update($data['alias_id'], $path_data);
 
         $this->db->where('id', $id)
             ->update('page', $data);
     }
 
-    /** Сохранение синонима */
-    private function save_path($id, & $data, $create = FALSE)
+    /**
+     * Генерация url синонима
+     * @param int $obj_id - ID отеля
+     * @param array $data - данные
+     * @return array
+     */
+    public function generate_path($id, $data)
     {
         $pathdata = array(
             'realpath' => 'page/view/'.$id,
-            'auto'     => $this->input->post('pathauto') ? 1 : 0,
+            'auto' => $this->input->post('pathauto') ? 1 : 0,
         );
-
-        // Формируем алиас
-        if (!$pathdata['auto'] && trim($this->input->post('path')))
-            $pathdata['alias'] = $this->input->post('path');
+        
+        if ($pathdata['auto'])
+        {
+            $pathdata['alias'] = array($data['title']);
+        }
         else
-            $pathdata['alias'] = $data['title'];
-
-        // Сохранение
-        if ( $create || !$data['alias_id'] || !$this->path->update($pathdata, $data['alias_id']) )
-            $data['alias_id'] = $this->path->create($pathdata);
-
-        // Обновить alias_id контента при создании контента
-        if ($create)
-            $this->db->update('page', array('alias_id'=>$data['alias_id']), array('id'=>$id));
-
-        return TRUE;
+        {
+            $pathdata['alias'] = array($this->input->post('path'));
+        }
+        
+        return $pathdata;
     }
 
 }

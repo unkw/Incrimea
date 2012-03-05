@@ -134,7 +134,7 @@ class Admin extends MX_Controller {
     }
 
     /** Загрузка картинки */
-    public function action_upload()
+    public function ajax_upload()
     {
         $this->load->library('upload', $this->config->config['upload']);
 

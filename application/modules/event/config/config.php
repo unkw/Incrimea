@@ -94,3 +94,11 @@ $config['thumb'] = array(
     'width'  => 120,
     'height' => 90
 );
+
+// Подменю админ. страниц
+$config['admin_submenu'] = array(
+    array(
+        'text' => 'Создать',
+        'href' => 'admin/event/new'
+    ),
+);

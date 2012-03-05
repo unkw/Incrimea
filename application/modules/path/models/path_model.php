@@ -6,63 +6,81 @@ class Path_Model extends CI_Model {
     public function __construct() {
         parent::__construct();
 
+        /** Таблица БД модуля */
         $this->table = 'alias';
     }
     
-    /** Получить псевдоним по id */
+    /**
+     * Получить данные псевдонима по id
+     * @param int $id
+     * @return array|null 
+     */
     public function get($id)
     {
         return $this->db->get_where($this->table, array('id' => (int)$id))->row_array();
     }
 
-    /** Получить настоящий адрес */
-    public function get_by_path($path)
+    /**
+     * Получить реальный адрес по синониму
+     * @param string $path
+     * @return string|null 
+     */ 
+    public function get_by_path($path_string)
     {
-        $q = $this->db->get_where($this->table, array('alias' => $path))->row_array();
+        $q = $this->db->get_where($this->table, array('alias' => $path_string))->row_array();
 
         return $q ? $q['realpath'] : NULL;
     }
 
-    /** Создать url синоним */
+    /**
+     * Создать синоним
+     * @param array $data - данные синонима
+     * @return int 
+     */
     public function create($data)
     {
-        $data['alias'] = $this->check_dublicate_path($data['alias']);
+        $data['alias'] = $this->converting($data['alias']);
         $this->db->insert($this->table, $data);
+        
         return $this->db->insert_id();
     }
 
-    /** Обновить url синоним */
-    public function update($data, $id)
+    /**
+     * Обновить синоним
+     * @param int $alias_id - id синонима
+     * @param array $pathdata - данные
+     */
+    public function update($alias_id, $pathdata)
     {
-        if ( ! $this->get($id) )
-            return FALSE;
-
-        $data['alias'] = $this->check_dublicate_path($data['alias'], $id);
-        return $this->db->update($this->table, $data, array('id' => (int)$id));
+        $pathdata['alias'] = $this->converting($pathdata['alias']);
+        $this->db->update($this->table, $pathdata, array('id' => (int)$alias_id));
     }
 
-    /** Удалить url синоним */
-    public function delete()
+    /** 
+     * Удалить url синоним
+     * @param int $alias_id - id синонима 
+     */
+    public function delete($alias_id)
     {
-
+        $this->db->delete($this->table, array('id' => $alias_id));
     }
-
-    /** Проверка сохраняемого алиаса на дубликаты */
-    private function check_dublicate_path($alias, $id = 0)
+    
+    /**
+     * Очистка алиаса от недопустимых символов 
+     * и преобразование к допустимому виду
+     * @param array $alias - кусочки синонима
+     * @return string 
+     */
+    private function converting($alias)
     {
-        $i = 1;
-        while ($this->db->get_where($this->table, array('alias' => $alias, 'id <>' => $id))->num_rows())
-        {
-            $pattern = '/(\.html)$/';
-            $ext = false;
-            if ( preg_match($pattern, $alias) ) {
-                $ext = true;
-                $alias = preg_replace($pattern, '', $alias);
-            }
-            $alias .= '_'.$i.($ext ? '.html' : '');
-            $i++;
+        $valid_alias = array();
+        $this->load->helper('text');
+
+        foreach ($alias as $a) {
+
+            $valid_alias[] = url_title(convert_accented_characters(str_replace('/', '', $a)), 'dash', TRUE);
         }
-
-        return $alias;
-    }
+        
+        return implode('/', $valid_alias);
+    }    
 }

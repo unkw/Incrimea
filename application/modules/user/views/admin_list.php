@@ -1,4 +1,4 @@
-<table>
+<table id="users-table" class="content-list">
 
     <thead class="select-all">
         <th><input type="checkbox" title="Выделить всех пользователей" /></th>
@@ -14,14 +14,16 @@
     <tbody>
         <?php foreach ($users as $user) : ?>
         <tr>
-            <td><input type="checkbox" title="Выделить всех пользователей" /></td>
+            <td class="selected"><input type="checkbox" title="Выделить всех пользователей" /></td>
             <td><?php print $user['username']; ?></td>
             <td><?php print $user['email']; ?></td>
             <td><?php print $user['role']; ?></td>
             <td><?php if ($user['last_login']) print date('Y-m-d H:i:s', $user['last_login']); ?></td>
             <td><?php print date('Y-m-d H:i:s', $user['created_date']); ?></td>
             <td><?php print $user['active'] ? 'Активен' : 'Забанен'; ?></td>
-            <td><a href="<?php print base_url() . 'admin/user/edit/' . $user['id']; ?>">Изменить</a></td>
+            <td class="actions">
+                <?php echo anchor('admin/user/edit/'.$user['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?>
+            </td>
         </tr>
         <?php endforeach; ?>
     </tbody>

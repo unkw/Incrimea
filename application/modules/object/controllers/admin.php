@@ -26,6 +26,10 @@ class Admin extends MX_Controller {
         $this->theme->add_submenu_item($this->config->config['admin_submenu']);
     }
 
+    ////////////////////
+    ///// ACTIONS //////
+    ////////////////////
+
     public function action_index()
     {
         $this->load->library('pagination');
@@ -86,6 +90,9 @@ class Admin extends MX_Controller {
         $data['metatags'] = $this->metatags->html_form_fields();
         // Алиас
         $data['alias'] = $this->path->get_form_field();
+        // Номерной фонд
+        if ($this->input->post('room'))
+            $data['obj']['room_found'] = $this->input->post('room');
 
         // CKEditor
         $this->editor_init();
@@ -114,13 +121,13 @@ class Admin extends MX_Controller {
         $title = 'Редактирование объекта';
         // Хлебная крошка
         $this->theme->set_breadcrumb($title, '');
-        // Заголовок
+        // Назначение заголовка
         $this->theme->setVar('title', $title);
         // Дополнительные поля
         $data = $this->all_fields();
         // Основные данные
         $data['obj'] = $this->model->get($id);
-
+        
         if (!$data['obj'])
             show_404();
 
@@ -155,12 +162,13 @@ class Admin extends MX_Controller {
     }
 
     /** Загрузка изображений */
-    public function action_upload()
+    public function ajax_upload()
     {
         $this->load->library('upload', $this->config->config['upload']);
 
-        if (!$this->upload->do_upload('edit-images')) {
-            echo $this->upload->display_errors('', '');
+        if (!$this->upload->do_upload('edit-images'))
+        {
+            echo 'ERROR: ' . $this->upload->display_errors('', '');
         }
         else
         {
@@ -172,6 +180,28 @@ class Admin extends MX_Controller {
         }
     }
 
+    public function action_test(){
+
+        echo 'html5 upload';
+    }
+
+    ////////////////////
+    ////// AJAX ////////
+    ////////////////////
+    public function ajax_load_edit_room_form()
+    {
+        $chbx = $this->model->get_addition_fields();
+
+        $data = array(
+            'room' => $chbx['room'],
+        );
+
+        echo $this->load->view($this->module_name.'/edit-room.php', $data);
+    }
+
+    ////////////////////
+    ///// METHODS //////
+    ////////////////////
     /**
      * Обработка данных запроса для сохранения данных отеля
      * @param int $id - ID отеля
@@ -234,21 +264,6 @@ class Admin extends MX_Controller {
 
         $data = array_merge($data, $this->model->get_addition_fields());
         
-//        // Типы объектов
-//        $data['types'] = $this->model->get_field('types');
-//        // Типы объектов
-//        $data['beachs'] = $this->model->get_field('beachs');
-//        // В номерах
-//        $data['room'] = $this->model->get_field('room');
-//        // Инфраструктура
-//        $data['infrastructure'] = $this->model->get_field('infrastructure');
-//        // Сервис
-//        $data['service'] = $this->model->get_field('service');
-//        // Развлечения и спорт
-//        $data['entertainment'] = $this->model->get_field('entertainment');
-//        // Для детей
-//        $data['for_children'] = $this->model->get_field('for_children');
-
         return $data;
     }
 

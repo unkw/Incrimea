@@ -166,7 +166,7 @@
 
                 var filename = item.replaceName || item.file.name;
                 xhr.open("POST", url);
-
+                 
                 if($.support.fileSending) {
                     // W3C (Chrome, Safari, Firefox 4+)
                     var formData = new FormData();
@@ -250,6 +250,7 @@
         switch(params) {
 
             case 'addItem':
+
                 if(!data) {
                     return false;
                 }
@@ -295,6 +296,7 @@
                         if($.isFunction(compl)) {
                             compl.call(this, successful, data, error);
                         }
+
                         if((self._damnUploaderItemsCount == 0) && ($.isFunction(set.onAllComplete))) {
                             set.onAllComplete.call(self);
                         }
