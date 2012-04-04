@@ -25,7 +25,10 @@
             </td>
             <td class="views">-</td>
             <td class="actions">
-                <?php echo anchor('admin/article/edit/'.$c['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?>
+                <ul>
+                    <li><?php echo anchor('admin/article/edit/'.$c['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?></li>
+                    <li><?php echo anchor('admin/article/delete/'.$c['id'], ' ', array('class'=>'trash', 'title'=>'Удалить')) ?></li>
+                </ul>
             </td>
         </tr>
         <?php endforeach; ?>

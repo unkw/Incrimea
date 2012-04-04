@@ -26,7 +26,8 @@ class Object extends MX_Controller {
         // Основные данные
         $data = $this->model->get_obj($id);
 
-        if (!$data)
+        // Если снято с публикации показывать только администраторам
+        if ( $data['published'] == 0 && ! $this->auth->is_admin() )
             show_404();
 
         // Назначаем метатеги

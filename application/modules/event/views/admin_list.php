@@ -13,7 +13,7 @@
     <tbody>
         <?php foreach ($content as $c) : ?>
         <tr>
-            <td class="status"><input type="checkbox" /></td>
+            <td class="selected"><input type="checkbox" /></td>
             <td class="title"><a href="<?php echo base_url().$c['alias']; ?>"><?php print $c['title']; ?></a></td>
             <td class="created-date"><?php print date('d.m.Y', $c['created_date']); ?></td>
             <td class="status">
@@ -25,7 +25,10 @@
             </td>
             <td class="views">-</td>
             <td class="actions">
-                <?php echo anchor('admin/event/edit/'.$c['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?>
+                <ul>
+                    <li><?php echo anchor('admin/event/edit/'.$c['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?></li>
+                    <li><?php echo anchor('admin/event/delete/'.$c['id'], ' ', array('class'=>'trash', 'title'=>'Удалить')) ?></li>
+                </ul>                
             </td>
         </tr>
         <?php endforeach; ?>

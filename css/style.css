@@ -1,6 +1,7 @@
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
     margin:0;
     padding:0;
+    font-family: Times New Roman, Times New Roman, Times, serif;
 }
 table {
     border-collapse: collapse;
@@ -113,8 +114,8 @@ input[type="button"] {
 
 /* Контент главной страницы */
 #content .filter-column {
-    width: 50%;
-    float: left;
+/*   width: 50%;
+    float: left;*/
 }
 
 #objects-column {
@@ -140,6 +141,9 @@ input[type="button"] {
 }
 
 /* Форма фильтров */
+#filters-form .filters-box {
+    clear: both;
+}
 #filters-form .filters-title {
     display: block;
 }
@@ -174,18 +178,38 @@ input[type="button"] {
 #filters-form .filters-box div {
     position: relative;
 }
-#filters-form .program-submit {
-    display: block;
+#filters-form div.program-submit-wrap {
     position: absolute;
-    right: 0px;
+    right: -78px;
     top: 0;
-    margin: -3px 0 0 0;
+    margin: -4px 0 0 0;
     border: 1px solid #16960B;
     padding: 3px 7px;
     background: #FFF;
     border-radius: 3px;
 }
-
+#filters-form .program-submit-wrap .count {
+    margin: 0 0 0 5px;
+}
+#filters-form .resorts-selected .item {
+    float: left;
+    margin: 0 10px 5px 0;
+}
+#filters-form .resorts-selected .item .remove {
+    color: red;
+    display: inline-block;
+    display: -moz-inline-stack;
+    zoom: 1;
+    *display: inline;
+    text-decoration: none;
+    font-size: 17px;
+    height: 10px;
+    line-height: 10px;
+    margin: 0 0 0 3px;
+}
+#filters-form .resorts-selected .item .remove:hover {
+    text-shadow: -1px -1px 0 orange,1px -1px 0 orange,-1px 1px 0 orange,1px 1px 0 orange; 
+}
 /* Карта Крыма */
 #crimea-map {
     width: 800px;
@@ -225,20 +249,13 @@ input[type="button"] {
     left: 200px;
     top: 25px;
 }
-#crimea-map .resorts ul {
-    position: relative;
-    list-style: none;
-    left: 15px;
-    top: 10px;
+#crimea-map .resorts {
+    padding: 0 0 0 450px;
 }
-#crimea-map .resorts ul li {
-    display: -moz-inline-stack;
-    display: inline-block;
-    zoom: 1;
-    *display: inline;
-    width: 110px;
-    margin: 0;
-    padding: 0;
+#crimea-map .resorts .checkbox-item {
+    background: lightsteelblue;
+    width: 120px;
+    float: left;
 }
 #crimea-map .resorts .buttons {
     position: relative;

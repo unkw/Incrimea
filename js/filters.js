@@ -35,7 +35,7 @@ var FilterManager = {
         $(this.formId + ' ' + this.cssSelectors.map)
             .colorbox({
                 inline: true,
-                width: '870px',
+//                width: '870px',
                 close: 'Закрыть',
                 scrolling: false,
                 opacity: 0

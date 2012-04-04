@@ -42,7 +42,18 @@
         <?php foreach ($beachs as $bch) : ?>
         <div>
             <label>
-            <?php echo form_checkbox(array('name'=>'beachs[]','autocomplete'=>'off','value'=>$bch['url_name'],'checked'=>in_array($bch['url_name'], $params['beachs']))); ?> <?php echo $bch['name']; ?>
+            <?php
+            $data = array(
+                'id' => 'beach-'.$bch['url_name'],
+                'name'=>'beachs[]',
+                'autocomplete'=>'off',
+                'value'=>$bch['url_name'],
+                'checked'=>in_array($bch['url_name'], $params['beachs'])
+            );
+            if ($bch['count'] < 1 && !$data['checked']) $data['disabled'] = true;
+            ?>
+            <?php echo form_checkbox($data); ?>
+            <?php echo form_label($bch['name'], $data['id']); ?>
             </label>
         </div>
         <?php endforeach; ?>
@@ -52,9 +63,15 @@
     <div class="filters-box">
         <?php foreach ($room as $rm) : ?>
             <div><label>
-                <input type="checkbox" name="room[]" value="<?php echo $rm['url_name']; ?>"
-                <?php if (in_array($rm['url_name'], $params['room'])) echo 'checked="checked"'; ?>
-                />
+                <?php
+                    $data = array(
+                        'name' => 'room[]',
+                        'value' => $rm['url_name'],
+                        'checked' => in_array($rm['url_name'], $params['room']),
+                    );
+                    if ($rm['count'] < 1 && !$data['checked']) $data['disabled'] = true;
+                ?>
+                <?php echo form_checkbox($data); ?>
                 <?php echo $rm['name']; ?>
             </label></div>
         <?php endforeach; ?>
@@ -64,9 +81,15 @@
     <div class="filters-box">
         <?php foreach ($infrastructure as $inf) : ?>
             <div><label>
-                <input type="checkbox" name="infr[]" value="<?php echo $inf['url_name']; ?>"
-                <?php if (in_array($inf['url_name'], $params['infr'])) echo 'checked="checked"'; ?>
-                />
+                <?php
+                    $data = array(
+                        'name' => 'infr[]',
+                        'value' => $inf['url_name'],
+                        'checked' => in_array($inf['url_name'], $params['infr']),
+                    );
+                    if ($inf['count'] < 1 && !$data['checked']) $data['disabled'] = true;
+                ?>
+                <?php echo form_checkbox($data); ?>
                 <?php echo $inf['name']; ?>
             </label></div>
         <?php endforeach; ?>
@@ -76,9 +99,15 @@
     <div class="filters-box">
         <?php foreach ($service as $ser) : ?>
             <div><label>
-                <input type="checkbox" name="service[]" value="<?php echo $ser['url_name']; ?>"
-                <?php if (in_array($ser['url_name'], $params['service'])) echo 'checked="checked"'; ?>
-                />
+                <?php
+                    $data = array(
+                        'name' => 'service[]',
+                        'value' => $ser['url_name'],
+                        'checked' => in_array($ser['url_name'], $params['service']),
+                    );
+                    if ($ser['count'] < 1 && !$data['checked']) $data['disabled'] = true;
+                ?>
+                <?php echo form_checkbox($data); ?>                    
                 <?php echo $ser['name']; ?>
             </label></div>
         <?php endforeach; ?>
@@ -88,9 +117,15 @@
     <div class="filters-box">
         <?php foreach ($entertainment as $ent) : ?>
             <div><label>
-                <input type="checkbox" name="entment[]" value="<?php echo $ent['url_name']; ?>"
-                <?php if (in_array($ent['url_name'], $params['entment'])) echo 'checked="checked"'; ?>
-                />
+                <?php
+                    $data = array(
+                        'name' => 'entment[]',
+                        'value' => $ent['url_name'],
+                        'checked' => in_array($ent['url_name'], $params['entment']),
+                    );
+                    if ($ent['count'] < 1 && !$data['checked']) $data['disabled'] = true;
+                ?>
+                <?php echo form_checkbox($data); ?>                     
                 <?php echo $ent['name']; ?>
             </label></div>
         <?php endforeach; ?>
@@ -100,9 +135,15 @@
     <div class="filters-box">
         <?php foreach ($for_children as $ch) : ?>
             <div><label>
-                <input type="checkbox" name="child[]" value="<?php echo $ch['url_name']; ?>"
-                <?php if (in_array($ch['url_name'], $params['child'])) echo 'checked="checked"'; ?>
-                />
+                <?php
+                    $data = array(
+                        'name' => 'child[]',
+                        'value' => $ch['url_name'],
+                        'checked' => in_array($ch['url_name'], $params['child']),
+                    );
+                    if ($ch['count'] < 1 && !$data['checked']) $data['disabled'] = true;
+                ?>
+                <?php echo form_checkbox($data); ?>                    
                 <?php echo $ch['name']; ?>
             </label></div>
         <?php endforeach; ?>
@@ -112,52 +153,41 @@
 
     <!-- Места отдыха -->
     <h4>Выберите местарасположение</h4>
-
-    <div class="resorts-selected">
-
-    </div>
-
-    <a class="small-map" href="#crimea-map" title="Выберите место отдыха"></a>
-
-    <div style="display: none">
-        <div id="crimea-map">
-
-            <div class="map">
-
-            </div>
-
-            <div class="resorts">
-                <ul>
-                <?php foreach ($resorts as $r) : ?>
-                    <li>
-                        <label for="resort-<?php echo $r['url_name']; ?>">
-                        <?php
-                            $data = array(
-                                    'name'    => 'resorts[]',
-                                    'id'      => 'resort-' . $r['url_name'],
-                                    'value'   => $r['url_name'],
-                                    'checked' => in_array($r['url_name'], $params['resorts']),
-                                    'autocomplete' => 'off'
-                                );
-                            echo form_checkbox($data);
-                            echo $r['name'];
-                        ?>
-                        </label>
-                    </li>
-                <?php endforeach; ?>
-                </ul>
-
-                <div class="buttons">
-                    <input type="button" value="Добавить" id="resorts-add" />
-                    <a href="#" id="resorts-select" >Выбрать все</a>
-                    <a href="#" id="resorts-reset" >Отменить выделение</a>
-                </div>
-            </div>
-
+    <div class="filters-box">
+        <!-- Выбранные места отдыха -->
+        <div class="resorts-selected"></div>
+        
+        <!-- Тизер карты -->
+        <div class="filters-box">
+            <a class="small-map" href="#crimea-map" title="Выберите место отдыха"></a>
         </div>
+        
     </div>
 
-    <input type="submit" value="Показать" />
-
-    <a href="<?php echo base_url(); ?>" >Сбросить</a>
+    <div class="filters-box">
+        <input type="submit" value="Показать" />
+        <a href="<?php echo base_url(); ?>" title="">Сбросить все фильтры</a>
+    </div>
 <?php echo form_close(); ?>
+
+<!-- Контейнер карты и мест отдыха -->
+<div style="display: none">
+    <div id="crimea-map">
+
+        <!-- Карта Крыма -->
+        <div class="map"></div>
+
+        <!-- Чекбоксы выбора мест отдыха -->
+        <div class="resorts"></div>
+
+    </div>
+</div>
+
+<!-- Инициализация карты и элементов управления местами отдыха -->
+<script type="text/javascript">
+ResortManager.$_GET = <?php echo json_encode($params['resorts']); ?>;
+<?php foreach ($resorts as $r): ?>
+ResortManager.collection.push(new ResortInstance(<?php echo json_encode($r); ?>));
+<?php endforeach; ?>
+ResortManager.init();
+</script>

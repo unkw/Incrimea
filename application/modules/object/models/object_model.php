@@ -36,24 +36,29 @@ class Object_Model extends CI_Model {
             ->order_by('name', 'asc')->get()->result_array();
     }
 
-    /** Дополнительные поля (тип, сервис, инфраструктура и т.д.) */
-    public function get_addition_fields()
+    /**
+     * Дополнительные поля (тип, сервис, инфраструктура, в номерах и т.д.)
+     * @param bool $short_select - флаг
+     * @return array 
+     */
+    public function get_addition_fields($short_select = FALSE)
     {
         if ( ! is_null($this->additional_fields) )
             return $this->additional_fields;
-
-        $fields = $this->db->select('*')
-            ->from('obj_fields')->get()->result_array();
-
-        $data = array(
-            'types' => array(),
-            'beachs' => array(),
-            'room' => array(),
-            'infrastructure' => array(),
-            'service' => array(),
-            'entertainment' => array(),
-            'for_children' => array(),
-        );
+        
+        // Если выбран тип контента "Отели", то проверяем чекбоксы на кол-во контента
+        if ($this->input->get('type', TRUE) == 'objects')
+        {
+            $sql = $this->getListSQL($short_select);
+            $fields = $this->db->query(implode(' UNION ', $sql))->result_array();             
+        } 
+        
+        else
+        {
+            $fields = $this->db->get_where('obj_fields')->result_array();
+        }
+        
+        $data = array();
         foreach ($fields as $row) {
 
             switch ($row['field_id']) {
@@ -67,9 +72,112 @@ class Object_Model extends CI_Model {
                 case 7: $data['types'][] = $row; break;
             }
         }
-
+        
         return $this->additional_fields = $data;
     }
+    
+    /** SQL запрос */
+    public function getListSQL($short_select)
+    {
+        // Подзапрос извлекающий кол-во контента у каждого поля
+        $sub_query = 
+            'SELECT count(1)'."\n"
+            .' FROM objects o'."\n"
+            .' JOIN resorts r ON r.id = o.resort_id'."\n"
+            .' JOIN obj_fields b ON b.url_name = o.beach_id'."\n"
+            .' WHERE o.published = 1';
+
+        // $_GET параметры фильтров
+        $params = $this->form_params();
+
+        // Наложение дополнительных условий на подзапрос
+        $add_conditions = array();
+        foreach ($params as $key => $value) {
+
+            if ( empty($params[$key]) )
+                continue;
+
+            switch ($key) {
+
+                // Условие вида cond1 LIKE val1 AND cond2 LIKE val2 ... AND condN LIKE valN 
+                case 'room': case 'infr': case 'service': case 'entment': case 'child':
+
+                    $json_fields = array(
+                        'room' => 'room',
+                        'infr' => 'infrastructure',
+                        'service' => 'service',
+                        'entment' => 'entertainment',
+                        'child' => 'for_children',
+                    );                    
+
+                    foreach ($value as $val)
+                        $add_conditions[] = "o.".$json_fields[$key]." LIKE '%".$this->db->escape_like_str($val)."%'";
+                    break;
+
+                case 'distance': case 'price_min': case 'price_max':
+                    $border_fields = array(
+                        'distance' => array('o.beach_distance', '<='),
+                        'price_min' => array('o.price', '>='),
+                        'price_max' => array('o.price', '<='),
+                    );
+
+                    $add_conditions[] = $border_fields[$key][0].' '.$border_fields[$key][1].' '.(int)$value;
+                    break;
+            }
+        }
+
+        $sub_query .= $add_conditions ? ' AND ' . implode(' AND ', $add_conditions) : '';
+
+        /** Собираем ссновной запрос */
+        $sql = array();
+        $filters = array(
+            'beachs' => array('id'=>1, 'col'=>'beach_id'),
+            'room' => array('id'=>2, 'col'=>'room'),
+            'infr' => array('id'=>3, 'col'=>'infrastructure'),
+            'entment' => array('id'=>4, 'col'=>'entertainment'),
+            'service' => array('id'=>5, 'col'=>'service'),
+            'child' => array('id'=>6, 'col'=>'for_children'),
+        );
+        
+        $select = $short_select ? 'f.field_id, f.url_name' : 'f.*';
+        foreach ($filters as $key => $val) {
+
+            switch ($key) {
+                case 'beachs':
+                    $sub_query .= !empty($params[$key]) ? ' AND o.'.$val['col'].' = f.url_name' : '';
+                    $sql[] = '(SELECT '.$select.', ('.$sub_query.') as count'
+                        .' FROM obj_fields f'
+                        .' WHERE f.field_id = '.$val['id'].')';                    
+                    break;
+                default:
+                    $sql[] = '(SELECT '.$select.', ('.$sub_query.' AND o.'.$val['col']." LIKE CONCAT(\"%\", f.url_name ,\"%\")) as count"
+                        .' FROM obj_fields f'
+                        .' WHERE f.field_id = '.$val['id'].')';  
+            }
+        }
+        
+        return $sql;
+    }
+    
+    /** Параметры GET запроса для отелей */
+    private function form_params()
+    {
+        $params = $this->input->get(NULL, TRUE);
+        
+        return array(
+            'type' => isset($params['type']) ? $params['type'] : false,
+            'resorts' => isset($params['resorts']) ? explode(',', $params['resorts']) : array(),            
+            'room' => isset($params['room']) ? explode(',', $params['room']) : array(),
+            'infr' => isset($params['infr']) ? explode(',', $params['infr']) : array(),
+            'service' => isset($params['service']) ? explode(',', $params['service']) : array(),
+            'entment' => isset($params['entment']) ? explode(',', $params['entment']) : array(),
+            'child' => isset($params['child']) ? explode(',', $params['child']) : array(),
+            'beachs' => isset($params['beachs']) ? explode(',', $params['beachs']) : array(),
+            'distance' => isset($params['distance']) ? $params['distance'] : '',
+            'price_min' => isset($params['p-min']) ? $params['p-min'] : '',
+            'price_max' => isset($params['p-max']) ? $params['p-max'] : '',
+        );
+    }    
 
     /** Получить полные данные json полей по url идентификатору */
     public function value_from_additional_field($field, $json)
@@ -95,9 +203,6 @@ class Object_Model extends CI_Model {
     {
         $where = array('o.id' => $id);
 
-        if ($published)
-            $where['o.published'] = 1;
-
         $data = $this->db->select('o.*')
             ->from('objects o')
             ->where($where)
@@ -121,10 +226,9 @@ class Object_Model extends CI_Model {
     {
         $where = array(
             'o.id' => $id,
-            'o.published' => 1,
         );
-
-        $this->db->select('o.*, r.name as resort, f1.name as type, f2.name as beach')
+        
+        $data = $this->db->select('o.*, r.name as resort, f1.name as type, f2.name as beach')
             ->from('objects o')
             ->join('resorts r', 'r.id = o.resort_id')
             ->join('obj_fields f1', 'f1.url_name = o.type_id')
@@ -133,10 +237,9 @@ class Object_Model extends CI_Model {
                 'f1.field_id' => 7,
                 'f2.field_id' => 1,
             ))
-            ->where($where);
+            ->where($where)
+            ->get()->row_array();
 
-        $data = $this->db->get()->row_array();
-        
         $data = $this->convert_data_to_view($data);
 
         return $data;
@@ -187,6 +290,26 @@ class Object_Model extends CI_Model {
         
         // Сохранение номерного фонда
         $this->room_foundation_save($obj_id);
+    }
+    
+    /**
+     * Удаление отеля
+     * @param int $id - ID
+     */
+    public function delete($id)
+    {
+        $data = $this->db
+            ->query('SELECT alias_id, meta_id FROM objects WHERE id = ?', array($id))
+            ->row_array();
+        
+        // Удаление отеля
+        $this->db->delete('objects', array('id' => $id));
+        // Удалить синоним в таблице алиасов
+        $this->db->delete('alias', array('id' => $data['alias_id']));
+        // Удалить метатеги
+        $this->db->delete('metatags', array('id' => $data['meta_id']));
+        // Удалить номера
+        $this->db->delete('obj_rooms', array('obj_id' => $id));
     }
     
     /**

@@ -84,6 +84,8 @@
     <input type="hidden" name="module-name" value="event">
 
     <input type="submit" value="Сохранить" />
+    <input type="button" value="Удалить" onclick="document.location = '<?php echo base_url(); ?>' + 'admin/event/delete/' + '<?php echo $content['id']; ?>'; return false;" />
+    <a href="<?php echo base_url().'admin/event' ?>">Отмена</a>
 
 </td>
 

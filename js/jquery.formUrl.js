@@ -13,8 +13,8 @@
 
     // Create some defaults, extending them with any options that were provided
     var settings = $.extend( {
-      checkboxSep: ',',
-      bindChange: [],
+      checkboxSep: ',', // Разделитель значений
+      bindChange: [], // Элементы формы, при изменении которых сразу отправляем форму
       bindFilters: [], // Фильтры для всех типов контента
       withoutSubmit: []
     }, options);
@@ -38,16 +38,20 @@
         });
 
         /** Ссылка, позволяющая программным путем отправить форму */
-        var programSubmit = $('<a href="#" class="program-submit">Показать</a>').click(function(){
-            submitForm.call(self);
-            return false;
-        });
+        var programSubmit = $('<div class="program-submit-wrap"></div>')
+            .append(
+                $('<a href="#" class="program-submit">Показать</a>').click(function(){
+                    submitForm.call(self);
+                    return false;
+                })            
+            ).append('<span class="count">0</span>')
+
         $(this).data('programSubmit', programSubmit);
 
         // Флаг, существует ли setTimeout
         $(this).data('hider', null);
         
-        // Отправка формы по клику
+        // Добавление ссылки "Показать" при изменение чекбокса
         $(this).find('input[type="checkbox"]').change(function(){
             if ( $.inArray($(this).attr('name'), settings.withoutSubmit) != -1)
                 return;
@@ -69,6 +73,39 @@
         if (hider) clearTimeout(hider);
         programSubmit.show();
         $(this).parent().parent().append(programSubmit);
+        
+        var getArr = getQueryString.call(form);
+        var data = getArr.join('&');
+        $.get('filter/get_form', data, function(json){
+            
+            var maxCount = 0;
+            for (var key in json) {
+                
+                var name;
+                switch (key) {
+                    case 'beachs': name = 'beachs[]'; break;
+                    case 'room': name = 'room[]'; break;
+                    case 'infrastructure': name = 'infr[]'; break;
+                    case 'entertainment': name = 'entment[]'; break;
+                    case 'service': name = 'service[]'; break;
+                    case 'for_children': name = 'child[]'; break;
+                }
+
+                var inputs = $(form).find('input[name="'+name+'"]');
+                for (var i = 0, len = json[key].length; i < len; i++) {
+                    
+                    maxCount = json[key][i].count > maxCount ? json[key][i].count : maxCount;
+                    
+                    inputs.each(function(){
+                        
+                       if ($(this).val() == json[key][i].url_name)
+                           $(this).prop('disabled', json[key][i].count > 0 ? false : true);
+                    });
+                }
+            }
+        
+            programSubmit.find('.count').html(maxCount);
+        }, 'json');
 
         hider = setTimeout(function(){
             programSubmit.hide();
@@ -79,6 +116,14 @@
     /** Отправка формы */
     function submitForm(onChange) {
 
+        var getArr = getQueryString.call(this, onChange);
+
+        // Отправляем GET запрос
+        document.location = $(this).attr('action') + ((getArr.length) ? '?' : '') + getArr.join('&');
+    }
+    
+    function getQueryString(onChange) {
+        
         onChange = onChange || false;
 
         var getArr = [];
@@ -93,23 +138,30 @@
 
         // Обработка полей
         $(this).find('input').filter(function(){
-
+            
             var name = null;
 
             if (onChange && $.inArray($(this).attr('name'), settings.bindFilters) == -1)
                 return;
-
+            
+            var elmType = $(this).attr('type');
+            
             /** Обработка чекбоксов */
-            if ($(this).attr('type') == 'checkbox') {
+            if (elmType == 'checkbox') {
                 if ($(this).prop('checked')) {
                     name = $(this).attr('name').replace(/\[\]/, '');
                 }
             }
 
             /** Обработке текстовых полей */
-            else if ($(this).attr('type') == 'text') {
+            else if (elmType == 'text') {
                 if (/^\s*\d+\s*$/.test($(this).val()))
                     name = $(this).attr('name');
+            }
+            
+            /** Обработка hidden элементов */
+            else if (elmType == 'hidden') {
+                name = $(this).attr('name').replace(/\[\]/, '');
             }
 
             if (name) {
@@ -128,8 +180,7 @@
             getArr.push(key + '=' + params[key].join(settings.checkboxSep));
         }
 
-        // Отправляем GET запрос
-        document.location = $(this).attr('action') + ((getArr.length) ? '?' : '') + getArr.join('&');
+        return getArr;
     }
 
   };

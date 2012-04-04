@@ -31,7 +31,10 @@
             </td>
             <td class="views">-</td>
             <td class="actions">
-                <?php echo anchor('admin/'.$module.'/edit/'.$c['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?>
+                <ul>
+                    <li><?php echo anchor('admin/'.$module.'/edit/'.$c['id'], ' ', array('class'=>'edit', 'title'=>'Редактировать')) ?></li>
+                    <li><?php echo anchor('admin/'.$module.'/delete/'.$c['id'], ' ', array('class'=>'trash', 'title'=>'Удалить')) ?></li>
+                </ul>
             </td>
         </tr>
         <?php endforeach; ?>

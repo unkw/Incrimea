@@ -19,8 +19,6 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>js/init.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 
-<script type="text/javascript" src="http://userapi.com/js/api/openapi.js?48"></script>
-
 </head>
 
 <body class="<?php print $body_classes; ?>">

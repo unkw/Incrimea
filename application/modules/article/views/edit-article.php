@@ -73,7 +73,7 @@
     <input type="hidden" name="module-name" value="article">
 
     <input type="submit" value="Сохранить" />
-    <input type="button" value="Применить" />
+    <input type="button" value="Удалить" onclick="document.location = '<?php echo base_url(); ?>' + 'admin/article/delete/' + '<?php echo $content['id']; ?>'; return false;" />
     <a href="<?php echo base_url().'admin/article' ?>">Отмена</a>
 
 </td>

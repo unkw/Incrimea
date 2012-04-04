@@ -28,8 +28,7 @@ class Filter_Model extends CI_Model {
         $data = $this->db->where($where)
             ->order_by('o.priority desc, o.created_date desc')
             ->limit($per_page, $offset)
-            ->get()
-            ->result_array();
+            ->get()->result_array();
 
         // Дополнительные поля объекта (в номерах, сервис, развлечения и т.п.)
         $addition_fields = $this->object->get_additional_fields();
@@ -114,7 +113,7 @@ class Filter_Model extends CI_Model {
 
         return $data;
     }
-
+    
     /** Получить список мест отдыха */
     public function get_resorts()
     {
@@ -134,7 +133,7 @@ class Filter_Model extends CI_Model {
             ->where('o.published', 1);
 
         $this->obj_add_filters($params);
-
+        
         return $this->db->count_all_results();
     }
 
@@ -190,7 +189,7 @@ class Filter_Model extends CI_Model {
         );
         foreach ($border_fields as $key => $val)
             $this->condition_for_border_fields($params, $key, $val);
-
+        
         return TRUE;
     }
 
@@ -238,7 +237,7 @@ class Filter_Model extends CI_Model {
 
         return FALSE;
     }
-
+    
     /** Перевод строки вида "dd-mm-yyyy" в timestamp */
     public function toTimestamp($string)
     {

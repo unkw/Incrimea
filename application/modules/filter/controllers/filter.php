@@ -32,7 +32,7 @@ class Filter extends MX_Controller {
     function action_index()
     {
         // Проверка на GET параметров на валидность
-        if (!$this->check_params())
+        if ( ! $this->check_params() )
             redirect('filter');
 
         /** Шаблон контента по-умолчанию */
@@ -77,7 +77,6 @@ class Filter extends MX_Controller {
         /** Контент */
         $this->theme->setVar('content', $this->load->view($this->module_name.'/'.$tpl, $data, TRUE));
     }
-
 
     /** Получить список заданного контента в зависимости от типа (отели, статьи или события) */
     function get_content_by_type($type, $pagination = FALSE, $per_page = 5)
@@ -136,14 +135,14 @@ class Filter extends MX_Controller {
         switch ($data['params']['type'])
         {
             case 'objects':
-                $data = array_merge($data, $this->object->get_additional_fields());
                 $data['params'] = array_merge($data['params'], $this->obj_form_params());
+                $data = array_merge($data, $this->object->model->get_addition_fields());
                 break;
         }
 
         return $this->load->view($this->module_name . '/form.php', $data, TRUE);
     }
-
+    
     /** Параметры GET запроса для отелей */
     private function obj_form_params()
     {
@@ -182,5 +181,16 @@ class Filter extends MX_Controller {
 
         return implode($sep_out, $temp);
     }
+    
+    ///////////////////////////
+    ////////// AJAX ///////////
+    ///////////////////////////
+    
+    /** Получить данные для обновления формы */
+    public function ajax_get_form()
+    {
+        echo json_encode($this->object->model->get_addition_fields(true));
+    }    
+    
 
 }

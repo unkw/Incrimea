@@ -39,9 +39,12 @@ class Path_Model extends CI_Model {
      */
     public function create($data)
     {
+        // Преобразование и очистка от недопустимых символов
         $data['alias'] = $this->converting($data['alias']);
-        $this->db->insert($this->table, $data);
+        // Проверка алиаса на дубликат
+        $data['alias'] = $this->check_duplicate($data['alias']);        
         
+        $this->db->insert($this->table, $data);
         return $this->db->insert_id();
     }
 
@@ -52,7 +55,11 @@ class Path_Model extends CI_Model {
      */
     public function update($alias_id, $pathdata)
     {
+        // Преобразование и очистка от недопустимых символов
         $pathdata['alias'] = $this->converting($pathdata['alias']);
+        // Проверка алиаса на дубликат
+        $pathdata['alias'] = $this->check_duplicate($pathdata['alias'], $alias_id);
+        
         $this->db->update($this->table, $pathdata, array('id' => (int)$alias_id));
     }
 
@@ -82,5 +89,19 @@ class Path_Model extends CI_Model {
         }
         
         return implode('/', $valid_alias);
-    }    
+    }
+    
+    private function check_duplicate($alias, $id = 0)
+    {
+        $unique = $alias;
+        $suffix = 2;
+        
+        while ( $this->db->get_where($this->table, array('alias' => $unique, 'id <>' => $id))->row() )
+        {
+            $unique = $alias . '-' . $suffix;
+            $suffix++;
+        }
+        
+        return $unique;
+    }
 }

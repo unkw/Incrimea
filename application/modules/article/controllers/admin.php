@@ -130,7 +130,26 @@ class Admin extends MX_Controller {
 
     function action_delete($id = 0)
     {
-        
+        if (!$id || !is_numeric($id))
+            show_404();
+
+        if ( $this->input->post('id') )
+        {
+            $this->model->delete($this->input->post('id'));
+            
+            $this->message->set('success', 'Удаление прошло успешно');
+            redirect('admin/article/');
+        }
+
+        $title = 'Удаление статьи';
+        // Хлебная крошка
+        $this->theme->set_breadcrumb($title, '');
+        // Заголовок
+        $this->theme->setVar('title', $title);
+        // Контент
+        $data = array();
+        $data['id'] = $id;
+        $this->theme->setVar('content', $this->load->view('article/delete.php', $data, TRUE));        
     }
 
     /** Загрузка картинки */

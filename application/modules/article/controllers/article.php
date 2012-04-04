@@ -24,9 +24,10 @@ class Article extends MX_Controller {
         $data = array();
         $data = $this->model->get($id, TRUE);
 
-        if (!$data)
+        // Если снято с публикации показывать только администраторам
+        if ( $data['status'] == 0 && ! $this->auth->is_admin() )
             show_404();
-
+        
         // Назначаем метатеги
         $this->theme->set_metatags($data['meta_id']);
 

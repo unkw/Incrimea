@@ -117,7 +117,8 @@
     </div>
 
     <div class="comments">
-
+        
+        <script type="text/javascript" src="http://userapi.com/js/api/openapi.js?48"></script>
         <script type="text/javascript">
           VK.init({apiId: 2800590, onlyWidgets: true});
         </script>

@@ -144,7 +144,26 @@ class Admin extends MX_Controller {
     /** Удаление отеля */
     public function action_delete($id = 0)
     {
-        
+        if (!$id || !is_numeric($id))
+            show_404();
+
+        if ( $this->input->post('id') )
+        {
+            $this->model->delete($this->input->post('id'));
+            
+            $this->message->set('success', 'Удаление прошло успешно');
+            redirect('admin/object/');
+        }
+
+        $title = 'Удаление отеля';
+        // Хлебная крошка
+        $this->theme->set_breadcrumb($title, '');
+        // Заголовок
+        $this->theme->setVar('title', $title);
+        // Контент
+        $data = array();
+        $data['id'] = $id;
+        $this->theme->setVar('content', $this->load->view('object/delete.php', $data, TRUE));        
     }
 
     /** Дополнительные поля отеля */
@@ -210,6 +229,7 @@ class Admin extends MX_Controller {
     {
         $data = array(
             'title'         => $this->input->post('edit-title'),
+            'info'          => $this->input->post('edit-info'),
             'location'      => $this->input->post('edit-location'),
             'resort_id'     => $this->input->post('edit-resorts'),
             'region_id'     => $this->input->post('edit-region'),

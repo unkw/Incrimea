@@ -35,12 +35,9 @@ class Event_Model extends CI_Model {
     }
 
     /** Получить страницу */
-    public function get($id, $published = FALSE)
+    public function get($id)
     {
         $where = array('id' => $id);
-
-        if ($published)
-            $where['status'] = 1;
 
         $data = $this->db->get_where('events', $where)->row_array();
 
@@ -84,6 +81,24 @@ class Event_Model extends CI_Model {
 
         $this->db->update('events', $data, array('id' => $id));
     }
+    
+    /**
+     * Удаление события
+     * @param int $id - ID 
+     */
+    public function delete($id)
+    {
+        $data = $this->db
+            ->query('SELECT alias_id, meta_id FROM events WHERE id = ?', array($id))
+            ->row_array();
+        
+        // Удаление статьи
+        $this->db->delete('events', array('id' => $id));
+        // Удалить синоним в таблице алиасов
+        $this->db->delete('alias', array('id' => $data['alias_id']));
+        // Удалить метатеги
+        $this->db->delete('metatags', array('id' => $data['meta_id']));
+    }    
 
     /**
      * Генерация url синонима

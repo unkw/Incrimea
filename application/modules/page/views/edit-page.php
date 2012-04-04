@@ -34,7 +34,7 @@
     <?php print $alias; ?>
 
     <input type="submit" value="Сохранить" />
-    <input type="button" value="Применить" />
+    <input type="button" value="Удалить" onclick="document.location = '<?php echo base_url(); ?>' + 'admin/page/delete/' + '<?php echo $content['id']; ?>'; return false;" />
     <a href="<?php echo base_url().'admin/page' ?>">Отмена</a>
 
 </td>

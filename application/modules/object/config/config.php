@@ -10,6 +10,11 @@ $config['validation_new'] = array(
         'rules' => 'required|max_length[70]'
     ),
     array(
+        'field' => 'edit-info',
+        'label' => 'Информация',
+        'rules' => ''
+    ),
+    array(
         'field' => 'edit-location',
         'label' => 'Месторасположение',
         'rules' => 'required'
@@ -95,6 +100,7 @@ $config['validation_new'] = array(
 $config['default_fields'] = array(
     'id' => '',
     'title' => '',
+    'info' => '',
     'location' => '',
     'resort_id' => 0,
     'region_id' => 0,

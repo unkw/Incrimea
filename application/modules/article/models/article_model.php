@@ -35,12 +35,9 @@ class Article_Model extends CI_Model {
     }
 
     /** Получить страницу */
-    public function get($id, $published = FALSE)
+    public function get($id)
     {
         $where = array('id' => $id);
-
-        if ($published)
-            $where['status'] = 1;
 
         return $this->db->get_where('articles', $where)->row_array();
     }
@@ -72,6 +69,24 @@ class Article_Model extends CI_Model {
         $this->path->update($data['alias_id'], $path_data);
         
         $this->db->update('articles', $data, array('id' => $id));
+    }
+    
+    /**
+     * Удаление статьи
+     * @param int $id - ID 
+     */
+    public function delete($id)
+    {
+        $data = $this->db
+            ->query('SELECT alias_id, meta_id FROM articles WHERE id = ?', array($id))
+            ->row_array();
+        
+        // Удаление статьи
+        $this->db->delete('articles', array('id' => $id));
+        // Удалить синоним в таблице алиасов
+        $this->db->delete('alias', array('id' => $data['alias_id']));
+        // Удалить метатеги
+        $this->db->delete('metatags', array('id' => $data['meta_id']));
     }
 
     /**

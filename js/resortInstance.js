@@ -1,5 +1,5 @@
 
-var ResortManager = {
+var ResortManager_old = {
 
     /** CSS ID карты */
     mapSelector: '#crimea-map .map',
@@ -17,7 +17,7 @@ var ResortManager = {
             return;
         
         this.inited = true;
-
+        
         var self = this;
 
         $('input[name="resorts[]"]').each(function(i){
@@ -65,7 +65,7 @@ var ResortManager = {
     }
 };
 
-function ResortInstance(data) {
+function ResortInstance_old(data) {
 
     var self = this;
 
@@ -116,7 +116,7 @@ function ResortInstance(data) {
         });
 };
 
-ResortInstance.prototype = {
+ResortInstance_old.prototype = {
     
     check: function(){
         this.checkbox.prop('checked', true);
@@ -140,3 +140,98 @@ ResortInstance.prototype = {
             this.html.removeClass('checked-label');
     }
 };
+
+
+var ResortManager = {
+    
+    /** Коллекция мест отдыха */
+    collection: [],
+    /** $_GET параметры */
+    $_GET: null,
+    /** Места отдыха включенные в выборку фильтров */
+    enabledItems: [],
+    
+    selectors: {
+        formId: '#filters-form',
+        enabled: '.resorts-selected',
+        mapId: '#crimea-map',
+        map: '.map',
+        checkboxList: '.resorts'
+    },
+    
+    init: function() {
+        
+        // Отобразить включенные фильтры
+        for (var i = 0, len = this.enabledItems.length; i < len; i++) {
+            $('#filters-form .resorts-selected').append(this.enabledItems[i].html.enabled);
+        }
+
+        // Отобразить места отдыха на карте
+        for (i = 0, len = this.collection.length; i < len; i++) {
+            $('#crimea-map .resorts').append(this.collection[i].html.checkbox);
+        }
+    }
+}
+
+/**
+ * Экземпляр одного места отдыха
+ * @param array data - Данные текущего места отдыха
+ * @param array enableResorts - Места отдыха включенные в выборку фильтров
+ */
+function ResortInstance(data) {
+    
+    var self = this;
+    
+    this.name = data.name;
+    
+    this.url_name = data.url_name;
+    
+    this.checked = $.inArray(this.url_name, ResortManager.$_GET) > -1 ? true : false;
+    
+    this.html = {
+        enabled: this._createEnabledHtml(),
+        label: this._createLabelHtml(),
+        checkbox: this._createCheckboxHtml()
+    }
+    
+    if (this.checked)
+        ResortManager.enabledItems.push(this);
+}
+
+ResortInstance.prototype = {
+    
+    _createEnabledHtml: function() {
+        
+        var self = this;
+        
+        var html = $('<div class="item" />').text(this.name);
+        
+        $('<a href="#" class="remove" title="Отключить фильтр">&times;</a>')
+            .click(function(){
+                self.html.enabled.detach();
+                return false;
+            }).appendTo(html);
+            
+        $('<input type="hidden" name="resorts[]" />').val(this.url_name).appendTo(html);
+            
+        return html;
+    },
+    
+    _createLabelHtml: function() {
+        
+    },
+    
+    _createCheckboxHtml: function() {
+        
+        var html = $('<div class="checkbox-item" />');
+        
+        var label = $('<label />').appendTo(html);
+        $('<input type="checkbox" name="select-resorts[]" >')
+            .val(this.url_name)
+            .prop('checked', this.checked)
+            .appendTo(label);
+        $('<span> '+this.name+'</span>').appendTo(label);
+        
+        return html;        
+    }
+}

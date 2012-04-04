@@ -22,9 +22,9 @@ class Page extends MX_Controller {
 
         // Контент
         $data = array();
-        $data = $this->model->get($id, TRUE);
+        $data = $this->model->get($id);
 
-        if (!$data)
+        if ( $data['status'] == 0 && ! $this->auth->is_admin() )
             show_404();
 
         // Назначаем метатеги

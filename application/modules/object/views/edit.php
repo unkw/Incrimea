@@ -19,9 +19,15 @@
     <input type="hidden" name="edit-id" value="<?php echo $obj['id']; ?>" />
 
     <!-- Название  -->
-    <div>
+    <div class="field-wrapper">
         <div><label class="title-label">Название</label></div>
         <input type="text" name="edit-title" size="50" value="<?php echo set_value('edit-title', $obj['title']) ?>"/>
+    </div>
+    
+    <!-- Информация об отеле  -->
+    <div class="field-wrapper">
+        <div><label class="title-label">Информация (Для администрации)</label></div>
+        <textarea name="edit-info" rows="2" cols="50" style="width: 100%;"><?php echo set_value('edit-info', $obj['info']) ?></textarea>        
     </div>
 
     <!-- Метатеги -->
@@ -108,7 +114,7 @@
     <input type="hidden" name="module-name" value="event">
 
     <input type="submit" value="Сохранить" />
-    <input type="button" value="Применить" />
+    <input type="button" value="Удалить" onclick="document.location = '<?php echo base_url(); ?>' + 'admin/object/delete/' + '<?php echo $obj['id']; ?>'; return false;" />
     <a href="<?php echo base_url().'admin/object' ?>">Отмена</a>
 
 </td>

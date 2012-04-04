@@ -336,6 +336,13 @@ a:hover {
 .content-list .actions {
     width: 60px;
 }
+.content-list .actions li {
+    float: left;
+    margin-right: 5px;
+}
+.content-list .actions li:last-child {
+    margin-right: 0;
+}
 .content-list .on {
     display: block;
     width: 16px;
@@ -359,6 +366,12 @@ a:hover {
     width: 16px;
     height: 16px;
     background: url(../css/images/remove.png) 0 0 no-repeat;
+}
+.content-list .trash {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url(../css/images/trash.gif) 0 0 no-repeat;
 }
 
 /** Content edit tables */
@@ -476,7 +489,7 @@ a:hover {
     margin-bottom: 5px;
     position: relative;
 }
-#edit-gallery li:last{
+#edit-gallery li:last-child {
     margin-right: 0;
 }
 #edit-gallery li .remove {
