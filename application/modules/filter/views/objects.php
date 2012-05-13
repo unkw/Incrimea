@@ -3,7 +3,7 @@
 
 <?php foreach ($objects as $obj) : ?>
 
-    <div class="content-items">
+    <div class="content-item">
         <!-- Название -->
         <h3><?php print href($obj['alias'], $obj['title']); ?></h3>
         <!-- Место отдыха -->

@@ -1,7 +1,11 @@
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
     margin:0;
     padding:0;
-    font-family: Times New Roman, Times New Roman, Times, serif;
+    font-family: Times New Roman, Times, serif;
+    vertical-align: baseline;
+}
+body {
+    line-height: 1;
 }
 table {
     border-collapse: collapse;
@@ -11,8 +15,8 @@ fieldset,img {
     border:0;
 }
 address,caption,cite,code,dfn,em,strong,th,var {
-    font-style:normal;
-    font-weight:normal;
+    font-style: normal;
+    font-weight: normal;
 }
 ol,ul {
     list-style:none;
@@ -51,14 +55,12 @@ input[type="button"] {
     font-size: 14px;
 }
 
-
 /* Header
 -----------------------------------------------------------------------------*/
 #header {
     height: 150px;
     background-color: #B5E3FF;
 }
-
 
 /* Middle
 -----------------------------------------------------------------------------*/
@@ -113,34 +115,14 @@ input[type="button"] {
 }
 
 /* Контент главной страницы */
-#content .filter-column {
-/*   width: 50%;
-    float: left;*/
-}
-
-#objects-column {
-    
-}
-
-#articles-column {
-    
-}
-
-/* Контент */
-.content ul {
-    list-style: none;
-}
-.content .field-label {
-    font-weight: bold;
-}
-.content .content-items {
-    margin: 0 0 10px 0;
-}
-.content .content-items p {
-    margin: 0;
-}
+#content .filter-column {}
+#objects-column {}
+#articles-column {}
 
 /* Форма фильтров */
+#filters-form {
+    position: relative;
+}
 #filters-form .filters-box {
     clear: both;
 }
@@ -176,20 +158,30 @@ input[type="button"] {
     background: #189DE1;
 }
 #filters-form .filters-box div {
-    position: relative;
+/*    position: relative;*/
 }
-#filters-form div.program-submit-wrap {
+#filters-form .program-submit-wrap {
     position: absolute;
-    right: -78px;
+    display: none;
+    margin: 0;
     top: 0;
-    margin: -4px 0 0 0;
+    left: 250px;
     border: 1px solid #16960B;
     padding: 3px 7px;
     background: #FFF;
     border-radius: 3px;
 }
+#filters-form .program-submit-wrap .program-submit {
+    display: block;
+    float: left;
+}
 #filters-form .program-submit-wrap .count {
-    margin: 0 0 0 5px;
+    margin: 0 0 0 60px;
+}
+#filters-form .program-submit-wrap .count .ajaxloader {
+    background: url(images/filter-ajaxloader.gif) 0 0 no-repeat;
+    width: 16px;
+    height: 16px;
 }
 #filters-form .resorts-selected .item {
     float: left;
@@ -210,6 +202,8 @@ input[type="button"] {
 #filters-form .resorts-selected .item .remove:hover {
     text-shadow: -1px -1px 0 orange,1px -1px 0 orange,-1px 1px 0 orange,1px 1px 0 orange; 
 }
+
+
 /* Карта Крыма */
 #crimea-map {
     width: 800px;
@@ -224,38 +218,44 @@ input[type="button"] {
     float: left;
     position: relative;
 }
-#crimea-map .map .resort-label {
+#crimea-map .map .map-item {
+    clear: both;
+    padding: 4px;
+/*    position: absolute;*/
+}
+#crimea-map .map .map-item .mark {
     display: block;
-    width: 12px;
-    height: 12px;
+    width: 9px;
+    height: 9px;
     border: 1px solid #333;
     cursor: pointer;
     background: #4F8A10;
-/*    border-radius: 8px;*/
-    margin: 5px;
+    border-radius: 7px;
     behavior: url(/PIE.php);
+    float: left;
 }
-#crimea-map .map .resort-label:hover {
+#crimea-map .map .map-item .mark:hover {
     background: #cd0a0a;
 }
-#crimea-map .map .resort-tooltip {
-    position: absolute;
+#crimea-map .map .map-item .name {
     font-size: 12px;
+    line-height: 90%;
+    margin: 0 0 0 15px;
 }
-#crimea-map .map .checked-label {
+#crimea-map .map .map-item .checked-mark {
     background: #cd0a0a;
-}
-#crimea-map .map #label-yalta {
-    left: 200px;
-    top: 25px;
 }
 #crimea-map .resorts {
     padding: 0 0 0 450px;
 }
+#crimea-map .resorts #resorts-form {
+    margin: 0 0 0 25px;
+    padding: 10px 0 0 0;
+}
 #crimea-map .resorts .checkbox-item {
-    background: lightsteelblue;
     width: 120px;
     float: left;
+    margin: 0 20px 3px 0;
 }
 #crimea-map .resorts .buttons {
     position: relative;

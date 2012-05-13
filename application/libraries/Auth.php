@@ -27,7 +27,7 @@ class Auth {
     {
         $query = $this->CI->db->query(''
             . 'SELECT * FROM users'
-            . ' WHERE (username = ? OR email = ?) AND password = ?',
+            . ' WHERE (username = ? OR email = ?) AND password = ? LIMIT 1',
                 array($login, $login, sha1($pass))
         );
 
@@ -37,6 +37,7 @@ class Auth {
         {
             $this->CI->session->set_userdata(array(
                 'uid' => $userdata->id,
+                'name' => $userdata->username,
             ));
             
             $this->update_activity($userdata->id);

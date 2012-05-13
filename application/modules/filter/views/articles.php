@@ -2,7 +2,7 @@
 <?php if ($articles): ?>
 <?php foreach ($articles as $a) : ?>
 
-    <div class="content-items">
+    <div class="content-item">
         <!-- Название -->
         <h3><?php echo href($a['alias'], $a['title']); ?></h3>
         <!-- Место отдыха -->

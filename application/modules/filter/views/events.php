@@ -2,7 +2,7 @@
 <?php if ($events): ?>
 <?php foreach ($events as $e) : ?>
 
-    <div class="content-items">
+    <div class="content-item">
         <!-- Название -->
         <h3><?php echo href($e['alias'], $e['title']); ?></h3>
         <!-- Место отдыха -->

@@ -27,11 +27,6 @@ class Theme extends CI_Model {
             'title'  => 'Фильтры',
             'enable' => true,
         ),
-        'login' => array(
-            'region' => 'left',
-            'title'  => 'Вход на сайт',
-            'enable' => true,
-        ),
     );
 
     function __construct()

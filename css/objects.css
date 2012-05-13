@@ -1,0 +1,76 @@
+/* 
+    Document   : objects
+    Created on : 01.05.2012, 16:15:34
+    Author     : Kemal
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/******* List of Hotels *******/
+
+.obj-item {
+    clear: both;
+    margin: 0 0 15px 0;
+}
+.obj-item .title-wrap {
+/*    padding: 5px 0;*/
+}
+.obj-item .title-wrap .title {
+    font-size: 20px;
+    font-weight: bold;
+}
+.obj-item .title-wrap .resort {
+    font-size: 16px;
+    font-weight: bold;
+}
+.obj-item .img-wrap {
+    width: 160px;
+    float: left;
+}
+.obj-item .img-wrap img.current {
+    width: 160px;
+    display: block;
+}
+.obj-item .img-wrap .small-thumbs {
+}
+.obj-item .img-wrap .small-thumbs li {
+    float: left;
+    margin: 3px 0 0 4px;
+    padding: 0;
+}
+.obj-item .img-wrap .small-thumbs li:first-child {
+    margin-left: 0;
+}
+.obj-item .img-wrap .small-thumbs li img {
+    width: 37px;
+}
+.obj-item .content-wrap {
+    margin-left: 160px;
+}
+.obj-item .content-wrap .icons-wrap {
+    height: 25px;
+    border: 1px solid #CCC;
+}
+.obj-item .content-wrap .middle-wrap {
+    height: 102px;
+    overflow: hidden;
+}
+.obj-item .content-wrap .middle-wrap .col {
+    border: 1px solid #CCC;
+}
+.obj-item .content-wrap .middle-wrap .info {
+    width: 120px;
+    float: left;
+}
+.obj-item .content-wrap .middle-wrap .desc {
+    float: left;
+    width: 344px;
+}
+.obj-item .content-wrap .middle-wrap .price {
+    width: 100px;
+    float: right;
+}
+.obj-item .content-wrap .bottom-wrap {
+    height: 20px;
+    border: 1px solid #CCC;    
+}

@@ -1,20 +1,71 @@
 <?php
 class Filter_Model extends CI_Model {
     
+    public $module_name = 'filter';
+    public $pager = FALSE;
+    
     public function __construct() {
         parent::__construct();
     }
+    
+    /**
+     * Получить список определенного заданного контента 
+     * в зависимости от типа (отели, статьи или события)
+     * @param string $qs - $_GET параметры
+     * @param bool $pagination - Флаг: пагинация
+     * @param int $per_page - Кол-во выводимого контента на страницу
+     * @return array 
+     */
+    function get_content($qs, $pagination = FALSE, $per_page = 5)
+    {
+        // Тип контента
+        $type = $qs['type'];
+        // Конфиги для пагинации
+        $config = array();
+        // Кол-во выводимого контента на страницу
+        $config['per_page'] = $per_page;
+        // Номер текущей страницы
+        $page = (int)$this->input->get('page') ? (int)$this->input->get('page') : 1;
+        // Позиция для БД
+        $offset = ($page - 1) * $config['per_page'];
 
-    /** Получить список объектов */
+        /** Прикручиваем пагинацию, если необходимо */
+        if ($pagination)
+        {
+            $this->load->library('pagination');
+            // Адресная строка
+            $config['base_url'] = base_url().$this->module_name.'?'.$this->url_params_to_string($qs);
+            // Кол-во всего контента
+            $method = 'count_all_'.$type;
+            $config['total_rows'] = $this->$method($qs);
+            // Ссылка на первую страницу
+            $config['first_url'] = base_url().$this->module_name.'?'.$this->url_params_to_string($qs);
+
+            $this->pagination->initialize($config);
+
+            if ($offset > $config['total_rows'])
+                redirect('filter');
+
+            // Пейджер
+            $this->pager = $this->pagination->create_links();
+        }
+
+        $method = 'get_'.$type;
+
+        return $this->$method($qs, $config['per_page'], $offset);
+    }    
+
+    /**
+     * Получить список отелей
+     * @param array $params - $_GET параметры
+     * @param int $per_page - Кол-во отелей
+     * @param int $offset - Смещение при выборке из БД 
+     * @return array 
+     */ 
     public function get_objects($params, $per_page, $offset)
     {
         $params = $params ? $params : array();
-
-        // Только опубликованные
-        $where = array(
-            'o.published' => 1
-        );
-
+        
         /** Основные данные отелей */
         $this->db->select('o.id, o.title, o.body, o.images, o.price, o.infrastructure, a.alias, r.name as resort')
             ->from('objects o')
@@ -22,16 +73,21 @@ class Filter_Model extends CI_Model {
             ->join('alias a', 'a.id = o.alias_id', 'left')
             ->join('resorts r', 'o.resort_id = r.id');
 
-        // Дополнительные фильтры
+        // Дополнительные условия
         $this->obj_add_filters($params);
 
+        // Только опубликованные
+        $where = array(
+            'o.published' => 1
+        );        
+        
         $data = $this->db->where($where)
             ->order_by('o.priority desc, o.created_date desc')
             ->limit($per_page, $offset)
             ->get()->result_array();
-
+        
         // Дополнительные поля объекта (в номерах, сервис, развлечения и т.п.)
-        $addition_fields = $this->object->get_additional_fields();
+        $addition_fields = $this->object->model->get_addition_fields();
 
         // Инфраструктура - все чекбоксы
         $infr_all = $addition_fields['infrastructure'];
@@ -58,7 +114,13 @@ class Filter_Model extends CI_Model {
         return $data;
     }
 
-    /** Получить список статей */
+    /**
+     * Получить список статей
+     * @param array $params - $_GET параметры
+     * @param int $per_page - Кол-во статей
+     * @param int $offset - Смещение при выборке из БД 
+     * @return array 
+     */ 
     public function get_articles($params, $per_page, $offset)
     {
         $params = $params ? $params : array();
@@ -114,16 +176,6 @@ class Filter_Model extends CI_Model {
         return $data;
     }
     
-    /** Получить список мест отдыха */
-    public function get_resorts()
-    {
-        $this->db->select('*')
-            ->from('resorts')
-            ->order_by('name', 'asc');
-
-        return $this->db->get()->result_array();
-    }
-
     /** Кол-во всех отелей */
     public function count_all_objects($params)
     {
@@ -158,7 +210,7 @@ class Filter_Model extends CI_Model {
 
         return $this->db->count_all_results();
     }
-
+    
     /** Условия накладываемые дополнительными фильтрами объектов */
     private function obj_add_filters($params)
     {
@@ -238,20 +290,279 @@ class Filter_Model extends CI_Model {
         return FALSE;
     }
     
-    /** Перевод строки вида "dd-mm-yyyy" в timestamp */
-    public function toTimestamp($string)
+    /**
+     * Преобразование ассоциативного массива в GET строку
+     * @param array $qs Параметры для преобразования в строку
+     * @param string $sep_in Разделить между ключом и значением параметра
+     * @param string $sep_out Символ, по которому необходимо склеить параметры
+     * @return string 
+     */
+    function url_params_to_string($qs, $sep_in = '=', $sep_out = '&')
     {
-        $arr = explode('-', $string);
+        $temp = array();
 
-        return mktime(0, 0, 0, $arr[1], $arr[0], $arr[2]);
+        foreach ($qs as $key => $value)
+        {
+            if ($key != 'page')
+                $temp[] = $key.$sep_in.$value;
+        }
+
+        return implode($sep_out, $temp);
     }
-
-    /** Перевод timestamp в date формат */
-    public function toDate($timestamp, $format = FALSE)
+    
+    /** Получить список мест отдыха */
+    public function get_resorts($params)
     {
-        $format = $format ? $format : 'd-m-Y';
+        switch ($params['type']) {
+            case 'objects': $sub_query_arr = $this->getObjCurrentFormSQL($params); break;
+            case 'articles': $sub_query_arr = $this->getArtCurrentFormSQL($params); break;
+            case 'events': $sub_query_arr = $this->getEventCurrentFormSQL($params); break;
+            default: $sub_query_arr = null;
+        }
+        
+        $count = '';
+        if ($sub_query_arr) {
+            $sub_query = $sub_query_arr['select'] . 'WHERE ' . $this->_getConditionSqlString($sub_query_arr['where'], array('resorts'));
+            $count = $sub_query.' AND f.id=resort_id';
+        }
+        else {
+            $count = 1;
+        }
+            
+        $sql = 'SELECT f.*, ('.$count.') as count'
+            .' FROM resorts f'
+            .' ORDER BY f.name ASC';
+        
+        return $this->db->query($sql)->result_array();
+    }    
+    
+    /**
+     * Получить параметры для заполнения формы фильтров
+     * @param array $params Выбранные параметры для формы фильтров
+     * @param boolean $short_select 
+     *      Флаг, необходим при ajax, чтобы уменьшить объем
+     *      передаваемых данных для клиента
+     * @return array Параметры формы
+     */
+    public function get_obj_form_params($params, $short_select = FALSE)
+    {
+        // Подзапрос
+        $sub_query_arr = $this->getObjCurrentFormSQL($params);
 
-        return date($format, $timestamp);
+        /** Собираем ссновной запрос */
+        $sql = array();
+        $filters = array(
+            'beachs' => array('id'=>1, 'col'=>'beach_id'),
+            'room' => array('id'=>2, 'col'=>'room'),
+            'infr' => array('id'=>3, 'col'=>'infrastructure'),
+            'entment' => array('id'=>4, 'col'=>'entertainment'),
+            'service' => array('id'=>5, 'col'=>'service'),
+            'child' => array('id'=>6, 'col'=>'for_children'),
+        );
+        
+        $select = $short_select ? 'f.field_id, f.url_name' : 'f.*';
+        $sub_query = $sub_query_arr['select'] . 'WHERE ';
+        foreach ($filters as $key => $val) {
+
+            switch ($key) {
+                case 'beachs':
+                    $sub = $sub_query . $this->_getConditionSqlString($sub_query_arr['where'], array('beachs'));
+                    $sql[] = '(SELECT '.$select.', ('.$sub.' AND f.url_name=o.'.$val['col'].') as count'
+                        .' FROM obj_fields f'
+                        .' WHERE f.field_id = '.$val['id'].')';                    
+                    break;
+                default:
+                    $sub = $sub_query . $this->_getConditionSqlString($sub_query_arr['where']);
+                    $sql[] = '(SELECT '.$select.', ('.$sub.' AND o.'.$val['col']." LIKE CONCAT(\"%\", f.url_name ,\"%\")) as count"
+                        .' FROM obj_fields f'
+                        .' WHERE f.field_id = '.$val['id'].')';  
+            }
+        }
+        
+        $fields = $this->db->query(implode(' UNION ', $sql))->result_array();
+        
+        $data = array();
+
+        foreach ($fields as $row) {
+
+            switch ($row['field_id']) {
+
+                case 1: $data['beachs'][] = $row; break;
+                case 2: $data['room'][] = $row; break;
+                case 3: $data['infrastructure'][] = $row; break;
+                case 4: $data['entertainment'][] = $row; break;
+                case 5: $data['service'][] = $row; break;
+                case 6: $data['for_children'][] = $row; break;
+                case 7: $data['types'][] = $row; break;
+            }
+        }   
+//        print'<pre>';print_r($data); die;
+        return $data;
     }
+    
+    /**
+     * Получить SQL-запрос, выводящий отели 
+     * для текущего состояния формы фильтров 
+     * @return string SQL запрос
+     */
+    public function getObjCurrentFormSQL($params)
+    {
+        $sqlArr = array();
+        $sqlArr['select'] = 
+            'SELECT count(1)'."\n"
+            .' FROM objects o'."\n"
+            .' JOIN resorts r ON r.id = o.resort_id'."\n"
+            .' JOIN obj_fields b ON b.url_name = o.beach_id'."\n";
+        $sqlArr['where'] = array(
+            'common' => array('o.published = 1'),
+        );
+        
+        // $select $where $where_custom
 
+        // Наложение дополнительных условий на подзапрос
+        foreach ($params as $key => $value) {
+
+            if ( empty($params[$key]) )
+                continue;
+
+            switch ($key) {
+                case 'beachs': case 'resorts':
+                    $fields = array(
+                        'resorts' => 'r',
+                        'beachs' => 'b',
+                    );
+                    
+                    $sqlArr['where'][$key] = $fields[$key].'.url_name IN ('.implode(',',array_map('escape', $value)).')';
+                    break;
+
+                // Условие вида cond1 LIKE val1 AND cond2 LIKE val2 ... AND condN LIKE valN 
+                case 'room': case 'infr': case 'service': case 'entment': case 'child':
+
+                    $json_fields = array(
+                        'room' => 'room',
+                        'infr' => 'infrastructure',
+                        'service' => 'service',
+                        'entment' => 'entertainment',
+                        'child' => 'for_children',
+                    );                    
+
+                    foreach ($value as $val)
+                        $sqlArr['where']['common'][] = "o.".$json_fields[$key]." LIKE '%".$this->db->escape_like_str($val)."%'";
+                    break;
+
+                case 'distance': case 'price_min': case 'price_max':
+                    $border_fields = array(
+                        'distance' => array('o.beach_distance', '<='),
+                        'price_min' => array('o.price', '>='),
+                        'price_max' => array('o.price', '<='),
+                    );
+
+                    $sqlArr['where']['common'][] = $border_fields[$key][0].' '.$border_fields[$key][1].' '.(int)$value;
+                    break;
+            }
+        }
+        
+        return $sqlArr;
+    }
+    
+    /**
+     * Получить SQL-запрос, выводящий статьи 
+     * для текущего состояния формы фильтров 
+     * @return string SQL запрос
+     */    
+    public function getArtCurrentFormSQL($params)
+    {
+        $sqlArr = array();
+        $sqlArr['select'] = 
+            'SELECT count(1)'."\n"
+            .' FROM articles a'."\n"
+            .' JOIN resorts r ON r.id = a.resort_id'."\n";
+        $sqlArr['where'] = array(
+            'common' => array('a.status = 1'),
+        );
+        
+        // Наложение дополнительных условий на подзапрос
+        foreach ($params as $key => $value) {
+
+            if ( empty($params[$key]) )
+                continue;
+
+            switch ($key) {
+                case 'resorts':
+                    $fields = array(
+                        'resorts' => 'r',
+                    );
+                    
+                    $sqlArr['where'][$key] = $fields[$key].'.url_name IN ('.implode(',',array_map('escape', $value)).')';
+                    break;
+            }
+        }
+        
+        return $sqlArr;        
+    }
+    
+    /**
+     * Получить SQL-запрос, выводящий события 
+     * для текущего состояния формы фильтров 
+     * @return string SQL запрос
+     */    
+    public function getEventCurrentFormSQL($params)
+    {
+        $sqlArr = array();
+        $sqlArr['select'] = 
+            'SELECT count(1)'."\n"
+            .' FROM events e'."\n"
+            .' JOIN resorts r ON r.id = e.resort_id'."\n";
+        $sqlArr['where'] = array(
+            'common' => array('e.status = 1'),
+        );
+        
+        // Наложение дополнительных условий на подзапрос
+        foreach ($params as $key => $value) {
+
+            if ( empty($params[$key]) )
+                continue;
+
+            switch ($key) {
+                case 'resorts':
+                    $fields = array(
+                        'resorts' => 'r',
+                    );
+                    
+                    $sqlArr['where'][$key] = $fields[$key].'.url_name IN ('.implode(',',array_map('escape', $value)).')';
+                    break;
+            }
+        }
+        
+        return $sqlArr;        
+    }
+    
+    /**
+     * Получить из массива условий SQL строку для WHERE 
+     * @param type $conditionArr Массив условия для sql запроса
+     * @param type $exceptionFields Поля, условия для которых не включать в выборку
+     * @return string
+     */
+    private function _getConditionSqlString($conditionArr, $exceptionFields = array())
+    {
+        $arr = array();
+        
+        foreach ($conditionArr as $cond => $values) {
+            
+            if (in_array($cond, $exceptionFields))
+                continue;
+            
+            if (is_array($values))
+            {
+                foreach ($values as $val)
+                    $arr[] = $val;
+            }
+            else
+            {
+                $arr[] = $values;
+            }
+        }
+
+        return implode(' AND ', $arr);
+    }
 }

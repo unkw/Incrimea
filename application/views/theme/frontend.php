@@ -9,13 +9,13 @@
 <link rel="stylesheet" href="<?php print base_url(); ?>css/ui.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="<?php print base_url(); ?>css/style.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="<?php print base_url(); ?>css/colorbox.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="<?php print base_url(); ?>css/objects.css" type="text/css" media="screen, projection" />
 
 <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery-ui.js"></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.formUrl.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.colorbox.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/filters.js"></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>js/resortInstance.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/resorts.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/init.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 
@@ -41,6 +41,9 @@
             <?php if ($left): ?>
                 <?php print $left; ?>
             <?php endif; ?>
+            
+            <?php Widget::run('user_login'); ?>
+            
         </div>
 
     </div>

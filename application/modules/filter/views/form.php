@@ -178,7 +178,9 @@
         <div class="map"></div>
 
         <!-- Чекбоксы выбора мест отдыха -->
-        <div class="resorts"></div>
+        <div class="resorts">
+            <form id="resorts-form" action="" method="post"></form>
+        </div>
 
     </div>
 </div>

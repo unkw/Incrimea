@@ -36,3 +36,23 @@ if ( ! function_exists('href'))
         return '<a href="'.base_url().$href.'"'.$id.$class.$title.'>'.$text.'</a>';
     }
 }
+
+if ( ! function_exists('getVar') ) 
+{
+    /**
+     * Получение параметра из массивов POST или GET
+     * @param string $name - имя параметра
+     * @param mixed $default - значение, если параметр отсутствует
+     * @param boolean $without_xss_clean - флаг, производить ли xss фильтрацию
+     * @return mixed 
+     */
+    function getVar($name, $default = FALSE, $xss_clean = TRUE)
+    {
+        $CI = & get_instance();
+        
+        $param = $CI->input->get_post($name, $xss_clean);
+
+        return $param ? $param : $default;
+    }
+
+}

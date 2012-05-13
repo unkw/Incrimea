@@ -46,9 +46,4 @@ class Object extends MX_Controller {
         // Отображение
         $this->theme->setVar('content', $this->load->view($this->module_name.'/template.php', $data, TRUE));
     }
-
-    public function get_additional_fields()
-    {
-        return $this->model->get_addition_fields();
-    }
 }

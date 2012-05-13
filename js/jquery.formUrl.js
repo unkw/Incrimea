@@ -44,7 +44,7 @@
                     submitForm.call(self);
                     return false;
                 })            
-            ).append('<span class="count">0</span>')
+            ).append('<span class="count"></span>')
 
         $(this).data('programSubmit', programSubmit);
 
@@ -73,29 +73,33 @@
         if (hider) clearTimeout(hider);
         programSubmit.show();
         $(this).parent().parent().append(programSubmit);
-        
+        // Получить $_GET параметры формы
         var getArr = getQueryString.call(form);
+        // Преобразование параметров для отправки на сервер
         var data = getArr.join('&');
         $.get('filter/get_form', data, function(json){
             
-            var maxCount = 0;
+            // Обновление обычных полей формы фильтров
+            var count = 0;
             for (var key in json) {
                 
                 var name;
                 switch (key) {
-                    case 'beachs': name = 'beachs[]'; break;
-                    case 'room': name = 'room[]'; break;
-                    case 'infrastructure': name = 'infr[]'; break;
-                    case 'entertainment': name = 'entment[]'; break;
-                    case 'service': name = 'service[]'; break;
-                    case 'for_children': name = 'child[]'; break;
+                    case 'beachs':name = 'beachs[]';break;
+                    case 'room':name = 'room[]';break;
+                    case 'infrastructure':name = 'infr[]';break;
+                    case 'entertainment':name = 'entment[]';break;
+                    case 'service':name = 'service[]';break;
+                    case 'for_children':name = 'child[]';break;
                 }
 
                 var inputs = $(form).find('input[name="'+name+'"]');
                 for (var i = 0, len = json[key].length; i < len; i++) {
-                    
-                    maxCount = json[key][i].count > maxCount ? json[key][i].count : maxCount;
-                    
+
+                    // Подсчитываем кол-во ожидаемого контента для отображения в подсказке
+                    if (key == 'resorts')
+                        count += parseInt(json[key][i].count, 10);
+
                     inputs.each(function(){
                         
                        if ($(this).val() == json[key][i].url_name)
@@ -103,8 +107,11 @@
                     });
                 }
             }
-        
-            programSubmit.find('.count').html(maxCount);
+            
+            // Обновление фильтра "Места отдыха"
+            ResortManager.updateOnFilterFormChange(json.resorts);
+            
+            programSubmit.find('.count').html(count);
         }, 'json');
 
         hider = setTimeout(function(){
@@ -140,10 +147,11 @@
         $(this).find('input').filter(function(){
             
             var name = null;
-
+            
+            // Только фильтры для всех типов контента будут добавлены в $_GET
             if (onChange && $.inArray($(this).attr('name'), settings.bindFilters) == -1)
                 return;
-            
+
             var elmType = $(this).attr('type');
             
             /** Обработка чекбоксов */

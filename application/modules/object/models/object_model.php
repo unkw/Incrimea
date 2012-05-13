@@ -12,6 +12,11 @@ class Object_Model extends CI_Model {
     {
         return $this->db->count_all('objects');
     }
+    
+    public static function static_test()
+    {
+        return 'this is static method';
+    }
 
     /** Получить список страниц */
     public function get_list($num, $offset)
@@ -41,24 +46,15 @@ class Object_Model extends CI_Model {
      * @param bool $short_select - флаг
      * @return array 
      */
-    public function get_addition_fields($short_select = FALSE)
+    public function get_addition_fields()
     {
         if ( ! is_null($this->additional_fields) )
             return $this->additional_fields;
         
-        // Если выбран тип контента "Отели", то проверяем чекбоксы на кол-во контента
-        if ($this->input->get('type', TRUE) == 'objects')
-        {
-            $sql = $this->getListSQL($short_select);
-            $fields = $this->db->query(implode(' UNION ', $sql))->result_array();             
-        } 
-        
-        else
-        {
-            $fields = $this->db->get_where('obj_fields')->result_array();
-        }
+        $fields = $this->db->get_where('obj_fields')->result_array();
         
         $data = array();
+
         foreach ($fields as $row) {
 
             switch ($row['field_id']) {
@@ -76,109 +72,6 @@ class Object_Model extends CI_Model {
         return $this->additional_fields = $data;
     }
     
-    /** SQL запрос */
-    public function getListSQL($short_select)
-    {
-        // Подзапрос извлекающий кол-во контента у каждого поля
-        $sub_query = 
-            'SELECT count(1)'."\n"
-            .' FROM objects o'."\n"
-            .' JOIN resorts r ON r.id = o.resort_id'."\n"
-            .' JOIN obj_fields b ON b.url_name = o.beach_id'."\n"
-            .' WHERE o.published = 1';
-
-        // $_GET параметры фильтров
-        $params = $this->form_params();
-
-        // Наложение дополнительных условий на подзапрос
-        $add_conditions = array();
-        foreach ($params as $key => $value) {
-
-            if ( empty($params[$key]) )
-                continue;
-
-            switch ($key) {
-
-                // Условие вида cond1 LIKE val1 AND cond2 LIKE val2 ... AND condN LIKE valN 
-                case 'room': case 'infr': case 'service': case 'entment': case 'child':
-
-                    $json_fields = array(
-                        'room' => 'room',
-                        'infr' => 'infrastructure',
-                        'service' => 'service',
-                        'entment' => 'entertainment',
-                        'child' => 'for_children',
-                    );                    
-
-                    foreach ($value as $val)
-                        $add_conditions[] = "o.".$json_fields[$key]." LIKE '%".$this->db->escape_like_str($val)."%'";
-                    break;
-
-                case 'distance': case 'price_min': case 'price_max':
-                    $border_fields = array(
-                        'distance' => array('o.beach_distance', '<='),
-                        'price_min' => array('o.price', '>='),
-                        'price_max' => array('o.price', '<='),
-                    );
-
-                    $add_conditions[] = $border_fields[$key][0].' '.$border_fields[$key][1].' '.(int)$value;
-                    break;
-            }
-        }
-
-        $sub_query .= $add_conditions ? ' AND ' . implode(' AND ', $add_conditions) : '';
-
-        /** Собираем ссновной запрос */
-        $sql = array();
-        $filters = array(
-            'beachs' => array('id'=>1, 'col'=>'beach_id'),
-            'room' => array('id'=>2, 'col'=>'room'),
-            'infr' => array('id'=>3, 'col'=>'infrastructure'),
-            'entment' => array('id'=>4, 'col'=>'entertainment'),
-            'service' => array('id'=>5, 'col'=>'service'),
-            'child' => array('id'=>6, 'col'=>'for_children'),
-        );
-        
-        $select = $short_select ? 'f.field_id, f.url_name' : 'f.*';
-        foreach ($filters as $key => $val) {
-
-            switch ($key) {
-                case 'beachs':
-                    $sub_query .= !empty($params[$key]) ? ' AND o.'.$val['col'].' = f.url_name' : '';
-                    $sql[] = '(SELECT '.$select.', ('.$sub_query.') as count'
-                        .' FROM obj_fields f'
-                        .' WHERE f.field_id = '.$val['id'].')';                    
-                    break;
-                default:
-                    $sql[] = '(SELECT '.$select.', ('.$sub_query.' AND o.'.$val['col']." LIKE CONCAT(\"%\", f.url_name ,\"%\")) as count"
-                        .' FROM obj_fields f'
-                        .' WHERE f.field_id = '.$val['id'].')';  
-            }
-        }
-        
-        return $sql;
-    }
-    
-    /** Параметры GET запроса для отелей */
-    private function form_params()
-    {
-        $params = $this->input->get(NULL, TRUE);
-        
-        return array(
-            'type' => isset($params['type']) ? $params['type'] : false,
-            'resorts' => isset($params['resorts']) ? explode(',', $params['resorts']) : array(),            
-            'room' => isset($params['room']) ? explode(',', $params['room']) : array(),
-            'infr' => isset($params['infr']) ? explode(',', $params['infr']) : array(),
-            'service' => isset($params['service']) ? explode(',', $params['service']) : array(),
-            'entment' => isset($params['entment']) ? explode(',', $params['entment']) : array(),
-            'child' => isset($params['child']) ? explode(',', $params['child']) : array(),
-            'beachs' => isset($params['beachs']) ? explode(',', $params['beachs']) : array(),
-            'distance' => isset($params['distance']) ? $params['distance'] : '',
-            'price_min' => isset($params['p-min']) ? $params['p-min'] : '',
-            'price_max' => isset($params['p-max']) ? $params['p-max'] : '',
-        );
-    }    
-
     /** Получить полные данные json полей по url идентификатору */
     public function value_from_additional_field($field, $json)
     {

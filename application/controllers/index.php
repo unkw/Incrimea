@@ -18,12 +18,8 @@ class Index extends MX_Controller {
     }
 
     /** Point of entry to the site */
-    function index()
+    public function index()
     {
-        // При ajax запросе меняем префикс контроллеров
-        if ( $this->input->is_ajax_request() )
-            $this->pre = 'ajax_';
-
         // Роутер
         $this->load_page_by_path();
         
@@ -33,9 +29,13 @@ class Index extends MX_Controller {
     }
 
     /** Router action */
-    function load_page_by_path()
+    public function load_page_by_path()
     {
         $this->theme->set_breadcrumb('Главная', '');
+        
+        // При ajax запросе меняем префикс контроллеров
+        if ( $this->input->is_ajax_request() )
+            $this->pre = 'ajax_';        
         
         if ($this->uri->segment(1))
             if ( $this->path->is_admin_url() )
@@ -50,7 +50,8 @@ class Index extends MX_Controller {
     }
 
     /** Display home page */
-    function load_main_page()
+    
+    public function load_main_page()
     {
         // Флаг - главная страница
         $this->theme->setVar('is_front', TRUE);
@@ -61,7 +62,7 @@ class Index extends MX_Controller {
     }
 
     /** Display administration pages */
-    function load_admin_page()
+    public function load_admin_page()
     {
         // Library system messages
         $this->load->library('message');
@@ -88,7 +89,7 @@ class Index extends MX_Controller {
     }
 
     /** Display module pages */
-    function load_module_page()
+    public function load_module_page()
     {
         // Get real path
         $path = $this->path->get_real_path();
@@ -107,7 +108,7 @@ class Index extends MX_Controller {
     }
 
     /** Update session */
-    function session_update()
+    protected function session_update()
     {
         if ($this->session->userdata('last_activity') < time() - 300)
         {

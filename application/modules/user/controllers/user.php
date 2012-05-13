@@ -38,10 +38,11 @@ class User extends MX_Controller {
         {
             if ($this->auth->login($this->input->post('login'), $this->input->post('password')))
             {
-                if ($this->auth->is_admin())
-                    redirect('admin');
-                else
-                    redirect('');
+                redirect();
+//                if ($this->auth->is_admin())
+//                    redirect('admin');
+//                else
+//                    redirect('');
             }
             else
             {
