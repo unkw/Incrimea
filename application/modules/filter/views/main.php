@@ -32,69 +32,36 @@
         <div class="content-wrap">
             
             <div class="icons-wrap">
+                <ul>
                 <?php foreach ($obj['infrastructure'] as $s): ?>
-                    <?php echo $s['name'].' - '; ?>
-                <?php endforeach; ?>                
+                    <li class="<?php echo $s['url_name']; ?> icon" title="<?php echo $s['name']; ?>"></li>
+                <?php endforeach; ?>
+                </ul>
             </div>
             
             <div class="middle-wrap">
-                <div class="info col">Краткая информация</div>
-                <div class="desc col"><?php echo $obj['body']; ?></div>
+                <div class="info col">
+                    <div class="row">Место отдыха: <?php echo $obj['resort']; ?></div>
+                    <div class="row">Питание: есть</div>
+                    <div class="row">Параметр1: тест1</div>
+                    <div class="row">Параметр2: тест2</div>
+                    <div class="row">Параметр3: тест3</div>
+                </div>
+                <div class="desc col">
+                    <div class="title">Краткое описание:</div>
+                    <?php echo $obj['body']; ?>
+                </div>
                 <div class="price col"><?php echo 'Цена от: $' . $obj['price']; ?></div>
             </div>
             
             <div class="bottom-wrap">
-                Подробнее
+                <div class="more"><?php echo href($obj['alias'], 'Подробнее'); ?></div>
             </div>
             
         </div>
         
     </div>
 
-<!--    <table class="obj-table-item"><tbody>
-        <tr>
-            <td class="title-wrap" colspan="3">
-                <?php print href($obj['alias'], $obj['title'], array('class'=>'title')); ?>
-                <span class="resort"><?php echo $obj['resort']; ?></span>                    
-            </td>
-        </tr>
-        <tr>
-            <td class="img-wrap" rowspan="3">
-                <?php if (isset($obj['images'][0])) : ?>
-                <?php echo href(
-                    $obj['alias'], 
-                    '<img class="current" src="'.base_url().'images/object/thumb/'.$obj['images'][0].'" alt="" />'
-                ); ?>
-                <?php endif; ?>                    
-                <ul class="small-thumbs">
-                <?php for ($i=0; $i < 4; $i++): ?>
-                    <?php if (isset($obj['images'][$i])) : ?>
-                    <li><img src="<?php echo base_url();?>images/object/thumb/<?php echo $obj['images'][$i];?>" alt="" /></li>
-                    <?php endif; ?>
-                <?php endfor; ?>
-                </ul>
-            </td>
-            <td colspan="2">
-                
-                <table class="info-table">
-                    <tr>
-                        <td colspan="2">
-                        <?php foreach ($obj['infrastructure'] as $s): ?>
-                            <?php echo $s['name'].' - '; ?>
-                        <?php endforeach; ?>                         
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><?php echo 'Цена от: $' . $obj['price']; ?></td>
-                        <td><?php echo $obj['body']; ?></td>
-                    </tr>
-                    <tr><td colspan="2">Подробнее</td></tr>
-                </table>
-                   
-            </td>
-        </tr>
-    </tbody></table>    -->
-        
 <?php endforeach; ?>
 
 

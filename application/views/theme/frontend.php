@@ -16,6 +16,7 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>js/jquery.colorbox.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/filters.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/resorts.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>js/objects.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/init.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>js/debug.js"></script>
 
